@@ -1,0 +1,37 @@
+{
+  "title": "{0}",
+  "description": "",
+  "imageViews": "1",
+  "creationTime": {
+    "timestamp": "{1}",
+    "formatted": "{2}"
+  },
+  "photoTakenTime": {
+    "timestamp": "{1}",
+    "formatted": "{2}"
+  },
+  "geoData": {
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "altitude": 0.0,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "geoDataExif": {
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "altitude": 0.0,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "url": "https://lh3.googleusercontent.com/deadbeefdeadbeefdeadbeeddeadbeef",
+  "googlePhotosOrigin": {
+    "mobileUpload": {
+      "deviceType": "ANDROID_PHONE"
+    }
+  },
+  "photoLastModifiedTime": {
+    "timestamp": "{3}",
+    "formatted": "{4}"
+  }
+}
