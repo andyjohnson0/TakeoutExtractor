@@ -38,6 +38,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 - GUI front-end using MAUI.
 = Options to specify a date/time winodw for extracted objects.
+- No-output mode that just counts/validates files that would be extracted withut actually extracting them.
 - Ability to open a zip or tgz archive directly, rather than having to unzip it to a temporary directory first.
 - Option to control file overwrite
   - The PhotExtractor class adds a four digit numeric suffix to files names to ensure file name uniqieness and prevent files from being
