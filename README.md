@@ -14,24 +14,24 @@ nameed copy of the image and video files in a takeout dataset and restores their
 
 1. Build the solution in Visual Studio 2022
 
-2. The command-line extractor, tex.exe, will be found in TakeoutExtractorCli\bin\Release\net6.0.
+2. The command-line extractor, `tex.exe`, will be found in `TakeoutExtractorCli\bin\Release\net6.0\`.
 Run `tex /h` for help.
 
 
 ## Built With
 
-- .net 6.0
+- .net 6.0, with nullable reference type checking enabled
 - [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) v2.1.4 or later, via nuget
 
 
 ## Author
 
-Andeew Johnson | github.com/andyjohnson0 | https://andyjohnson.uk
+Andeew Johnson | [github.com/andyjohnson0](https://github.com/andyjohnson0) | https://andyjohnson.uk
 
 
 ## Licence
 
-This project is licensed under the MIT License - see the [LICENCE.md](lICENCE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 
 ## Future Enhancements and TODOs
@@ -45,8 +45,8 @@ This project is licensed under the MIT License - see the [LICENCE.md](lICENCE.md
 - Process other media types: contacts, transactions, location, maps, tasks, etc.
 - Extend the command-line parser to automatically generate help text (à la System.CommandLine).
 
-Things to do are flagged with `TODO:` in the code. Something of them are:
-- Option validation is done inside the Option-derived DTO classes. This kind of mixes UI and implementation and could be abstracted better.
+Things to do are flagged with `TODO:` in the code. Some of them are:
+- Option validation is done inside the Option-derived DTO classes. This kind-of exposed implementation in the UI and could be abstracted better.
 
 
 ## Implementation Notes
@@ -87,7 +87,12 @@ to preserve all(?) other exif fields that were populated at the time of image ca
 EXIF tag reference: <https://exiftool.org/TagNames/EXIF.html>
 
 
-### Some Notes on Takeout's' Image File Naming
+### Some Notes on Takeout's Image File Naming
+
+*(The following are notes that I made during development, when I was initially attempting to match the image json manifest to
+its corresponding image(s) based on file name - to avoid the necessity to parse the json itself. Due to ambiguities in the file
+naming conventions used by Google, I eventually abandond this. These notes are left here for posterity, and perhaps future
+reference.)*
 
 Google takeout appears to provide access to the original captured form of an image, together with the last edited version of
 the image, if any. The images are linked together by a json metadata file.
