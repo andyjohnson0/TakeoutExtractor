@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    
+    <Style TargetType="Border">
+        <Setter Property="Stroke" Value="{StaticResource Gray950}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 5,5,5,5"/>
+        <Setter Property="StrokeThickness" Value="2"/>
+        <Setter Property="Background" Value="{StaticResource Gray050}"/>
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="BorderColor" Value="{StaticResource Gray950}" />
+    </Style>
+
+
+<!--
+    <Style TargetType="TabbedPage">
+        <Setter Property="BarBackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}" />
+        <Setter Property="BarTextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+        <Setter Property="UnselectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />
+        <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
+    </Style>
+-->
+
+</ResourceDictionary>

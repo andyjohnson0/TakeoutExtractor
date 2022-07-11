@@ -44,73 +44,86 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// <summary>
         /// Progress event.
         /// </summary>
-        public event EventHandler<string>? Progress;
+        public event EventHandler<ProgressEventArgs>? Progress;
+
 
 
         /// <summary>
         /// Perform extraction
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>PhotoResults object describing results</returns>
         /// <exception cref="InvalidOperationException">Invalid options.</exception>
-        public void Extract()
+        /// <exception cref="OperationCanceledException">The operation was cancelled.</exception>
+        public async Task<PhotoResults> ExtractAsync(CancellationToken cancellationToken)
         {
             // Validate options.
             // If keeping originals then, to prevent file name clash, subdir and/or suffix option must be set.
             if (options.KeepOriginalsForEdited && string.IsNullOrEmpty(options.OriginalsSubdirName) && string.IsNullOrEmpty(options.OriginalsSuffix))
                 throw new InvalidOperationException("Original file subdir and/or suffix option must be set to prevent file name clash");
 
-
             // Do it.
-            var progressInfo = new ProgressInfo();
-            ProcessDir(inputDir, outputDir, options, progressInfo);
+            var results = new PhotoResults();
+            results.StartTime = DateTime.UtcNow;
+            await ProcessDirAsync(inputDir, outputDir, options, results, cancellationToken);
+            results.Duration = DateTime.UtcNow - results.StartTime;
 
-            var duration = DateTime.UtcNow - progressInfo.startTime; ;
-            RaiseProgress(1, $"Done in {duration.ToString("hh\\:mm\\:ss")}");
+            //var duration = DateTime.UtcNow - results.StartTime;
+            //RaiseProgress(1, $"Done in {duration.ToString("hh\\:mm\\:ss")}");
+            //RaiseProgress(2, $"Input groups: {progressInfo.inputGroupCount}");
+            //RaiseProgress(2, $"    Edited: {progressInfo.inputEditedCount}");
+            //RaiseProgress(2, $"    Un-edited: {progressInfo.inputUneditedCount}");
+            //RaiseProgress(2, $"Output files: {progressInfo.outputFileCount}");
+            //RaiseProgress(2, $"    Edited + original: {progressInfo.outputEditedCount}");
+            //RaiseProgress(2, $"    Un-edited: {progressInfo.outputUneditedCount}");
+            //RaiseProgress(2, $"Coverage: {progressInfo.Coverage * 100M}%");
 
-            RaiseProgress(2, $"Input groups: {progressInfo.inputGroupCount}");
-            RaiseProgress(2, $"    Edited: {progressInfo.inputEditedCount}");
-            RaiseProgress(2, $"    Un-edited: {progressInfo.inputUneditedCount}");
-            RaiseProgress(2, $"Output files: {progressInfo.outputFileCount}");
-            RaiseProgress(2, $"    Edited + original: {progressInfo.outputEditedCount}");
-            RaiseProgress(2, $"    Un-edited: {progressInfo.outputUneditedCount}");
-            RaiseProgress(2, $"Coverage: {progressInfo.Coverage * 100M}%");
+            return results;
         }
 
+
+        /// <summary>
+        /// Perform extraction
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>PhotoResults object describing results</returns>
+        /// <exception cref="InvalidOperationException">Invalid options.</exception>
+        /// <exception cref="OperationCanceledException">The operation was cancelled.</exception>
+        public PhotoResults Extract(CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Defer to the async version.
+                return Task.Run(async () => await ExtractAsync(cancellationToken)).Result;
+            }
+            catch (AggregateException ex)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex.InnerException!).Throw();
+                return null; // Not reached
+            }
+        }
 
 
         #region Implementation
 
         private const string starDotJason = "*.json";
 
-        private class ProgressInfo
-        {
-            public DateTime startTime = DateTime.UtcNow;
-
-            public int inputGroupCount;
-            public int inputEditedCount;
-            public int inputUneditedCount;
-
-            public int outputFileCount;
-            public int outputEditedCount;  // + original
-            public int outputUneditedCount;
-
-            public decimal Coverage
-            { 
-                get { return this.inputGroupCount  != 0 ? (decimal)this.outputFileCount / (decimal)this.inputGroupCount : 0M; } 
-            }
-        }
 
 
-
-        private void ProcessDir(
+        private async Task ProcessDirAsync(
             DirectoryInfo inDir,
             DirectoryInfo outDir,
             PhotoOptions options,
-            ProgressInfo progressInfo)
+            PhotoResults results,
+            CancellationToken cancellationToken)
         {
             // Process all json manifests in 'inDir'
             foreach (var jsonManifestFile in inDir.EnumerateFiles(starDotJason))
             {
-                var mi = ExtractManifestInfo(jsonManifestFile);
+                // Check for cancellation
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var mi = await ExtractManifestInfoAsync(jsonManifestFile);
                 if (mi == null)
                 {
                     // Not a manifest file
@@ -121,11 +134,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                     throw new InvalidOperationException($"Failed to identify original content file for {jsonManifestFile}");
                 }
 
-                progressInfo.inputGroupCount += 1;
+                results.InputGroupCount += 1;
                 if (mi.editedFile != null)
-                    progressInfo.inputEditedCount += 1;
+                    results.InputEditedCount += 1;
                 else
-                    progressInfo.inputUneditedCount += 1;
+                    results.InputUneditedCount += 1;
 
                 DirectoryInfo destDir = outDir;
                 if (mi.originalFile.IsImageFile())
@@ -138,34 +151,34 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                     // We have an edited file, and an original file too.
 
                     // Create edited.
-                    var outFile = CreateOutputFile(mi.editedFile, destDir, null, mi.description, mi.creationTime, mi.lastModifiedTime);
-                    RaiseProgress(1, "{0} => {1}", mi.editedFile, outFile);
-                    progressInfo.outputFileCount += 1;
+                    var outFile = await CreateOutputFileAsync(mi.editedFile, destDir, null, mi.description, mi.creationTime, mi.lastModifiedTime);
+                    RaiseProgress(1, mi.editedFile, outFile);
+                    results.OutputFileCount += 1;
 
                     // Optionally create original. 
                     if (options.KeepOriginalsForEdited)
                     {
                         if (!string.IsNullOrEmpty(options.OriginalsSubdirName))
                             destDir = destDir.CreateSubdirectory(options.OriginalsSubdirName);
-                        outFile = CreateOutputFile(mi.originalFile, destDir, options.OriginalsSuffix, mi.description, mi.creationTime, mi.creationTime);
-                        RaiseProgress(1, "{0} => {1}", mi.originalFile, outFile);
-                        progressInfo.outputEditedCount += 1;
+                        outFile = await CreateOutputFileAsync(mi.originalFile, destDir, options.OriginalsSuffix, mi.description, mi.creationTime, mi.creationTime);
+                        RaiseProgress(1, mi.originalFile, outFile);
+                        results.OutputEditedCount += 1;
                     }
                 }
                 else
                 {
                     // We have an original file only.
-                    var outFile = CreateOutputFile(mi.originalFile, destDir, null, mi.description, mi.creationTime, mi.creationTime);
-                    RaiseProgress(1, "{0} => {1}", mi.originalFile, outFile);
-                    progressInfo.outputFileCount += 1;
-                    progressInfo.outputUneditedCount += 1;
+                    var outFile = await CreateOutputFileAsync(mi.originalFile, destDir, null, mi.description, mi.creationTime, mi.creationTime);
+                    RaiseProgress(1, mi.originalFile, outFile);
+                    results.OutputFileCount += 1;
+                    results.OutputUneditedCount += 1;
                 }
             }
 
             // Recurse all subdirectories of 'inDir'.
             foreach (var subDir in inDir.EnumerateDirectories())
             {
-                ProcessDir(subDir, outDir, options, progressInfo);
+                await ProcessDirAsync(subDir, outDir, options, results, cancellationToken);
             }
         }
 
@@ -193,7 +206,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// Timestamps can be null if metadata was not available.
         /// If the json file is not a media manifest the returns null.
         /// </returns>
-        private ManifestInfo? ExtractManifestInfo(
+        private async Task<ManifestInfo?> ExtractManifestInfoAsync(
             FileInfo jsonManifestFile)
         {
             /* const */ var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -203,7 +216,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
             using (var manifestStm = new FileStream(jsonManifestFile.FullName, FileMode.Open, FileAccess.Read))
             {
-                using (var manifestDoc = JsonDocument.Parse(manifestStm, new JsonDocumentOptions() { AllowTrailingCommas = true }))
+                using (var manifestDoc = await JsonDocument.ParseAsync(manifestStm, new JsonDocumentOptions() { AllowTrailingCommas = true }))
                 {
                     // Get title from json manifest. Original file will be the same as the title
                     // but the name (excluding path and ext) will have a max length of 'maxFileNameLen' chars.
@@ -280,7 +293,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// <param name="lastModifiedTime">Last modified time. Can be null.</param>
         /// <returns>FileInfo object referring to the created file.</returns>
         /// <exception cref="InvalidOperationException">File creation failed</exception>
-        private FileInfo CreateOutputFile(
+        private async Task<FileInfo> CreateOutputFileAsync(
             FileInfo sourceFile,
             DirectoryInfo outDir,
             string? filenameSuffix,
@@ -312,7 +325,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
                 if (options.UpdateExif && destFile.IsImageFileWithExif())
                 {
-                    var file = ImageFile.FromFile(destFile.FullName);
+                    var file = await ImageFile.FromFileAsync(destFile.FullName);
 
                     file.Properties.Set(ExifTag.ImageDescription, description);
                     var d = new ExifDateTime(ExifTag.DateTime, creationTime);
@@ -323,7 +336,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                         file.Properties.Set(ExifTag.DateTime, d);
                     }
 
-                    file.Save(destFile.FullName);
+                    await file.SaveAsync(destFile.FullName);
                 }
 
                 File.SetCreationTime(destFile.FullName, creationTime);
@@ -340,12 +353,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
         public void RaiseProgress(
             int verbosityLevel,
-            string message,
-            params object[] parms)
+            FileInfo sourceFile,
+            FileInfo destinationFile)
         {
             if ((verbosityLevel >= this.verbosity) && (this.Progress != null))
             {
-                this.Progress(this, string.Format(message, parms));
+                var args = new ProgressEventArgs(sourceFile, destinationFile);
+                this.Progress(this, args);
             }
         }
 

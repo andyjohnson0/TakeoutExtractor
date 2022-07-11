@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace uk.andyjohnson.TakeoutExtractor.Lib
 {
     /// <summary>
-    /// Base class for options
+    /// Base interface for options
     /// </summary>
-    public abstract class Options
+    public interface IExtractorOptions
     {
         /// <summary>
         /// Validate options.
         /// </summary>
-        public abstract void Vaildate();
+        void Vaildate();
     }
 }
