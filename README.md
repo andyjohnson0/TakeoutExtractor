@@ -55,12 +55,14 @@ Things to do are flagged with `TODO:` in the code. Some of them are:
 
 ### Project Structure
 
-- **TakeoutExtractorCli** Command-line `tex` app that drives the extraction process.
+- **TakeoutExtractor.Cli** Command-line `tex` app that drives the extraction process.
 
-- **TakeoutExtractorLib** Core library for the Takeout Extractor project. Exposes the TakeoutExtractor class which
+- **TakeoutExtractor.Lib** Core library for the Takeout Extractor project. Exposes the TakeoutExtractor class which
 coordinates the extraction and reassembly of files from an unzipped Google Takeout archive.
 
-- **TakeoutExtractorCliTests** Tests fpr the TakeoutExtractorCli project.
+- **TakeoutExtractor.Cli.Tests** Tests for the TakeoutExtractor.Cli project.
+
+- **TakeoutExtractor.Lib.Tests** Tests for the TakeoutExtractor.Lib project.
 
 
 ### Method
