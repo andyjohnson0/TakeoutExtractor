@@ -46,22 +46,10 @@ Except for third-party elements that are licened separately, this project is lic
 
 ## Future Enhancements, TODOs, and known bugs
 
-- Tabbed interface for the gui driver.
-= Options to specify a date/time winodw for extracted objects.
-- Option to run different types of extractor in parallel.
-- No-output mode that just counts/validates files that would be extracted withut actually extracting them.
-- Ability to open a zip or tgz archive directly, rather than having to unzip it to a temporary directory first.
-- Option to control file overwrite
-  - The PhotExtractor class adds a four digit numeric suffix to files names to ensure file name uniqieness and prevent files from being
-    overwritten. This is nice to have but prevents having an option to allow output file overwrite, as it is not possible to determine
-    whether an existing output file is from a previous run or not.
-- Process other media types: contacts, transactions, location, maps, tasks, etc.
-- Extend the command-line parser to automatically generate help text (à la System.CommandLine).
+These are logged as issues at https://github.com/andyjohnson0/TakeoutExtractor/issues/
 
-Things to do are flagged with `TODO:` in the code. Some of them are:
-- Browser buttons in the gui app are not functional because MAUI currently lacks a folder picker class in Microsoft.Maui.Storage.
-  Browser buttons shuld be ImageButtons.
-- Option validation is done inside the Option-derived DTO classes. This kind-of exposed implementation in the UI and could be abstracted better.
+Things to do are flagged with `TODO:` in the code. 
+
 
 
 ## Implementation Notes
