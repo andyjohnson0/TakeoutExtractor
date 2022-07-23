@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="uk.andyjohnson.TakeoutExtractor.Gui.MainPage">
+
+    <ScrollView
+        Orientation="Vertical"
+        VerticalScrollBarVisibility="Always">
+        <Grid
+            x:Name="MainGrid">
+
+            <VerticalStackLayout 
+                Grid.Row="0" Grid.Column="0"
+                Spacing="25" 
+                Padding="30,30">
+
+                <Border>
+                    <VerticalStackLayout
+                            Spacing="25" 
+                            Padding="30,30">
+                        <Label
+                            Text="General" 
+                            FontAttributes="Bold" VerticalOptions="Center"/>
+                        <Grid
+                            RowSpacing="10"
+                            ColumnSpacing="5"
+                            RowDefinitions="40, 40" ColumnDefinitions="1.5*, 7*, 1*">
+                            <Label
+                                Grid.Row="0" Grid.Column="0"
+                                Text="Input folder" 
+                                HorizontalOptions="End" VerticalOptions="Center"/>
+                            <Entry 
+                                Grid.Row="0" Grid.Column="1"
+                                x:Name="InputDirEntry"
+                                Placeholder="Input folder"
+                                SemanticProperties.Hint="Folder containing input files"/>
+                            <Button 
+                                Grid.Row="0" Grid.Column="2"
+                                x:Name="InputDirButton"
+                                Text="Browse"
+                                IsEnabled="false"
+                                SemanticProperties.Hint="Select input directory"
+                                Clicked="OnInputDirButtonClicked" />
+                            <Label
+                                Grid.Row="1" Grid.Column="0"
+                                Text="Output folder" 
+                                HorizontalOptions="End" VerticalOptions="Center"/>
+                            <Entry 
+                                Grid.Row="1" Grid.Column="1"
+                                x:Name="OutputDirEntry"
+                                Placeholder="Output folder"
+                                SemanticProperties.Hint="Folder to contain output files"/>
+                            <Button 
+                                Grid.Row="1" Grid.Column="2"
+                                x:Name="OutputDirButton"
+                                Text="Browse"
+                                IsEnabled="false"
+                                SemanticProperties.Hint="Select output directory"
+                                Clicked="OnOutputDirButtonClicked" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--- Options are below in Border objects -->
+
+                <VerticalStackLayout
+                    Spacing="25">
+
+                    <Border>
+                        <VerticalStackLayout
+                            Spacing="25" 
+                            Padding="30,30">
+                            <HorizontalStackLayout>
+                                <CheckBox
+                                    x:Name="PhotosExtractCbx"
+                                    SemanticProperties.Hint="Extract photos and videos"
+                                    VerticalOptions="Center"
+                                    CheckedChanged="OnPhotosExtractChanged"/>
+                                <Label
+                                    Text="Photos and Videos" 
+                                    FontAttributes="Bold" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+
+                            <Grid
+                                x:Name="PhotosOptionsGrid"
+                                RowSpacing="10" ColumnSpacing="5"
+                                RowDefinitions="60,60,60,60,60" ColumnDefinitions="1.5*, 8.5*" 
+                                VerticalOptions="Center">
+
+                                <Label
+                                    Grid.Row="0" Grid.Column="0"
+                                    Text="Output filename format" 
+                                    HorizontalOptions="End" VerticalOptions="Center"/>
+                                <Entry 
+                                    Grid.Row="0" Grid.Column="1"
+                                    x:Name="PhotosFileNameFormatTxt"
+                                    Placeholder="Output filename format"
+                                    SemanticProperties.Hint="Format of output filenames"/>
+
+                                <Label
+                                    Grid.Row="1" Grid.Column="0"
+                                    x:Name="PhotosUpdateExifLbl"
+                                    Text="Update EXIF timestamps" 
+                                    HorizontalOptions="End" VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="1" Grid.Column="1"
+                                    x:Name="PhotosUpdateExifCbx"
+                                    SemanticProperties.Hint="Update EXIF timestamps"/>
+
+                                <Label
+                                    Grid.Row="2" Grid.Column="0"
+                                    x:Name="PhotosKeepOriginalsLbl"
+                                    Text="Save original versions" 
+                                    HorizontalOptions="End" VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="2" Grid.Column="1"
+                                    x:Name="PhotosKeepOriginalsCbx"
+                                    SemanticProperties.Hint="Save original version of photos and videos"
+                                    CheckedChanged="OnPhotosKeepOriginalsChanged"/>
+
+                                <Label
+                                    Grid.Row="3" Grid.Column="0"
+                                    x:Name="PhotosSuffixOriginalsLbl"
+                                    Text="Originals suffix" 
+                                    HorizontalOptions="End" VerticalOptions="Center" />
+                                <Entry 
+                                    Grid.Row="3" Grid.Column="1"
+                                    x:Name="PhotosSuffixOriginalsTxt"
+                                    Placeholder="File name suffix for original versions"
+                                    SemanticProperties.Hint="Suffix added to original file names"/>
+
+                                <Label
+                                    Grid.Row="4" Grid.Column="0"
+                                    x:Name="PhotosSubdirOriginalsLbl"
+                                    Text="Originals subdirectory" 
+                                    HorizontalOptions="End" VerticalOptions="Center" />
+                                <Entry 
+                                    Grid.Row="4" Grid.Column="1"
+                                    x:Name="PhotosSubdirOriginalsTxt"
+                                    Placeholder="Subdirectory for original versions"
+                                    SemanticProperties.Hint="Subdirectory for original files"/>
+
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+
+
+                <Button 
+                    x:Name="StartBtn"
+                    Text="Start"
+                    SemanticProperties.Hint="Start the extraction"
+                    HorizontalOptions="Center"
+                    Clicked="OnStartBtnClicked" />
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

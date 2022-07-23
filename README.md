@@ -20,8 +20,17 @@ Run `tex /h` for help.
 
 ## Built With
 
+- Visual Studio 2022. Maui-based gui currently requires VS2022 7.3.0 preview 2.0 or later.
 - .net 6.0, with nullable reference type checking enabled
 - [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) v2.1.4 or later, via nuget
+
+The shovel icon used by the gui project is from SmartIcon's excellent *Gylph* icon set.
+Check them out at https://glyph.smarticons.co/ and https://github.com/frexy/glyph-iconset.
+
+- Link: https://github.com/frexy/glyph-iconset/blob/master/svg/si-glyph-shovel.svg 
+- Author: [SmartIcons](https://github.com/frexy/glyph-iconset)
+- Licence: [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/)
+
 
 
 ## Author
@@ -31,13 +40,15 @@ Andeew Johnson | [github.com/andyjohnson0](https://github.com/andyjohnson0) | ht
 
 ## Licence
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+Except for third-party elements that are licened separately, this project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 
-## Future Enhancements and TODOs
 
-- GUI front-end using MAUI.
+## Future Enhancements, TODOs, and known bugs
+
+- Tabbed interface for the gui driver.
 = Options to specify a date/time winodw for extracted objects.
+- Option to run different types of extractor in parallel.
 - No-output mode that just counts/validates files that would be extracted withut actually extracting them.
 - Ability to open a zip or tgz archive directly, rather than having to unzip it to a temporary directory first.
 - Option to control file overwrite
@@ -48,12 +59,16 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 - Extend the command-line parser to automatically generate help text (à la System.CommandLine).
 
 Things to do are flagged with `TODO:` in the code. Some of them are:
+- Browser buttons in the gui app are not functional because MAUI currently lacks a folder picker class in Microsoft.Maui.Storage.
+  Browser buttons shuld be ImageButtons.
 - Option validation is done inside the Option-derived DTO classes. This kind-of exposed implementation in the UI and could be abstracted better.
 
 
 ## Implementation Notes
 
 ### Project Structure
+
+- **TakeoutExtractor.Gui** GUI front-end using MAUI.
 
 - **TakeoutExtractor.Cli** Command-line `tex` app that drives the extraction process.
 

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Reflection;
 using System.IO;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using uk.andyjohnson.TakeoutExtractor.Lib;
 
@@ -12,14 +12,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
 {
     class Program
     {
-        static int Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             var msg = string.Format("Takeout Organiser v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutOrganiser for info.",
                                     Assembly.GetExecutingAssembly().GetName().Version.ToString());
             Console.WriteLine(msg);
             Console.WriteLine("Use /? or /h for help");
 
-            var options = new List<Options>();
+            //
+            var options = new List<IExtractorOptions>();
             DirectoryInfo inDir = null;
             DirectoryInfo outDir = null;
             int verbosity = 0;
@@ -51,7 +52,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                 }
             }
 
-            var extractor = new ExtractorManager(inDir, outDir, verbosity: verbosity);
+            var extractor = new ExtractorManager(inDir, outDir, options, verbosity: verbosity);
             extractor.Progress += Extractor_Progress;
             try
             {
@@ -65,7 +66,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                 options.ForEach(o => o.Vaildate());
 
                 // Perform the extraction.
-                extractor.Extract(options);
+                await extractor.ExtractAsync(CancellationToken.None);
 
                 // All done
                 return 0;
@@ -77,6 +78,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             catch(InvalidOperationException ex)
             {
                 Console.WriteLine("Validation error: " + ex.Message);
+            }
+            catch(OperationCanceledException)
+            {
+                Console.WriteLine("Extraction cancelled");
             }
             catch(Exception ex)
             {
@@ -92,9 +97,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         }
 
 
-        private static void Extractor_Progress(object sender, string e)
+
+        private static void Extractor_Progress(object sender, ProgressEventArgs e)
         {
-            Console.WriteLine(e);
+            if ((e?.SourceFile != null) && (e?.DesinationFile != null))
+            {
+                Console.WriteLine($"{e.SourceFile.FullName} => {e.DesinationFile.FullName}");
+            }
         }
 
 

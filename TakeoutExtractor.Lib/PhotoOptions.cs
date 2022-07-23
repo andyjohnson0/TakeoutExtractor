@@ -9,7 +9,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
     /// <summary>
     /// Options for PhotoExtractor
     /// </summary>
-    public class PhotoOptions : Options
+    public class PhotoOptions : IExtractorOptions
     {
         // 
         /// <summary>
@@ -17,7 +17,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// TODO: This mixes implementation and UI a bit. Fefactor?
         /// </summary>
         /// <exception cref="InvalidOperationException"></exception>
-        public override void Vaildate()
+        public void Vaildate()
         {
             try
             {

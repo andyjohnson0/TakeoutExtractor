@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 
@@ -18,21 +19,21 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
     public class PhotoExtractorTests
     {
         [TestMethod]
-        public void SingleFileWithEdit()
+        public async Task SingleFileWithEdit()
         {
-            DoExtractionTest("file_1646604530458_6906359968518998018.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, hasEdited: true);
+            await DoExtractionTestAsync("file_1646604530458_6906359968518998018.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, hasEdited: true);
         }
 
 
         [TestMethod]
-        public void SingleFileNoEdit()
+        public async Task SingleFileNoEdit()
         {
-            DoExtractionTest("file_993673465464_690438953657018.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, hasEdited: false);
+            await DoExtractionTestAsync("file_993673465464_690438953657018.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, hasEdited: false);
         }
 
 
         [TestMethod]
-        public void MultipleFilesWithEdits()
+        public async Task MultipleFilesWithEdits()
         {
             var data = new (string imageBaseName, System.Drawing.Imaging.ImageFormat imageFormat, bool hasEdited)[]
             {
@@ -40,12 +41,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
                 ("file_f67g4544445_kjsdf76sdfhg.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, true),
                 ("file_87e669feuf_efrhu333674rf.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, true)
             };
-            DoExtractionTest(data);
+            await DoExtractionTestAsync(data);
         }
 
 
         [TestMethod]
-        public void MultipleFilesNoEdits()
+        public async Task MultipleFilesNoEdits()
         {
             var data = new (string imageBaseName, System.Drawing.Imaging.ImageFormat imageFormat, bool hasEdited)[]
             {
@@ -53,12 +54,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
                 ("file_f67g4544445_kjsdf76sdfhg.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, false),
                 ("file_87e669feuf_efrhu333674rf.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, false)
             };
-            DoExtractionTest(data);
+            await DoExtractionTestAsync(data);
         }
 
 
         [TestMethod]
-        public void MultipleFilesMixedoEdits()
+        public async Task MultipleFilesMixedoEdits()
         {
             var data = new (string imageBaseName, System.Drawing.Imaging.ImageFormat imageFormat, bool hasEdited)[]
             {
@@ -67,27 +68,27 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
                 ("file_87e669feuf_efrhu333674rf.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, false),
                 ("file_87efff7j33sd_df6gddff7h.jpg", System.Drawing.Imaging.ImageFormat.Jpeg, true)
             };
-            DoExtractionTest(data);
+            await DoExtractionTestAsync(data);
         }
 
 
 
         #region Shared implementation
 
-        public static void DoExtractionTest(
+        public static async Task DoExtractionTestAsync(
             string imageBaseName,
             System.Drawing.Imaging.ImageFormat imageFormat,
             bool hasEdited)
         {
             var data = new (string, System.Drawing.Imaging.ImageFormat, bool)[] { (imageBaseName, imageFormat, hasEdited) };
-            DoExtractionTest(data);
+            await DoExtractionTestAsync(data);
         }
 
 
 
 
 
-        public static void DoExtractionTest(
+        public static async Task DoExtractionTestAsync(
             (string imageBaseName, System.Drawing.Imaging.ImageFormat imageFormat, bool hasEdited)[] testData)
         {
             const int yearsPast = 2;
@@ -119,7 +120,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
                 var options = new PhotoOptions();
                 var photoExtractor = new PhotoExtractor(options, inDir, outDir);
-                photoExtractor.Extract();
+                var results = await photoExtractor.ExtractAsync(CancellationToken.None);
+                Assert.IsNotNull(results);
 
                 for (var i = 0; i < testData.Length; i++)
                 {

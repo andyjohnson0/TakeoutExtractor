@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="uk.andyjohnson.TakeoutExtractor.Gui.ProgressOverlay">
+    <Border
+        HorizontalOptions="CenterAndExpand"
+        VerticalOptions="CenterAndExpand"
+        Padding="30,30"
+        SizeChanged="Border_SizeChanged">
+        <VerticalStackLayout
+            Spacing="25" >
+            <Label 
+                x:Name="Title"
+                Text=""
+                FontAttributes="Bold"
+                HorizontalOptions="Center"/>
+            <ActivityIndicator
+                IsVisible="true"
+                IsRunning="true"
+                IsEnabled="true"
+                HorizontalOptions="Center"/>
+            <Label 
+                x:Name="SourceLabel"
+                Text=""
+                HorizontalOptions="Center"/>
+            <Label 
+                x:Name="DestinationLabel"
+                Text=""
+                HorizontalOptions="Center"/>
+            <Button
+                x:Name="CancelButton"
+                Text="Cancel"
+                HorizontalOptions="Center"
+                Clicked="OnCancelButtonClicked"/>
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

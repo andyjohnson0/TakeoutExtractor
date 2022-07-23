@@ -10,6 +10,49 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
     public static class FileInfoExt
     {
         /// <summary>
+        /// Compactify a compacted path by repeatedby replacing long path elements with
+        /// elipsis unntil the length of the path is below a specified maximum.
+        /// </summary>
+        /// <param name="fi">FileInfo object</param>
+        /// <param name="maxRequestedLen">Requested maximum path length. It may not be possible to achieve this.</param>
+        /// <returns>Path with a length that is (as near as possible) less than or equal to the requested maximum.</returns>
+        /// <exception cref="ArgumentNullException">Invalid argument</exception>
+        /// <exception cref="ArgumentException">Invalid argument</exception>
+        public static string CompactName(
+            this FileInfo fi,
+            int maxRequestedLen)
+        {
+            if (fi == null)
+                throw new ArgumentNullException(nameof(fi));
+            if (maxRequestedLen <= 0)
+                throw new ArgumentException(nameof(maxRequestedLen));
+
+            const string ellipsis = "...";
+
+            // TODO: Halt if longest is ellipsis
+            // Don't replace file name part
+
+            var len = fi.FullName.Length;
+            var parts = fi.FullName.Split(Path.DirectorySeparatorChar);
+            if (parts.Length < 2)
+                return fi.FullName;  // Need at least 2 elements because we never compactify the last element (the filename)
+
+            while(len > maxRequestedLen)
+            {
+                // Identify the longest element. We want to retain the last element so we don't consider that.
+                var longest = parts.Take(parts.Length - 1).OrderByDescending(s => s.Length).First();
+                var iLongest = Array.IndexOf(parts, longest);
+
+                if (parts[iLongest].Length <= ellipsis.Length)
+                    break;  // Nothing more to do
+                len = len - parts[iLongest].Length + ellipsis.Length;
+                parts[iLongest] = ellipsis;
+            }
+            return Path.Combine(parts);
+        }
+
+
+        /// <summary>
         /// Trim the name part of a FileInfo object, reatining the directory and extension parts.
         /// </summary>
         /// <param name="fi">FileInfo object</param>
