@@ -29,7 +29,7 @@ public partial class ProgressOverlay : ContentView
 
 
     public void ShowProgress(
-		object sender,
+		object? sender,
 		ProgressEventArgs e)
 	{ 
 		if (sender is PhotoExtractor)
