@@ -1,4 +1,5 @@
-﻿
+﻿using Microsoft.Extensions.Primitives;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +15,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             InitializeComponent();
         }
 
-        
+
+
         protected override void OnAppearing()
         {
 #if DEBUG
@@ -33,15 +35,23 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
 
 
 
-        private void OnInputDirButtonClicked(object sender, EventArgs e)
+        private async void OnInputDirButtonClicked(object sender, EventArgs e)
         {
-            // TODO: Browser for input dir
+            var dir = await FolderPicker.PickFolderAsync();
+            if (dir != null)
+            {
+                this.InputDirEntry.Text = dir.FullName;
+            }
         }
 
 
-        private void OnOutputDirButtonClicked(object sender, EventArgs e)
+        private async void OnOutputDirButtonClicked(object sender, EventArgs e)
         {
-            // TODO: Browse for output dir
+            var dir = await FolderPicker.PickFolderAsync();
+            if (dir != null)
+            {
+                this.OutputDirEntry.Text = dir.FullName;
+            }
         }
 
 
@@ -110,8 +120,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             // Do the extraction.
             try
             {
-                await Task.Run(() => extractor.ExtractAsync(cancellationTokenSource.Token));
-                await DisplayAlert("Completed", "The extraction operation completed successfully", "Ok");
+                var results = await Task.Run(() => extractor.ExtractAsync(cancellationTokenSource.Token));
+                await DisplayAlert("Completed", "The extraction operation completed successfully" + Environment.NewLine + Environment.NewLine + FormatResults(results), "Ok");
             }
             catch(OperationCanceledException)
             {
@@ -128,6 +138,34 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 progressOverlay = null;
                 MainGrid.IsEnabled = true;
             }
+        }
+
+
+        private static string FormatResults(
+            IEnumerable<IExtractorResults>? results)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append("Results:" + Environment.NewLine);
+            if (results != null && results.Any())
+            {
+                foreach (var result in results)
+                {
+                    if (result is PhotoResults)
+                        sb.Append("Photos and Videos: ");
+                    else
+                        sb.Append("Other: ");
+                    sb.Append(string.Format("{0}% in {1}",
+                        result.Coverage * 100M,
+                        result.Duration.ToString(@"hh\h\ mm\m\ ss\s")));
+                }
+            }
+            else
+            {
+                sb.Append("None");
+            }
+
+            return sb.ToString();
         }
     }
 }

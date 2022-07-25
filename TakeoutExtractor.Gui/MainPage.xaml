@@ -38,7 +38,6 @@
                                 Grid.Row="0" Grid.Column="2"
                                 x:Name="InputDirButton"
                                 Text="Browse"
-                                IsEnabled="false"
                                 SemanticProperties.Hint="Select input directory"
                                 Clicked="OnInputDirButtonClicked" />
                             <Label
@@ -54,7 +53,6 @@
                                 Grid.Row="1" Grid.Column="2"
                                 x:Name="OutputDirButton"
                                 Text="Browse"
-                                IsEnabled="false"
                                 SemanticProperties.Hint="Select output directory"
                                 Clicked="OnOutputDirButtonClicked" />
                         </Grid>

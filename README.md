@@ -7,7 +7,7 @@ This software currently processes only photo and video files. It is planned to a
 
 - *Photos and Videos* Image files in a Google takeout dataset have inconsistent naming. They also do not contain exif timestamps -
 although, confusingly, they do contain other metadata such as location information and camera settings. This software builds a uniformaly
-nameed copy of the image and video files in a takeout dataset and restores their exif timestamps.
+named copy of the image and video files in a takeout dataset and restores their exif timestamps.
 
 
 ## Getting Started
@@ -24,14 +24,6 @@ Run `tex /h` for help.
 - .net 6.0, with nullable reference type checking enabled
 - [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) v2.1.4 or later, via nuget
 
-The shovel icon used by the gui project is from SmartIcon's excellent *Gylph* icon set.
-Check them out at https://glyph.smarticons.co/ and https://github.com/frexy/glyph-iconset.
-
-- Link: https://github.com/frexy/glyph-iconset/blob/master/svg/si-glyph-shovel.svg 
-- Author: [SmartIcons](https://github.com/frexy/glyph-iconset)
-- Licence: [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/)
-
-
 
 ## Author
 
@@ -42,6 +34,13 @@ Andeew Johnson | [github.com/andyjohnson0](https://github.com/andyjohnson0) | ht
 
 Except for third-party elements that are licened separately, this project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
+The folder picker implementations used in the gui project are based on code from [MauiFolderPickerSample](https://github.com/jfversluis/MauiFolderPickerSample)
+and https://blog.verslu.is/maui/folder-picker-with-dotnet-maui/ by Gerald Versluis. 
+Licenced as [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)] (https://creativecommons.org/licenses/by-sa/4.0/) by the original author.
+
+The [shovel icon](https://github.com/frexy/glyph-iconset/blob/master/svg/si-glyph-shovel.svg) used by the gui project is from (SmartIcon's)[https://smarticons.co/]
+excellent *Gylph* icon set at https://glyph.smarticons.co/ and https://github.com/frexy/glyph-iconset. 
+Licenced as [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/) by the original author.
 
 
 ## Future Enhancements, TODOs, and known bugs
