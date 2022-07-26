@@ -34,12 +34,13 @@ Andeew Johnson | [github.com/andyjohnson0](https://github.com/andyjohnson0) | ht
 
 Except for third-party elements that are licened separately, this project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-The shovel icon used by the gui project is from SmartIcon's excellent *Gylph* icon set.
-Check them out at https://glyph.smarticons.co/ and https://github.com/frexy/glyph-iconset.
+The folder picker implementations used in the gui project are based on code from [MauiFolderPickerSample](https://github.com/jfversluis/MauiFolderPickerSample)
+and https://blog.verslu.is/maui/folder-picker-with-dotnet-maui/ by Gerald Versluis. 
+Licenced as [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)] (https://creativecommons.org/licenses/by-sa/4.0/) by the original author.
 
-- Link: https://github.com/frexy/glyph-iconset/blob/master/svg/si-glyph-shovel.svg 
-- Author: [SmartIcons](https://github.com/frexy/glyph-iconset)
-- Licence: [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/)
+The [shovel icon](https://github.com/frexy/glyph-iconset/blob/master/svg/si-glyph-shovel.svg) used by the gui project is from (SmartIcon's)[https://smarticons.co/]
+excellent *Gylph* icon set at https://glyph.smarticons.co/ and https://github.com/frexy/glyph-iconset. 
+Licenced as [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/) by the original author.
 
 
 ## Future Enhancements, TODOs, and known bugs
