@@ -5,7 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>uk.andyjohnson.TakeoutExtractor.Cli</RootNamespace>
     <Description>Takeout Extractor command-line</Description>
-	<Version>0.2.0</Version>
+	<Version>0.3.0</Version>
     <PackageProjectUrl>https://github.com/andyjohnson0/TakeoutExtractor</PackageProjectUrl>
     <RepositoryUrl>https://github.com/andyjohnson0/TakeoutExtractor</RepositoryUrl>
     <AssemblyName>tex</AssemblyName>
