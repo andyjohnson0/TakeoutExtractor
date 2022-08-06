@@ -5,6 +5,7 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20D1CF75-F5F3-44B0-B151-15FAA3F2CAB4}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
 		LICENSE.md = LICENSE.md
 		README.md = README.md
 	EndProjectSection
@@ -26,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Lib.Tests"
 		{089F5117-CEFF-4083-95D5-E0EC9B916096} = {089F5117-CEFF-4083-95D5-E0EC9B916096}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakeoutExtractor.Gui", "TakeoutExtractor.Gui\TakeoutExtractor.Gui.csproj", "{D0222C6B-89D7-4736-A686-68D247E22635}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Gui", "TakeoutExtractor.Gui\TakeoutExtractor.Gui.csproj", "{D0222C6B-89D7-4736-A686-68D247E22635}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

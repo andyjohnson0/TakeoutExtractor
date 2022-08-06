@@ -1,4 +1,4 @@
-﻿# Takout Extracter
+﻿# Takout Extractor
 
 Extracts the contents of a [Google Takeout](https://takeout.google.com/) archive - re-organising it, adding missing metadata, and
 applying a uniform file naming convention.
