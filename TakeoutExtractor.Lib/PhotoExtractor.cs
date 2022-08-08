@@ -22,23 +22,23 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// <param name="options">Photo options</param>
         /// <param name="inputDir">Root input directory</param>
         /// <param name="outputDir">Root output directory</param>
-        /// <param name="verbosity">Lverbosity level. 0 = quiet.</param>
+        /// <param name="logFileWtr">Log file writer. Can be null.</param>
         public PhotoExtractor(
             PhotoOptions options,
             DirectoryInfo inputDir,
             DirectoryInfo outputDir,
-            int verbosity = 0)
+            Utf8JsonWriter? logFileWtr)
         {
+            this.options = options;
             this.inputDir = inputDir;
             this.outputDir = outputDir;
-            this.options = options;
-            this.verbosity = verbosity;
+            this.logFileWtr = logFileWtr;
         }
 
         private PhotoOptions options;
         private DirectoryInfo inputDir;
         private DirectoryInfo outputDir;
-        private int verbosity;
+        private Utf8JsonWriter logFileWtr;
 
 
         /// <summary>
@@ -62,21 +62,35 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             if (options.KeepOriginalsForEdited && string.IsNullOrEmpty(options.OriginalsSubdirName) && string.IsNullOrEmpty(options.OriginalsSuffix))
                 throw new InvalidOperationException("Original file subdir and/or suffix option must be set to prevent file name clash");
 
+            if (logFileWtr != null)
+            {
+                logFileWtr.WriteStartObject("PhotosAndVideos");
+                logFileWtr.WriteStartArray("ExtractedFiles");
+            }
+
             // Do it.
             var results = new PhotoResults();
             results.StartTime = DateTime.UtcNow;
             await ProcessDirAsync(inputDir, outputDir, options, results, cancellationToken);
             results.Duration = DateTime.UtcNow - results.StartTime;
 
-            //var duration = DateTime.UtcNow - results.StartTime;
-            //RaiseProgress(1, $"Done in {duration.ToString("hh\\:mm\\:ss")}");
-            //RaiseProgress(2, $"Input groups: {progressInfo.inputGroupCount}");
-            //RaiseProgress(2, $"    Edited: {progressInfo.inputEditedCount}");
-            //RaiseProgress(2, $"    Un-edited: {progressInfo.inputUneditedCount}");
-            //RaiseProgress(2, $"Output files: {progressInfo.outputFileCount}");
-            //RaiseProgress(2, $"    Edited + original: {progressInfo.outputEditedCount}");
-            //RaiseProgress(2, $"    Un-edited: {progressInfo.outputUneditedCount}");
-            //RaiseProgress(2, $"Coverage: {progressInfo.Coverage * 100M}%");
+            if (logFileWtr != null)
+            {
+                logFileWtr.WriteEndArray();
+
+                logFileWtr.WriteStartObject("Results");
+                logFileWtr.WriteString("TimeTaken", results.Duration.ToString("hh\\:mm\\:ss"));
+                logFileWtr.WriteNumber("InputGroupTotalCount", results.InputGroupCount);
+                logFileWtr.WriteNumber("InputGroupEditedCount", results.InputEditedCount);
+                logFileWtr.WriteNumber("InputGroupUneditedCount", results.InputUneditedCount);
+                logFileWtr.WriteNumber("OutputTotalFileCount", results.OutputFileCount);
+                logFileWtr.WriteNumber("OutputEditedFileCount", results.OutputEditedCount);
+                logFileWtr.WriteNumber("OutputUneditedFileCount", results.OutputUneditedCount);
+                logFileWtr.WriteNumber("CoveragePercent", results.Coverage * 100M);
+                logFileWtr.WriteEndObject();
+
+                logFileWtr.WriteEndObject();
+            }
 
             return results;
         }
@@ -152,7 +166,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
                     // Create edited.
                     var outFile = await CreateOutputFileAsync(mi.editedFile, destDir, null, mi.description, mi.creationTime, mi.lastModifiedTime);
-                    RaiseProgress(1, mi.editedFile, outFile);
+                    RaiseProgress(mi.editedFile, outFile);
                     results.OutputFileCount += 1;
 
                     // Optionally create original. 
@@ -161,7 +175,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                         if (!string.IsNullOrEmpty(options.OriginalsSubdirName))
                             destDir = destDir.CreateSubdirectory(options.OriginalsSubdirName);
                         outFile = await CreateOutputFileAsync(mi.originalFile, destDir, options.OriginalsSuffix, mi.description, mi.creationTime, mi.creationTime);
-                        RaiseProgress(1, mi.originalFile, outFile);
+                        RaiseProgress(mi.originalFile, outFile);
                         results.OutputEditedCount += 1;
                     }
                 }
@@ -169,7 +183,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 {
                     // We have an original file only.
                     var outFile = await CreateOutputFileAsync(mi.originalFile, destDir, null, mi.description, mi.creationTime, mi.creationTime);
-                    RaiseProgress(1, mi.originalFile, outFile);
+                    RaiseProgress(mi.originalFile, outFile);
                     results.OutputFileCount += 1;
                     results.OutputUneditedCount += 1;
                 }
@@ -343,6 +357,25 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 if (lastModifiedTime.HasValue)
                     File.SetLastWriteTime(destFile.FullName, lastModifiedTime.Value);
 
+                if (logFileWtr != null)
+                {
+                    logFileWtr.WriteStartObject();
+                    if (sourceFile.IsImageFile())
+                        logFileWtr.WriteString("Type", "Photo");
+                    else if (sourceFile.IsVideoFile())
+                        logFileWtr.WriteString("Type", "Video");
+                    else
+                        logFileWtr.WriteString("Type", "Unknown");
+                    logFileWtr.WriteString("Source", sourceFile.FullName);
+                    logFileWtr.WriteString("Output", destFile.FullName);
+                    logFileWtr.WriteString("CreationTime", creationTime.ToString("u"));
+                    if (lastModifiedTime.HasValue)
+                        logFileWtr.WriteString("ModifiedTime", lastModifiedTime.Value.ToString("u"));
+                    else
+                        logFileWtr.WriteNull("ModifiedTime");
+                    logFileWtr.WriteEndObject();
+                }
+
                 return destFile;
             }
 
@@ -352,11 +385,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
 
         public void RaiseProgress(
-            int verbosityLevel,
             FileInfo sourceFile,
             FileInfo destinationFile)
         {
-            if ((verbosityLevel >= this.verbosity) && (this.Progress != null))
+            if (this.Progress != null)
             {
                 var args = new ProgressEventArgs(sourceFile, destinationFile);
                 this.Progress(this, args);

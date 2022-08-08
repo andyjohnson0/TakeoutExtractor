@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.IO;
 
@@ -17,24 +18,24 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// </summary>
         /// <param name="inputDir">Root input directory</param>
         /// <param name="outputDir">Root output directory</param>
+        /// <param name="createLogFile">Log file.</param>
         /// <param name="options">Media-specific options.</param>
-        /// <param name="verbosity">Lverbosity level. 0 = quiet.</param>
         public ExtractorManager(
             DirectoryInfo inputDir,
             DirectoryInfo outputDir,
-            IEnumerable<IExtractorOptions> options,
-            int verbosity = 0)
+            bool createLogFile,
+            IEnumerable<IExtractorOptions> options)
         {
             this.inputDir = inputDir;
             this.outputDir = outputDir;
+            this.createLogFile = createLogFile;
             this.options = options;
-            this.verbosity = verbosity;
         }
 
-        private DirectoryInfo inputDir;
-        private DirectoryInfo outputDir;
-        private IEnumerable<IExtractorOptions> options;
-        private int verbosity;
+        private readonly DirectoryInfo inputDir;
+        private readonly DirectoryInfo outputDir;
+        private readonly bool createLogFile;
+        private readonly IEnumerable<IExtractorOptions> options;
 
 
         /// <summary>
@@ -53,18 +54,42 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         public async Task<IEnumerable<IExtractorResults>> ExtractAsync(CancellationToken cancellationToken)
         {
             if (!outputDir.Exists)
+            {
                 outputDir.Create();
+            }
+
+            Utf8JsonWriter logFileWtr = null;
+            if (this.createLogFile)
+            {
+                var stm = new FileStream(Path.Combine(outputDir.FullName, "logfile.json"), FileMode.Create, FileAccess.Write);
+                logFileWtr = new Utf8JsonWriter(stm, new JsonWriterOptions() { Indented = true });
+                logFileWtr.WriteStartObject();
+                logFileWtr.WriteStartObject("ExtractionLog");
+                logFileWtr.WriteString("Started", DateTime.UtcNow.ToString("u"));
+            }
 
             var results = new List<IExtractorResults>();
-
-            var inSubDir = inputDir.GetDirectories().First(d => d.Name == "Google Photos");
-            var opt = options.FirstOrDefault(o => o is PhotoOptions);
-            if ((inSubDir != null) && (opt != null))
+            try
             {
-                var pe = new PhotoExtractor((opt as PhotoOptions)!, inSubDir, outputDir, verbosity);
-                pe.Progress += Extractor_Progress;
-                results.Add(await pe.ExtractAsync(cancellationToken));
-                pe.Progress -= Extractor_Progress;
+                var inSubDir = inputDir.GetDirectories().First(d => d.Name == "Google Photos");
+                var opt = options.FirstOrDefault(o => o is PhotoOptions);
+                if ((inSubDir != null) && (opt != null))
+                {
+                    var pe = new PhotoExtractor((opt as PhotoOptions)!, inSubDir, outputDir, logFileWtr);
+                    pe.Progress += Extractor_Progress;
+                    results.Add(await pe.ExtractAsync(cancellationToken));
+                    pe.Progress -= Extractor_Progress;
+                }
+            }
+            finally
+            {
+                if (logFileWtr != null)
+                {
+                    logFileWtr.WriteString("Finished", DateTime.UtcNow.ToString("u"));
+                    logFileWtr.WriteEndObject();
+                    logFileWtr.WriteEndObject();
+                    await logFileWtr.FlushAsync();
+                }
             }
 
             return results;

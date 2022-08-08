@@ -119,7 +119,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
                 }
 
                 var options = new PhotoOptions();
-                var photoExtractor = new PhotoExtractor(options, inDir, outDir);
+                var photoExtractor = new PhotoExtractor(options, inDir, outDir, null);
                 var results = await photoExtractor.ExtractAsync(CancellationToken.None);
                 Assert.IsNotNull(results);
 

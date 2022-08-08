@@ -23,7 +23,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             var options = new List<IExtractorOptions>();
             DirectoryInfo inDir = null;
             DirectoryInfo outDir = null;
-            int verbosity = 0;
+            bool createLogFile = false;
             var commands = new string[] { "photo" };
             var cl = CommandLine.Create(args, commands);
             foreach(var kvp in cl)
@@ -38,7 +38,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                         }
                         inDir = kvp.Value.GetArgDir("i", required: true);
                         outDir = kvp.Value.GetArgDir("o", required: true);
-                        verbosity = kvp.Value.GetArgInt("v", defaultValue: 0);
+                        createLogFile = kvp.Value.GetArgBool("lf", defaultValue: false);
                         break;
                     case "photo":
                         var opt = new PhotoOptions();
@@ -52,7 +52,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                 }
             }
 
-            var extractor = new ExtractorManager(inDir, outDir, options, verbosity: verbosity);
+            var extractor = new ExtractorManager(inDir, outDir, createLogFile, options);
             extractor.Progress += Extractor_Progress;
             try
             {

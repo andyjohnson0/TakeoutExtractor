@@ -24,6 +24,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             InputDirEntry.Text = "D:\\Temp\\takeout-20220331T163017Z-001\\Takeout";
             OutputDirEntry.Text = "D:\\Temp\\TakeoutData";
 #endif
+            CreateLogFileCbx.IsChecked = false;
 
             PhotosExtractCbx.IsChecked = true;
             var photoOptions = new PhotoOptions();  // for default values
@@ -112,8 +113,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             }
             var extractor = new ExtractorManager(new DirectoryInfo(InputDirEntry.Text),
                                                  new DirectoryInfo(OutputDirEntry.Text),
-                                                 options,
-                                                 verbosity: 1);
+                                                 CreateLogFileCbx.IsChecked,
+                                                 options);
             extractor.Progress += (sender, e) =>
             {
                 MainThread.BeginInvokeOnMainThread(() =>
