@@ -14,7 +14,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
     {
         static async Task<int> Main(string[] args)
         {
-            var msg = string.Format("Takeout Organiser v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutOrganiser for info.",
+            var msg = string.Format("Takeout Extractor v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutExtractor for info.",
                                     Assembly.GetExecutingAssembly().GetName().Version.ToString());
             Console.WriteLine(msg);
             Console.WriteLine("Use /? or /h for help");
