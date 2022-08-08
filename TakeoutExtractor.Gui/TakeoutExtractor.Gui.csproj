@@ -11,11 +11,13 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Takeout Extractor</ApplicationTitle>
+		<ApplicationTitle Condition="'$(Configuration)' == 'Release'">Takeout Extractor</ApplicationTitle>
+		<ApplicationTitle Condition="'$(Configuration)' != 'Release'">Takeout Extractor (development)</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>uk.andyjohnson.takeoutextractor.gui</ApplicationId>
-		<ApplicationIdGuid>AD79D964-7DE4-44D0-B604-69F7925DDE60</ApplicationIdGuid>
+		<ApplicationIdGuid Condition="'$(Configuration)' == 'Release'">AD79D964-7DE4-44D0-B604-69F7925DDE60</ApplicationIdGuid>
+		<ApplicationIdGuid Condition="'$(Configuration)' != 'Release'">CFF1B00D-439D-43AF-888D-3A8BE0A0B56A</ApplicationIdGuid>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>0.3</ApplicationDisplayVersion>
