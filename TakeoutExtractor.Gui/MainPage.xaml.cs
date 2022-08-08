@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Primitives;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +34,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(photoOptions.OriginalsSubdirName) ? photoOptions.OriginalsSubdirName : "";
         }
 
+
+        private void ExitCommandClicked(object sender, EventArgs e)
+        {
+            Application.Current!.Quit();
+        }
+
+        private void HelpCommandClicked(object sender, EventArgs e)
+        {
+            var msg = string.Format("Takeout Extractor v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutExtractor for info.",
+                                    Assembly.GetExecutingAssembly().GetName().Version!.ToString());
+            DisplayAlert("About TakeoutExtractor", msg, "Ok");
+        }
 
 
         private async void OnInputDirButtonClicked(object sender, EventArgs e)

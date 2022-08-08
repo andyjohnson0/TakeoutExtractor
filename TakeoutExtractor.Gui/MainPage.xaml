@@ -3,6 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="uk.andyjohnson.TakeoutExtractor.Gui.MainPage">
 
+    <ContentPage.MenuBarItems>
+        <MenuBarItem
+            Text="File">
+            <MenuFlyoutItem
+                Text="Exit"
+                Clicked="ExitCommandClicked" />
+        </MenuBarItem>
+        <MenuBarItem
+            Text="Help">
+            <MenuFlyoutItem
+                Text="About TakeoutExtractor"
+                Clicked="HelpCommandClicked" />
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
     <ScrollView
         Orientation="Vertical"
         VerticalScrollBarVisibility="Always">
