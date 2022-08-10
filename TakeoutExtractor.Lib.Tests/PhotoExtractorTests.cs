@@ -129,9 +129,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
                     Assert.IsTrue(ext.StartsWith("."));
 
                     // Check for existence of the required original file.
-                    // If there is no edited file then the original will be in the main output directory and will have no suffix..
                     // If there is an edited file then the original will be in the original subdirectory (if specified) and will have a suffix.
-                    var dn = Path.Combine(outDir.ToString(), "Photos", testData[i].hasEdited ? options.OriginalsSubdirName : "");
+                    // If there is no edited file then the original will be in the main output directory and will have no suffix..
+                    
+                    var dn = Path.Combine(outDir.ToString(), "Photos", testData[i].hasEdited ? (options.OriginalsSubdirName != null ? options.OriginalsSubdirName : "") : "");
                     var fn = timestamps[i].creationTime.ToString(options.OutputFileNameFormat) +
                              (testData[i].hasEdited ? options.OriginalsSuffix : "") +
                              ext;

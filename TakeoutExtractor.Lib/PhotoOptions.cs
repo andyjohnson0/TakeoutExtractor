@@ -39,18 +39,31 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// </summary>
         public string OutputFileNameFormat { get; set; } = "yyyyMMdd_HHmmss";
 
+        public enum OutputFileOrganisation
+        {
+            None = 0,
+            Year,
+            YearMonth,
+            YearMonthDay
+        }
+
+        /// <summary>
+        /// Store output files in directories by date/time of creation
+        /// </summary>
+        public OutputFileOrganisation OrganiseBy { get; set; } = OutputFileOrganisation.None;
+
         /// <summary>
         /// Extract and retain original photo/video files if there is an edited version.
         /// </summary>
         public bool KeepOriginalsForEdited { get; set; } = true;
 
         // File name suffix for original ophoto/video files.
-        public string OriginalsSuffix { get; set; } = "_original";
+        public string? OriginalsSuffix { get; set; } = "_original";
 
         /// <summary>
         /// Subdirectory name for original ophoto/video files.
         /// </summary>
-        public string OriginalsSubdirName { get; set; } = "original";
+        public string? OriginalsSubdirName { get; set; } = "original";
 
         /// <summary>
         /// Update image exif information using values in json manifest.

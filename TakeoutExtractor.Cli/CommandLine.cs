@@ -82,12 +82,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         /// <param name="argAltNames">Alternative/synonym names.</param>
         /// <param name="defaultValue">Default value to return if the argument is not found.</param>
         /// <param name="required">If true then a CommandLineException is thrown if the argument is not found.</param>
-        /// <returns>Argument string value.</returns>
+        /// <returns>Argument string value. This can be null if the argument is not found and the default is null.</returns>
         /// <exception cref="CommandLineException">Argument value missing or invalid</exception>
-        public string GetArgString(
+        public string? GetArgString(
             string argName,
-            string[] argAltNames = null,
-            string defaultValue = null,
+            string[]? argAltNames = null,
+            string? defaultValue = null,
             bool required = false)
         {
             for (int i = 0; i < (Args.Length - 1); i++)
@@ -118,14 +118,14 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         /// <exception cref="CommandLineException">Argument value missing or invalid</exception>
         public bool GetArgBool(
             string argName,
-            string[] argAltNames = null,
+            string[]? argAltNames = null,
             bool defaultValue = false,
             bool required = false)
         {
             try
             {
-                var b = GetArgString(argName, argAltNames: argAltNames, defaultValue: defaultValue.ToString(), required: required);
-                return (b != null) ? bool.Parse(b) : defaultValue;
+                var argStr = GetArgString(argName, argAltNames: argAltNames, defaultValue: defaultValue.ToString(), required: required);
+                return (argStr != null) ? bool.Parse(argStr) : defaultValue;
             }
             catch(FormatException ex)
             {
@@ -145,14 +145,14 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         /// <exception cref="CommandLineException">Argument value missing or invalid</exception>
         public int GetArgInt(
             string argName,
-            string[] argAltNames = null,
+            string[]? argAltNames = null,
             int defaultValue = -1,
             bool required = false)
         {
             try
             {
-                var b = GetArgString(argName, argAltNames: argAltNames, defaultValue: defaultValue.ToString(), required: required);
-                return (b != null) ? int.Parse(b) : defaultValue;
+                var argStr = GetArgString(argName, argAltNames: argAltNames, defaultValue: defaultValue.ToString(), required: required);
+                return (argStr != null) ? int.Parse(argStr) : defaultValue;
             }
             catch (FormatException ex)
             {
@@ -172,7 +172,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         /// <exception cref="CommandLineException">Argument missing</exception>
         public bool GetArgFlag(
             string argName,
-            string[] argAltNames = null,
+            string[]? argAltNames = null,
             bool defaultValue = false,
             bool required = false)
         {
@@ -194,16 +194,77 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         /// <param name="required">If true then a CommandLineException is thrown if the argument is not found.</param>
         /// <returns>Argument DirectoryInfo value. The existence of the directory is not checked.</returns>
         /// <exception cref="CommandLineException">Argument value missing or invalid</exception>
-        public DirectoryInfo GetArgDir(
+        public DirectoryInfo? GetArgDir(
             string argName,
-            string[] argAltNames = null,
-            DirectoryInfo defaultValue = null,
+            string[]? argAltNames = null,
+            DirectoryInfo? defaultValue = null,
             bool required = false)
         {
-            var path = GetArgString(argName, argAltNames: argAltNames, defaultValue: defaultValue?.FullName, required: required);
-            if (!Path.IsPathRooted(path))
-                path = Path.GetFullPath(path);
-            return new DirectoryInfo(path);
+            var argStr = GetArgString(argName, argAltNames: argAltNames, defaultValue: defaultValue?.FullName, required: required);
+            if (argStr != null)
+            {
+                if (!Path.IsPathRooted(argStr))
+                    argStr = Path.GetFullPath(argStr);
+                return new DirectoryInfo(argStr);
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+
+        /// <summary>
+        /// Given a set of possible argument values, and an enumeration with corresponding values, return
+        /// the enum value that corresponds to the argument value.
+        /// </summary>
+        /// <typeparam name="T">An enum type</typeparam>
+        /// <param name="argName">Argument name</param>
+        /// <param name="argValues">
+        /// Possible argument values.
+        /// Must match one to one with enum values.
+        /// Specify null for enum elements that shuld not be returned - for example if the default enum value does not map to an argument value.
+        /// </param>
+        /// <param name="argAltNames">Alternative/synonym names.</param>
+        /// <param name="defaultValue">Default value. By default this is the argument value that corresponds to the default value of the denum.</param>
+        /// <param name="required">If true then a CommandLineException is thrown if the argument is not found.</param>
+        /// <returns>Enumeration value corresponding to the argument value.</returns>
+        /// <exception cref="CommandLineException">Argument value missing or invalid</exception>
+        public T GetArgEnum<T>(
+            string argName,
+            string?[] argValues,
+            string[]? argAltNames = null,
+            T defaultValue = default(T)!,
+            bool required = false) where T : System.Enum
+        {
+            // Check that the arg values array has the same number of elements as the enum has values.
+            // This is required so that we can map from vaues to enums.
+            var enumVals = (T[])Enum.GetValues(typeof(T));
+            var enumNames = Enum.GetNames(typeof(T));
+            if (argValues.Length != enumNames.Length)
+            {
+                throw new ArgumentException($"Argument values mismatch with {typeof(T).Name} - expected {enumNames.Length} but got {argValues.Length}");
+            }
+
+            // Get the element of argValues that corresponds to the default value. The element may be null.
+            string? defaultArgValue = argValues[Array.IndexOf(enumVals, defaultValue)];
+
+            // Get the actual argument value from the command line.
+            var argValue = GetArgString(argName, argAltNames: argAltNames, defaultValue: defaultArgValue, required: required);
+
+            // Find argValue in the array of argument values we were given . We will use the idex to return the corresponding enum value.
+            var i = Array.IndexOf(argValues, argValue);
+            if (i != -1)
+            {
+                // Found. Return the correspnding enum value.
+                return enumVals[i];
+            }
+            else
+            {
+                // Not found. argValue is not in argValues so we can't map to the enum.
+                var argValuesStr = "'" + string.Join("', '", argValues) + "'";
+                throw new CommandLineException($"Invalid value '{argValue}' for  '{argName}'. Must be one of '{argValuesStr}.");
+            }
         }
 
 
@@ -229,7 +290,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         private static bool IsMatch(
             string argVal,
             string argName,
-            string[] argAltNames)
+            string[]? argAltNames)
         {
             foreach (var c in optChars.ToCharArray())
             {

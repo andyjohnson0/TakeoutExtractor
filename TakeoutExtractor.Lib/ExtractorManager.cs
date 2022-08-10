@@ -58,7 +58,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 outputDir.Create();
             }
 
-            Utf8JsonWriter logFileWtr = null;
+            Utf8JsonWriter? logFileWtr = null;
             if (this.createLogFile)
             {
                 var stm = new FileStream(Path.Combine(outputDir.FullName, "logfile.json"), FileMode.Create, FileAccess.Write);

@@ -38,7 +38,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         private PhotoOptions options;
         private DirectoryInfo inputDir;
         private DirectoryInfo outputDir;
-        private Utf8JsonWriter logFileWtr;
+        private Utf8JsonWriter? logFileWtr;
 
 
         /// <summary>
@@ -154,11 +154,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 else
                     results.InputUneditedCount += 1;
 
-                DirectoryInfo destDir = outDir;
-                if (mi.originalFile.IsImageFile())
-                    destDir = destDir.CreateSubdirectory("Photos");
-                else if (mi.originalFile.IsVideoFile())
-                    destDir = destDir.CreateSubdirectory("Videos");
+                // Create output directory in necessary.
+                DirectoryInfo destDir = CreateOutputDir(outDir, mi, options);
 
                 if (mi.editedFile != null)
                 {
@@ -194,6 +191,50 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             {
                 await ProcessDirAsync(subDir, outDir, options, results, cancellationToken);
             }
+        }
+
+
+        /// <summary>
+        /// Create and return the output directory given the file media type, creation time, and options.
+        /// </summary>
+        /// <param name="outputDir">Base output directory</param>
+        /// <param name="mi">Manifest information</param>
+        /// <param name="options">Options.</param>
+        /// <returns>The created output directory.</returns>
+        private static DirectoryInfo CreateOutputDir(
+            DirectoryInfo outputDir,
+            ManifestInfo mi,
+            PhotoOptions options)
+        {
+            if (mi.originalFile.IsImageFile())
+            {
+                outputDir = outputDir.CreateSubdirectory("Photos");
+            }
+            else if (mi.originalFile.IsVideoFile())
+            {
+                outputDir = outputDir.CreateSubdirectory("Videos");
+            }
+            else
+            {
+                outputDir = outputDir.CreateSubdirectory("Unknown");
+            }
+
+            if (options.OrganiseBy == PhotoOptions.OutputFileOrganisation.Year ||
+                options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonth ||
+                options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonthDay)
+            {
+                outputDir = outputDir.CreateSubdirectory(mi.creationTime.Year.ToString("D4"));
+            }
+            if (options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonth ||
+                options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonthDay)
+            {
+                outputDir = outputDir.CreateSubdirectory(mi.creationTime.Month.ToString("D2"));
+            }
+            if (options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonthDay)
+            {
+                outputDir = outputDir.CreateSubdirectory(mi.creationTime.Day.ToString("D2"));
+            }
+            return outputDir;
         }
 
 

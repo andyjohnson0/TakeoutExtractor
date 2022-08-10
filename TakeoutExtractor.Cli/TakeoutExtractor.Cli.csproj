@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <RootNamespace>uk.andyjohnson.TakeoutExtractor.Cli</RootNamespace>
     <Description>Takeout Extractor command-line</Description>
 	<Version>0.3.0</Version>

@@ -15,14 +15,14 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         static async Task<int> Main(string[] args)
         {
             var msg = string.Format("Takeout Extractor v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutExtractor for info.",
-                                    Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                                    Assembly.GetExecutingAssembly().GetName().Version!.ToString());
             Console.WriteLine(msg);
             Console.WriteLine("Use /? or /h for help");
 
             //
             var options = new List<IExtractorOptions>();
-            DirectoryInfo inDir = null;
-            DirectoryInfo outDir = null;
+            DirectoryInfo? inDir = null;
+            DirectoryInfo? outDir = null;
             bool createLogFile = false;
             var commands = new string[] { "photo" };
             var cl = CommandLine.Create(args, commands);
@@ -47,10 +47,16 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                         opt.OriginalsSubdirName = kvp.Value.GetArgString("od", defaultValue: opt.OriginalsSubdirName);
                         opt.OriginalsSuffix = kvp.Value.GetArgString("os", defaultValue: opt.OriginalsSuffix);
                         opt.UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: opt.UpdateExif);
+                        opt.OrganiseBy = kvp.Value.GetArgEnum<PhotoOptions.OutputFileOrganisation>("fd",
+                                                                                                   new string?[] { null, "y", "ym", "ymd" },
+                                                                                                   defaultValue: PhotoOptions.OutputFileOrganisation.None);
                         options.Add(opt);
                         break;
                 }
             }
+
+            if ((inDir == null) || (outDir == null))
+                throw new CommandLineException("Input and/or output directories not specified");  // This should never happen but it keeps the compiler happy.
 
             var extractor = new ExtractorManager(inDir, outDir, createLogFile, options);
             extractor.Progress += Extractor_Progress;
@@ -98,7 +104,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
 
 
 
-        private static void Extractor_Progress(object sender, ProgressEventArgs e)
+        private static void Extractor_Progress(object? sender, ProgressEventArgs e)
         {
             if ((e?.SourceFile != null) && (e?.DesinationFile != null))
             {
@@ -110,7 +116,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
         private static void ShowHelp()
         {
             var msg = string.Format("Takeout Extractor v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutExtractor for info.",
-                                    Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                                    Assembly.GetExecutingAssembly().GetName().Version!.ToString());
             Console.WriteLine(msg);
             Console.WriteLine();
             Console.WriteLine("Purpose:");
@@ -120,10 +126,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("    tex global_options command1 command1_options command2 command2_options ...");
             Console.WriteLine();
             Console.WriteLine("Global options:");
-            Console.WriteLine("    -i input_dir");
-            Console.WriteLine("    -o output_dir");
-            Console.WriteLine("    -v verbosity_level");
-            Console.WriteLine("        0 = no output (quiet), 1 = progress info, 2 = extended output");
+            Console.WriteLine("    -i  input_dir");
+            Console.WriteLine("    -o  output_dir");
+            Console.WriteLine("    -lf true/false");
+            Console.WriteLine("        Create json logfile in root output dir");
             Console.WriteLine("    -h");
             Console.WriteLine("        Help/usage information");
             Console.WriteLine();
@@ -133,13 +139,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("        Options:");
             Console.WriteLine("            -fm format_str");
             Console.WriteLine("                Time-based format for output file names. E.g. \"yyyyMMdd_HHmmss.\"");
+            Console.WriteLine("            -fd y | ym | ymb");
+            Console.WriteLine("                Create subdirectories for year, year and month, or year and month and day. Default none.");
             Console.WriteLine("            -ox true/false");
             Console.WriteLine("                Extract original photos/videos");
             Console.WriteLine("            -od sub_dir");
             Console.WriteLine("                Put original photos/videos in subdir");
             Console.WriteLine("            -os suffix");
             Console.WriteLine("                Filename suffix for original photos/videos");
-            Console.WriteLine("            -ux true/false");
+            Console.WriteLine("            -ux true | false");
             Console.WriteLine("                Update EXIF timestamps in output files. Default: true.");
             Console.WriteLine();
             Console.WriteLine("(end)");
