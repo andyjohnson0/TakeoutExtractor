@@ -33,6 +33,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosKeepOriginalsCbx.IsChecked = photoOptions.KeepOriginalsForEdited;
             PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(photoOptions.OriginalsSuffix) ? photoOptions.OriginalsSuffix : "";
             PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(photoOptions.OriginalsSubdirName) ? photoOptions.OriginalsSubdirName : "";
+            PhotosSubdirOrganisationPicker.SelectedIndex = (int)photoOptions.OrganiseBy;
         }
 
 
@@ -80,7 +81,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosSubdirOriginalsTxt.IsEnabled = e.Value;
 
             // Perform required operation after examining e.Value
-            SemanticScreenReader.Announce(PhotosKeepOriginalsLbl.Text);
+            //SemanticScreenReader.Announce(PhotosKeepOriginalsLbl.Text);
         }
 
 
@@ -109,6 +110,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 photoOptions.KeepOriginalsForEdited = PhotosKeepOriginalsCbx.IsChecked;
                 photoOptions.OriginalsSuffix = PhotosKeepOriginalsCbx.IsChecked ? PhotosSuffixOriginalsTxt.Text : "";
                 photoOptions.OriginalsSubdirName = PhotosKeepOriginalsCbx.IsChecked ? PhotosSubdirOriginalsTxt.Text : "";
+                photoOptions.OrganiseBy = (PhotoOptions.OutputFileOrganisation) PhotosSubdirOrganisationPicker.SelectedIndex;
                 options.Add(photoOptions);
             }
             var extractor = new ExtractorManager(new DirectoryInfo(InputDirEntry.Text),

@@ -105,7 +105,7 @@
                             <Grid
                                 x:Name="PhotosOptionsGrid"
                                 RowSpacing="10" ColumnSpacing="5"
-                                RowDefinitions="60,60,60,60,60" ColumnDefinitions="1.5*, 8.5*" 
+                                RowDefinitions="60,60,60,60,60,60" ColumnDefinitions="1.5*, 8.5*" 
                                 VerticalOptions="Center">
 
                                 <Label
@@ -116,51 +116,70 @@
                                     Grid.Row="0" Grid.Column="1"
                                     x:Name="PhotosFileNameFormatTxt"
                                     Placeholder="Output filename format"
-                                    SemanticProperties.Hint="Format of output filenames"/>
+                                    SemanticProperties.Hint="Format of output filenames"
+                                    HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
                                     Grid.Row="1" Grid.Column="0"
-                                    x:Name="PhotosUpdateExifLbl"
                                     Text="Update EXIF timestamps" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <CheckBox
                                     Grid.Row="1" Grid.Column="1"
                                     x:Name="PhotosUpdateExifCbx"
-                                    SemanticProperties.Hint="Update EXIF timestamps"/>
+                                    SemanticProperties.Hint="Update EXIF timestamps"
+                                    HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
                                     Grid.Row="2" Grid.Column="0"
-                                    x:Name="PhotosKeepOriginalsLbl"
                                     Text="Save original versions" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <CheckBox
                                     Grid.Row="2" Grid.Column="1"
                                     x:Name="PhotosKeepOriginalsCbx"
                                     SemanticProperties.Hint="Save original version of photos and videos"
-                                    CheckedChanged="OnPhotosKeepOriginalsChanged"/>
+                                    CheckedChanged="OnPhotosKeepOriginalsChanged"
+                                    HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
                                     Grid.Row="3" Grid.Column="0"
-                                    x:Name="PhotosSuffixOriginalsLbl"
                                     Text="Originals suffix" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <Entry 
                                     Grid.Row="3" Grid.Column="1"
                                     x:Name="PhotosSuffixOriginalsTxt"
                                     Placeholder="File name suffix for original versions"
-                                    SemanticProperties.Hint="Suffix added to original file names"/>
+                                    SemanticProperties.Hint="Suffix added to original file names"
+                                    HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
                                     Grid.Row="4" Grid.Column="0"
-                                    x:Name="PhotosSubdirOriginalsLbl"
                                     Text="Originals subdirectory" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <Entry 
                                     Grid.Row="4" Grid.Column="1"
                                     x:Name="PhotosSubdirOriginalsTxt"
                                     Placeholder="Subdirectory for original versions"
-                                    SemanticProperties.Hint="Subdirectory for original files"/>
+                                    SemanticProperties.Hint="Subdirectory for original files"
+                                    HorizontalOptions="Start" VerticalOptions="Center"/>
 
+                                <Label
+                                    Grid.Row="5" Grid.Column="0"
+                                    Text="Subdirectory organisation" 
+                                    HorizontalOptions="End" VerticalOptions="Center" />
+                                <Picker 
+                                    Grid.Row="5" Grid.Column="1"
+                                    x:Name="PhotosSubdirOrganisationPicker"
+                                    SemanticProperties.Hint="Organise out put in subdirectories based on create time"
+                                    HorizontalOptions="Start" VerticalOptions="Center">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>None</x:String>
+                                            <x:String>Year</x:String>
+                                            <x:String>Year / Month</x:String>
+                                            <x:String>Year / Month / Day</x:String>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
                             </Grid>
                         </VerticalStackLayout>
                     </Border>
