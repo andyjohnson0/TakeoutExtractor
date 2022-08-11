@@ -101,22 +101,27 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             //progressOverlay.IsEnabled = true;
 
             // Set-up extractor and options.
-            var options = new List<IExtractorOptions>();
+            var globalOptions = new GlobalOptions()
+            {
+                InputDir = new DirectoryInfo(InputDirEntry.Text),
+                OutputDir = new DirectoryInfo(OutputDirEntry.Text),
+                CreateLogFile = CreateLogFileCbx.IsChecked
+            };
+            var mediaOptions = new List<IExtractorOptions>();
             if (this.PhotosExtractCbx.IsChecked)
             {
-                var photoOptions = new PhotoOptions();
-                photoOptions.OutputFileNameFormat = PhotosFileNameFormatTxt.Text;
-                photoOptions.UpdateExif = PhotosUpdateExifCbx.IsChecked;
-                photoOptions.KeepOriginalsForEdited = PhotosKeepOriginalsCbx.IsChecked;
-                photoOptions.OriginalsSuffix = PhotosKeepOriginalsCbx.IsChecked ? PhotosSuffixOriginalsTxt.Text : "";
-                photoOptions.OriginalsSubdirName = PhotosKeepOriginalsCbx.IsChecked ? PhotosSubdirOriginalsTxt.Text : "";
-                photoOptions.OrganiseBy = (PhotoOptions.OutputFileOrganisation) PhotosSubdirOrganisationPicker.SelectedIndex;
-                options.Add(photoOptions);
+                var photoOptions = new PhotoOptions()
+                {
+                    OutputFileNameFormat = PhotosFileNameFormatTxt.Text,
+                    UpdateExif = PhotosUpdateExifCbx.IsChecked,
+                    KeepOriginalsForEdited = PhotosKeepOriginalsCbx.IsChecked,
+                    OriginalsSuffix = PhotosKeepOriginalsCbx.IsChecked ? PhotosSuffixOriginalsTxt.Text : "",
+                    OriginalsSubdirName = PhotosKeepOriginalsCbx.IsChecked ? PhotosSubdirOriginalsTxt.Text : "",
+                    OrganiseBy = (PhotoOptions.OutputFileOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
+                };
+                mediaOptions.Add(photoOptions);
             }
-            var extractor = new ExtractorManager(new DirectoryInfo(InputDirEntry.Text),
-                                                 new DirectoryInfo(OutputDirEntry.Text),
-                                                 CreateLogFileCbx.IsChecked,
-                                                 options);
+            var extractor = new ExtractorManager(globalOptions, mediaOptions);
             extractor.Progress += (sender, e) =>
             {
                 MainThread.BeginInvokeOnMainThread(() =>

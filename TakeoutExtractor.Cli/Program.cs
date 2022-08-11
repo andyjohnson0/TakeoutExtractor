@@ -20,15 +20,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("Use /? or /h for help");
 
             //
-            var options = new List<IExtractorOptions>();
-            DirectoryInfo? inDir = null;
-            DirectoryInfo? outDir = null;
-            bool createLogFile = false;
+            var globalOptions = new GlobalOptions();
+            var mediaOptions = new List<IExtractorOptions>();
             var commands = new string[] { "photo" };
             var cl = CommandLine.Create(args, commands);
             foreach(var kvp in cl)
             {
-                switch(kvp.Key)
+                switch (kvp.Key)
                 {
                     case "":
                         if (kvp.Value.GetArgFlag("?", argAltNames: new string[] { "h", "help" }))
@@ -36,9 +34,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                             ShowHelp();
                             return 0;
                         }
-                        inDir = kvp.Value.GetArgDir("i", required: true);
-                        outDir = kvp.Value.GetArgDir("o", required: true);
-                        createLogFile = kvp.Value.GetArgBool("lf", defaultValue: false);
+                        globalOptions = new GlobalOptions()
+                        {
+                            InputDir = kvp.Value.GetArgDir("i", required: true),
+                            OutputDir = kvp.Value.GetArgDir("o", required: true),
+                            CreateLogFile = kvp.Value.GetArgBool("lf", defaultValue: false)
+                        };
                         break;
                     case "photo":
                         var opt = new PhotoOptions();
@@ -50,26 +51,26 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                         opt.OrganiseBy = kvp.Value.GetArgEnum<PhotoOptions.OutputFileOrganisation>("fd",
                                                                                                    new string?[] { null, "y", "ym", "ymd" },
                                                                                                    defaultValue: PhotoOptions.OutputFileOrganisation.None);
-                        options.Add(opt);
+                        mediaOptions.Add(opt);
                         break;
                 }
             }
 
-            if ((inDir == null) || (outDir == null))
+            if ((globalOptions?.InputDir == null) || (globalOptions?.OutputDir == null))
                 throw new CommandLineException("Input and/or output directories not specified");  // This should never happen but it keeps the compiler happy.
 
-            var extractor = new ExtractorManager(inDir, outDir, createLogFile, options);
+            var extractor = new ExtractorManager(globalOptions, mediaOptions);
             extractor.Progress += Extractor_Progress;
             try
             {
                 // Validate general options
-                if (!inDir.Exists)
+                if (!globalOptions.InputDir.Exists)
                     throw new InvalidOperationException("Input directory does not exist");
-                if (outDir.IsSubirOf(inDir) || inDir.IsSubirOf(outDir))
+                if (globalOptions.OutputDir.IsSubirOf(globalOptions.InputDir) || globalOptions.InputDir.IsSubirOf(globalOptions.OutputDir))
                     throw new InvalidOperationException("Input and output directory paths must not overlap");
 
                 // Validate options. Vaiidators throw expections to be caught below.
-                options.ForEach(o => o.Vaildate());
+                mediaOptions.ForEach(o => o.Vaildate());
 
                 // Perform the extraction.
                 await extractor.ExtractAsync(CancellationToken.None);
