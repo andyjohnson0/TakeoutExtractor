@@ -59,7 +59,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
 
         [TestMethod]
-        public async Task MultipleFilesMixedoEdits()
+        public async Task MultipleFilesMixedNoEdits()
         {
             var data = new (string imageBaseName, System.Drawing.Imaging.ImageFormat imageFormat, bool hasEdited)[]
             {
@@ -131,8 +131,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
                     // Check for existence of the required original file.
                     // If there is an edited file then the original will be in the original subdirectory (if specified) and will have a suffix.
                     // If there is no edited file then the original will be in the main output directory and will have no suffix..
-                    
-                    var dn = Path.Combine(outDir.ToString(), "Photos", testData[i].hasEdited ? (options.OriginalsSubdirName != null ? options.OriginalsSubdirName : "") : "");
+                    var dn = options.OriginalsSubdirName != null ? options.OriginalsSubdirName : ""; 
+                    dn = Path.Combine(outDir.ToString(), "Photos", testData[i].hasEdited ? dn : "");
                     var fn = timestamps[i].creationTime.ToString(options.OutputFileNameFormat) +
                              (testData[i].hasEdited ? options.OriginalsSuffix : "") +
                              ext;
