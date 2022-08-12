@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>uk.andyjohnson.TakeoutExtractor.Cli</RootNamespace>
     <Description>Takeout Extractor command-line</Description>
-	<Version>0.4.0</Version>
+	<Version>0.5.0</Version>
     <PackageProjectUrl>https://github.com/andyjohnson0/TakeoutExtractor</PackageProjectUrl>
     <RepositoryUrl>https://github.com/andyjohnson0/TakeoutExtractor</RepositoryUrl>
     <AssemblyName>tex</AssemblyName>

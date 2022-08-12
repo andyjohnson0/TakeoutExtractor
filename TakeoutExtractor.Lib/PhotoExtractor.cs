@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.IO;
 
 using ExifLibrary;
+using System.Diagnostics;
 
 
 namespace uk.andyjohnson.TakeoutExtractor.Lib
@@ -45,6 +46,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// Progress event.
         /// </summary>
         public event EventHandler<ProgressEventArgs>? Progress;
+
+
+        /// <summary>
+        /// An ExtractorAlert has been generated.
+        /// </summary>
+        public event EventHandler<ExtractorAlertEventArgs>? Alert;
 
 
 
@@ -145,7 +152,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 }
                 if ((mi.originalFile == null) || !mi.originalFile.Exists)
                 {
-                    throw new InvalidOperationException($"Failed to identify original content file for {jsonManifestFile}");
+                    var alert = new ExtractorAlert(ExtractorAlertType.Error, $"Failed to identify original content file for {jsonManifestFile}")
+                    {
+                        AssociatedFile = jsonManifestFile
+                    };
+                    results.Add(alert);
+                    RaiseAlert(alert);
+                    continue;
                 }
 
                 results.InputGroupCount += 1;
@@ -162,7 +175,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                     // We have an edited file, and an original file too.
 
                     // Create edited.
-                    var outFile = await CreateOutputFileAsync(mi.editedFile, destDir, null, mi.description, mi.creationTime, mi.lastModifiedTime);
+                    var outFile = await CreateOutputFileAsync(mi.editedFile, destDir, null, mi.description, mi.creationTime, mi.lastModifiedTime, results);
                     RaiseProgress(mi.editedFile, outFile);
                     results.OutputFileCount += 1;
 
@@ -171,7 +184,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                     {
                         if (!string.IsNullOrEmpty(options.OriginalsSubdirName))
                             destDir = destDir.CreateSubdirectory(options.OriginalsSubdirName);
-                        outFile = await CreateOutputFileAsync(mi.originalFile, destDir, options.OriginalsSuffix, mi.description, mi.creationTime, mi.creationTime);
+                        outFile = await CreateOutputFileAsync(mi.originalFile, destDir, options.OriginalsSuffix, mi.description, mi.creationTime, mi.creationTime, results);
                         RaiseProgress(mi.originalFile, outFile);
                         results.OutputEditedCount += 1;
                     }
@@ -179,7 +192,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 else
                 {
                     // We have an original file only.
-                    var outFile = await CreateOutputFileAsync(mi.originalFile, destDir, null, mi.description, mi.creationTime, mi.creationTime);
+                    var outFile = await CreateOutputFileAsync(mi.originalFile, destDir, null, mi.description, mi.creationTime, mi.creationTime, results);
                     RaiseProgress(mi.originalFile, outFile);
                     results.OutputFileCount += 1;
                     results.OutputUneditedCount += 1;
@@ -279,7 +292,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                     if (manifestDoc.RootElement.TryGetProperty("title", out elem))
                     {
                         mi.title = elem.GetString()!;
-                        mi.originalFile = new FileInfo(Path.Combine(jsonManifestFile.Directory!.ToString(), elem.GetString()!)).TrimName(maxFileNameLen);
+                        var fn = mi.title.Replace('&', '_').Replace('?', '_');
+                        if (Path.GetExtension(fn) == String.Empty)
+                            fn = fn + ".jpg";
+                        mi.originalFile = new FileInfo(Path.Combine(jsonManifestFile.Directory!.ToString(), fn)).TrimName(maxFileNameLen);
                     }
                     else
                     {
@@ -297,13 +313,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                         elem.TryGetProperty("timestamp", out elem))
                     {
                         var ticksStr = long.Parse(elem.GetString()!);
-                        mi.creationTime = unixEpoch.AddSeconds(ticksStr);
+                        mi.creationTime = unixEpoch.AddSeconds(ticksStr);  // UTC
                     }
                     if (manifestDoc.RootElement.TryGetProperty("photoLastModifiedTime", out elem) &&
                         elem.TryGetProperty("timestamp", out elem))
                     {
                         var ticksStr = long.Parse(elem.GetString()!);
-                        mi.lastModifiedTime = unixEpoch.AddSeconds(ticksStr);
+                        mi.lastModifiedTime = unixEpoch.AddSeconds(ticksStr);  // UTC
                     }
                 }
             }
@@ -327,11 +343,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 }
             }
 
-            if (mi.creationTime.Kind != DateTimeKind.Utc)
-                throw new InvalidOperationException($"Bad time kind for image creation timestamp: {mi.creationTime.Kind}");
-            if ((mi.lastModifiedTime != null) && (mi.lastModifiedTime.Value.Kind != DateTimeKind.Utc))
-                throw new InvalidOperationException($"Bad time kind for image modification timestamp: {mi.lastModifiedTime.Value.Kind}");
-
             return mi;
         }
 
@@ -346,6 +357,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// <param name="description">Image description. Can be null.</param>
         /// <param name="creationTime">Creation time. Must not null.</param>
         /// <param name="lastModifiedTime">Last modified time. Can be null.</param>
+        /// <param name="results">Results object. Must not be null.</param>
         /// <returns>FileInfo object referring to the created file.</returns>
         /// <exception cref="InvalidOperationException">File creation failed</exception>
         private async Task<FileInfo> CreateOutputFileAsync(
@@ -354,7 +366,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             string? filenameSuffix,
             string? description,
             DateTime creationTime,
-            DateTime? lastModifiedTime)
+            DateTime? lastModifiedTime,
+            PhotoResults results)
         {
             if (sourceFile == null)
                 throw new ArgumentNullException(nameof(sourceFile));
@@ -380,18 +393,39 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
                 if (options.UpdateExif && destFile.IsImageFileWithExif())
                 {
-                    var file = await ImageFile.FromFileAsync(destFile.FullName);
-
-                    file.Properties.Set(ExifTag.ImageDescription, description);
-                    var d = new ExifDateTime(ExifTag.DateTime, creationTime);
-                    file.Properties.Set(ExifTag.DateTimeOriginal, d);
-                    if (lastModifiedTime.HasValue)
+                    try
                     {
-                        d = new ExifDateTime(ExifTag.DateTime, lastModifiedTime.Value);
-                        file.Properties.Set(ExifTag.DateTime, d);
+                        var imageFile = await ImageFile.FromFileAsync(destFile.FullName);
+                        imageFile.Properties.Set(ExifTag.ImageDescription, description);
+                        var d = new ExifDateTime(ExifTag.DateTime, creationTime);
+                        imageFile.Properties.Set(ExifTag.DateTimeOriginal, d);
+                        if (lastModifiedTime.HasValue)
+                        {
+                            d = new ExifDateTime(ExifTag.DateTime, lastModifiedTime.Value);
+                            imageFile.Properties.Set(ExifTag.DateTime, d);
+                        }
+                        await imageFile.SaveAsync(destFile.FullName);
+                        if (imageFile.Errors?.Count > 0)
+                        {
+                            var imageAlert = new ExtractorAlert(ImageErrorsToAlertType(imageFile.Errors), "One or more errors occurred while updatimg image EXIF data")
+                            {
+                                AssociatedFile = destFile,
+                                AssociatedObject = imageFile.Errors
+                            };
+                            results.Add(imageAlert);
+                            RaiseAlert(imageAlert);
+                        }
                     }
-
-                    await file.SaveAsync(destFile.FullName);
+                    catch(Exception ex)
+                    {
+                        var exifAlert = new ExtractorAlert(ExtractorAlertType.Error, "An error occurred while updating image EXIF data")
+                        {
+                            AssociatedFile = destFile,
+                            AssociatedException = ex
+                        };
+                        results.Add(exifAlert);
+                        RaiseAlert(exifAlert);
+                    }
                 }
 
                 File.SetCreationTime(destFile.FullName, creationTime);
@@ -421,11 +455,28 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             }
 
             // If we get to here then we were unable to generate a unique file name.
-            throw new InvalidOperationException($"File uniqueness counter overflow for {sourceFile} in {outDir}");
+            var alert = new ExtractorAlert(ExtractorAlertType.Error, "Couldb't create a unique output filename")
+            {
+                AssociatedDirectory = outDir,
+                AssociatedFile = sourceFile
+            };
+            RaiseAlert(alert);
+            throw new InvalidOperationException();
         }
 
 
-        public void RaiseProgress(
+        private static ExtractorAlertType ImageErrorsToAlertType(IEnumerable<ImageError> errors)
+        {
+            if (errors.Any(e => e.Severity == Severity.Error))
+                return ExtractorAlertType.Error;
+            else if (errors.Any(e => e.Severity == Severity.Warning))
+                return ExtractorAlertType.Warning;
+            else
+                return ExtractorAlertType.Information;
+        }
+
+
+        private void RaiseProgress(
             FileInfo sourceFile,
             FileInfo destinationFile)
         {
@@ -435,6 +486,23 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 this.Progress(this, args);
             }
         }
+
+
+        private void RaiseAlert(
+            ExtractorAlert alert)
+        {
+            if (logFileWtr != null)
+            {
+                alert.Write(logFileWtr);
+            }
+
+            if (this.Alert != null)
+            {
+                var args = new ExtractorAlertEventArgs(alert);
+                this.Alert(this, args);
+            }
+        }
+
 
         #endregion Implementation
     }

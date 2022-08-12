@@ -12,5 +12,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         TimeSpan Duration { get; set; }
 
         decimal Coverage { get; }
+
+        void Add(ExtractorAlert alert);
+
+        IEnumerable<ExtractorAlert> Alerts { get; }
     }
 }

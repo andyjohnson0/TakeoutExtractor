@@ -19,6 +19,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         public DirectoryInfo? OutputDir { get; set; }
 
         /// <summary>
+        /// Stop when an error occurs
+        /// </summary>
+        public bool StopOnError { get; set; } = true;
+
+        /// <summary>
         /// Create json log file
         /// </summary>
         public bool CreateLogFile { get; set; } = false;

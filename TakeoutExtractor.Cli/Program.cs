@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Reflection;
+using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -38,19 +39,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                         {
                             InputDir = kvp.Value.GetArgDir("i", required: true),
                             OutputDir = kvp.Value.GetArgDir("o", required: true),
-                            CreateLogFile = kvp.Value.GetArgBool("lf", defaultValue: GlobalOptions.Defaults.CreateLogFile)
+                            CreateLogFile = kvp.Value.GetArgBool("lf", defaultValue: GlobalOptions.Defaults.CreateLogFile),
+                            StopOnError = kvp.Value.GetArgBool("se", defaultValue: GlobalOptions.Defaults.StopOnError)
                         };
                         break;
                     case "photo":
-                        var opt = new PhotoOptions();
-                        opt.OriginalsSuffix = kvp.Value.GetArgString("fm", defaultValue: PhotoOptions.Defaults.OutputFileNameFormat);
-                        opt.KeepOriginalsForEdited = kvp.Value.GetArgBool("ox", defaultValue: PhotoOptions.Defaults.KeepOriginalsForEdited);
-                        opt.OriginalsSubdirName = kvp.Value.GetArgString("od", defaultValue: PhotoOptions.Defaults.OriginalsSubdirName);
-                        opt.OriginalsSuffix = kvp.Value.GetArgString("os", defaultValue: PhotoOptions.Defaults.OriginalsSuffix);
-                        opt.UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: PhotoOptions.Defaults.UpdateExif);
-                        opt.OrganiseBy = kvp.Value.GetArgEnum<PhotoOptions.OutputFileOrganisation>("fd",
+                        var opt = new PhotoOptions()
+                        {
+                            OutputFileNameFormat = kvp.Value.GetArgString("fm", defaultValue: PhotoOptions.Defaults.OutputFileNameFormat)!,
+                            KeepOriginalsForEdited = kvp.Value.GetArgBool("ox", defaultValue: PhotoOptions.Defaults.KeepOriginalsForEdited),
+                            OriginalsSubdirName = kvp.Value.GetArgString("od", defaultValue: PhotoOptions.Defaults.OriginalsSubdirName),
+                            OriginalsSuffix = kvp.Value.GetArgString("os", defaultValue: PhotoOptions.Defaults.OriginalsSuffix),
+                            UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: PhotoOptions.Defaults.UpdateExif),
+                            OrganiseBy = kvp.Value.GetArgEnum<PhotoOptions.OutputFileOrganisation>("fd",
                                                                                                    new string?[] { null, "y", "ym", "ymd" },
-                                                                                                   defaultValue: PhotoOptions.Defaults.OrganiseBy);
+                                                                                                   defaultValue: PhotoOptions.Defaults.OrganiseBy)
+                        };
                         mediaOptions.Add(opt);
                         break;
                 }
@@ -73,7 +77,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                 mediaOptions.ForEach(o => o.Vaildate());
 
                 // Perform the extraction.
-                await extractor.ExtractAsync(CancellationToken.None);
+                var results = await extractor.ExtractAsync(CancellationToken.None);
+
+                // Display the results.
+                var alerts = results.SelectMany(a => a.Alerts);
+                var errorCount = alerts.Count(a => a.Type == ExtractorAlertType.Error);
+                var warningCount = alerts.Count(a => a.Type == ExtractorAlertType.Warning);
+                var infoCount = alerts.Count(a => a.Type == ExtractorAlertType.Information);
+                Console.WriteLine($"{errorCount} error, {warningCount} warning, {infoCount} information");
+                foreach(var alert in alerts)
+                {
+                    alert.Write(Console.Out);
+                }
 
                 // All done
                 return 0;
@@ -130,9 +145,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("    -i  input_dir");
             Console.WriteLine("    -o  output_dir");
             Console.WriteLine("    -lf true/false");
-            Console.WriteLine("        Create json logfile in root output dir");
+            Console.WriteLine("        Create json logfile in root output dir. Default: false.");
+            Console.WriteLine("    -se true/false");
+            Console.WriteLine("        Stop on error. Default: false.");
             Console.WriteLine("    -h");
-            Console.WriteLine("        Help/usage information");
+            Console.WriteLine("        Display help/usage information");
             Console.WriteLine();
             Console.WriteLine("Commands:");
             Console.WriteLine("    photo");
@@ -141,9 +158,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("            -fm format_str");
             Console.WriteLine("                Time-based format for output file names. E.g. \"yyyyMMdd_HHmmss.\"");
             Console.WriteLine("            -fd y | ym | ymb");
-            Console.WriteLine("                Create subdirectories for year, year and month, or year and month and day. Default none.");
+            Console.WriteLine("                Create subdirectories for year, year and month, or year and month and day. Default: none.");
             Console.WriteLine("            -ox true/false");
-            Console.WriteLine("                Extract original photos/videos");
+            Console.WriteLine("                Extract original photos/video versions. Default: false.");
             Console.WriteLine("            -od sub_dir");
             Console.WriteLine("                Put original photos/videos in subdir");
             Console.WriteLine("            -os suffix");

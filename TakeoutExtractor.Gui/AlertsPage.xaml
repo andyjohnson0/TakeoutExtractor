@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:uk.andyjohnson.TakeoutExtractor.Gui"
+             x:Class="uk.andyjohnson.TakeoutExtractor.Gui.AlertsPage"
+             Title="Errors and Warnings">
+
+    <VerticalStackLayout>
+
+        <CollectionView
+            x:Name="alertsCollView">
+            <CollectionView.HeaderTemplate>
+                <DataTemplate>
+                    <Grid Padding="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Label 
+                            Grid.Column="0"
+                            Text="Type" />
+                        <Label
+                            Grid.Column="1"
+                            Text="Description" />
+                        <Label
+                            Grid.Column="2"
+                            Text="File" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.HeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="5*" />
+                        </Grid.ColumnDefinitions>
+                        <Label 
+                            Grid.Column="0"
+                            Text="{Binding Type}" />
+                        <Label
+                            Grid.Column="1"
+                            Text="{Binding Description}" />
+                        <Label
+                            Grid.Column="2">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span
+                                        Text="{Binding AssociatedFile}"
+                                        TextColor="Blue"
+                                        TextDecorations="Underline">
+                                        <Span.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding FileTapCommand}"
+                                                CommandParameter="{Binding AssociatedFile}" />
+                                        </Span.GestureRecognizers>
+                                    </Span>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+    
+</ContentPage>
