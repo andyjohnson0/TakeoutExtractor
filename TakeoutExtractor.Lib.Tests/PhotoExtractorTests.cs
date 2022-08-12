@@ -118,7 +118,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
                     timestamps.Add((creationTime, modifiedTime));
                 }
 
-                var options = new PhotoOptions();
+                var options = new PhotoOptions() { KeepOriginalsForEdited = true, UpdateExif = true };
                 var photoExtractor = new PhotoExtractor(options, inDir, outDir, null);
                 var results = await photoExtractor.ExtractAsync(CancellationToken.None);
                 Assert.IsNotNull(results);

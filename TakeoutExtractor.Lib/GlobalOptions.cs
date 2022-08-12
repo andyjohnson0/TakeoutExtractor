@@ -22,5 +22,16 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// Create json log file
         /// </summary>
         public bool CreateLogFile { get; set; } = false;
+
+
+        /// <summary>
+        /// Default values
+        /// </summary>
+        public static readonly GlobalOptions Defaults = new GlobalOptions()
+        {
+            InputDir = null,
+            OutputDir = null,
+            CreateLogFile = false
+        };
     }
 }

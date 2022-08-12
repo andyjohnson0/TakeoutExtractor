@@ -38,19 +38,19 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                         {
                             InputDir = kvp.Value.GetArgDir("i", required: true),
                             OutputDir = kvp.Value.GetArgDir("o", required: true),
-                            CreateLogFile = kvp.Value.GetArgBool("lf", defaultValue: false)
+                            CreateLogFile = kvp.Value.GetArgBool("lf", defaultValue: GlobalOptions.Defaults.CreateLogFile)
                         };
                         break;
                     case "photo":
                         var opt = new PhotoOptions();
-                        opt.OriginalsSuffix = kvp.Value.GetArgString("fm", defaultValue: opt.OutputFileNameFormat);
-                        opt.KeepOriginalsForEdited = kvp.Value.GetArgBool("ox", defaultValue: false);
-                        opt.OriginalsSubdirName = kvp.Value.GetArgString("od", defaultValue: opt.OriginalsSubdirName);
-                        opt.OriginalsSuffix = kvp.Value.GetArgString("os", defaultValue: opt.OriginalsSuffix);
-                        opt.UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: opt.UpdateExif);
+                        opt.OriginalsSuffix = kvp.Value.GetArgString("fm", defaultValue: PhotoOptions.Defaults.OutputFileNameFormat);
+                        opt.KeepOriginalsForEdited = kvp.Value.GetArgBool("ox", defaultValue: PhotoOptions.Defaults.KeepOriginalsForEdited);
+                        opt.OriginalsSubdirName = kvp.Value.GetArgString("od", defaultValue: PhotoOptions.Defaults.OriginalsSubdirName);
+                        opt.OriginalsSuffix = kvp.Value.GetArgString("os", defaultValue: PhotoOptions.Defaults.OriginalsSuffix);
+                        opt.UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: PhotoOptions.Defaults.UpdateExif);
                         opt.OrganiseBy = kvp.Value.GetArgEnum<PhotoOptions.OutputFileOrganisation>("fd",
                                                                                                    new string?[] { null, "y", "ym", "ymd" },
-                                                                                                   defaultValue: PhotoOptions.OutputFileOrganisation.None);
+                                                                                                   defaultValue: PhotoOptions.Defaults.OrganiseBy);
                         mediaOptions.Add(opt);
                         break;
                 }

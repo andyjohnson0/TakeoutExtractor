@@ -24,16 +24,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             InputDirEntry.Text = "D:\\Temp\\takeout-20220331T163017Z-001\\Takeout";
             OutputDirEntry.Text = "D:\\Temp\\TakeoutData";
 #endif
-            CreateLogFileCbx.IsChecked = false;
+            CreateLogFileCbx.IsChecked = GlobalOptions.Defaults.CreateLogFile;
 
             PhotosExtractCbx.IsChecked = true;
-            var photoOptions = new PhotoOptions();  // for default values
-            PhotosFileNameFormatTxt.Text = !string.IsNullOrEmpty(photoOptions.OutputFileNameFormat) ? photoOptions.OutputFileNameFormat : "";
-            PhotosUpdateExifCbx.IsChecked = photoOptions.UpdateExif;
-            PhotosKeepOriginalsCbx.IsChecked = photoOptions.KeepOriginalsForEdited;
-            PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(photoOptions.OriginalsSuffix) ? photoOptions.OriginalsSuffix : "";
-            PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(photoOptions.OriginalsSubdirName) ? photoOptions.OriginalsSubdirName : "";
-            PhotosSubdirOrganisationPicker.SelectedIndex = (int)photoOptions.OrganiseBy;
+            PhotosFileNameFormatTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OutputFileNameFormat) ? PhotoOptions.Defaults.OutputFileNameFormat : "";
+            PhotosUpdateExifCbx.IsChecked = PhotoOptions.Defaults.UpdateExif;
+            PhotosKeepOriginalsCbx.IsChecked = PhotoOptions.Defaults.KeepOriginalsForEdited;
+            PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSuffix) ? PhotoOptions.Defaults.OriginalsSuffix : "";
+            PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSubdirName) ? PhotoOptions.Defaults.OriginalsSubdirName : "";
+            PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OrganiseBy;
         }
 
 
