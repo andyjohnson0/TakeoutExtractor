@@ -22,6 +22,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
 #elif MACCATALYST
             return await Platforms.MacCatalyst.FolderPicker.PickFolderAsync();
 #else
+            await Task.CompletedTask;  // prevents a warning about some code paths not doing an await
             throw new PlatformNotSupportedException();
 #endif
         }
