@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+
+# -------------------------------------------------------------------------------------
+# Project specific overrides
+
+# Don't ignore the third-party directory
+!Third party/*

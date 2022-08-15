@@ -11,6 +11,26 @@ public partial class ProgressOverlay : ContentView
 	}
 
 
+	public void Show(Grid parent)
+	{
+        this.ZIndex = 99;
+        this.SetValue(Grid.RowProperty, 0);
+        this.SetValue(Grid.ColumnProperty, 0);
+        parent.Children.Add(this);
+    }
+
+
+	public void Close()
+	{
+		this.IsVisible = false;
+		var parent = this.Parent as Grid;
+		if (parent != null)
+		{
+			parent.Children.Remove(this);
+		}
+	}
+
+
     public event EventHandler<EventArgs>? Cancelled;
 
 

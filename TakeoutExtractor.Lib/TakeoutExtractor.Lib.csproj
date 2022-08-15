@@ -11,7 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ExifLibNet" Version="2.1.4" />
+    <Reference Include="ExifLibrary">
+      <HintPath>..\Third party\ExifLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

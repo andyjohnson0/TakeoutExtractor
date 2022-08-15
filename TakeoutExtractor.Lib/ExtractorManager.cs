@@ -37,6 +37,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
 
         /// <summary>
+        /// ExtractorAlert event.
+        /// </summary>
+        public event EventHandler<ExtractorAlertEventArgs>? Alert;
+
+
+        /// <summary>
         /// Perform extraction
         /// </summary>
         /// <param name="cancellationToken">Cancellation token</param>
@@ -75,8 +81,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 {
                     var pe = new PhotoExtractor((opt as PhotoOptions)!, inSubDir, globalOptions.OutputDir, logFileWtr);
                     pe.Progress += Extractor_Progress;
+                    pe.Alert += Extractor_Alert;
                     results.Add(await pe.ExtractAsync(cancellationToken));
                     pe.Progress -= Extractor_Progress;
+                    pe.Alert -= Extractor_Alert;
                 }
             }
             finally
@@ -122,6 +130,19 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             if (this.Progress != null)
             {
                 this.Progress(sender, args);  // intentionally pass original sender, not self
+            }
+        }
+
+        private void Extractor_Alert(object? sender, ExtractorAlertEventArgs args)
+        {
+            if (this.Alert != null)
+            {
+                this.Alert(sender, args);  // intentionally pass original sender, not self
+            }
+
+            if ((args?.Alert?.Type == ExtractorAlertType.Error) && this.globalOptions.StopOnError)
+            {
+                throw new InvalidOperationException("An error has occurred");
             }
         }
     }

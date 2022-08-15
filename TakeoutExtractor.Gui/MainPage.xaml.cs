@@ -25,6 +25,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             OutputDirEntry.Text = "D:\\Temp\\TakeoutData";
 #endif
             CreateLogFileCbx.IsChecked = GlobalOptions.Defaults.CreateLogFile;
+            StopOnErrorCbx.IsChecked = GlobalOptions.Defaults.StopOnError;
 
             PhotosExtractCbx.IsChecked = true;
             PhotosFileNameFormatTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OutputFileNameFormat) ? PhotoOptions.Defaults.OutputFileNameFormat : "";
@@ -90,21 +91,16 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             EventArgs e)
         {
             // Show the overlay that give feedback progress.
-            MainGrid.IsEnabled = false;
-            ProgressOverlay? progressOverlay = new ProgressOverlay();
-            progressOverlay.ZIndex = 99;
-            // TODO: Improve how this is added to the layout.
-            progressOverlay.SetValue(Grid.RowProperty, 0);
-            progressOverlay.SetValue(Grid.ColumnProperty, 0);
-            MainGrid.Children.Add(progressOverlay);
-            //progressOverlay.IsEnabled = true;
+            var progressOverlay = new ProgressOverlay();
+            progressOverlay.Show(MainGrid);
 
             // Set-up extractor and options.
             var globalOptions = new GlobalOptions()
             {
                 InputDir = new DirectoryInfo(InputDirEntry.Text),
                 OutputDir = new DirectoryInfo(OutputDirEntry.Text),
-                CreateLogFile = CreateLogFileCbx.IsChecked
+                CreateLogFile = CreateLogFileCbx.IsChecked,
+                StopOnError = StopOnErrorCbx.IsChecked
             };
             var mediaOptions = new List<IExtractorOptions>();
             if (this.PhotosExtractCbx.IsChecked)
@@ -141,7 +137,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             try
             {
                 var results = await Task.Run(() => extractor.ExtractAsync(cancellationTokenSource.Token));
-                await DisplayAlert("Completed", "The extraction operation completed successfully" + Environment.NewLine + Environment.NewLine + FormatResults(results), "Ok");
+                progressOverlay.Close();
+                await DisplayResults(results);
             }
             catch(OperationCanceledException)
             {
@@ -154,19 +151,29 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             finally
             {
                 // Hide the overlay.
-                progressOverlay.IsVisible = false;
+                progressOverlay.Close();
                 progressOverlay = null;
-                MainGrid.IsEnabled = true;
             }
         }
 
 
-        private static string FormatResults(
+        private async Task DisplayResults(
             IEnumerable<IExtractorResults>? results)
         {
             var sb = new StringBuilder();
 
-            sb.Append("Results:" + Environment.NewLine);
+            sb.AppendLine("The extraction operation completed");
+            sb.AppendLine();
+
+            sb.AppendLine("Results:");
+            var alerts = results?.SelectMany(a => a.Alerts);
+            if (alerts != null)
+            {
+                var errorCount = alerts.Count(a => a.Type == ExtractorAlertType.Error);
+                var warningCount = alerts.Count(a => a.Type == ExtractorAlertType.Warning);
+                var infoCount = alerts.Count(a => a.Type == ExtractorAlertType.Information);
+                sb.AppendLine($"{errorCount} error, {warningCount} warning, {infoCount} information");
+            }
             if (results != null && results.Any())
             {
                 foreach (var result in results)
@@ -175,17 +182,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                         sb.Append("Photos and Videos: ");
                     else
                         sb.Append("Other: ");
-                    sb.Append(string.Format("{0}% in {1}",
+                    sb.AppendLine(string.Format("{0}% in {1}",
                         result.Coverage * 100M,
                         result.Duration.ToString(@"hh\h\ mm\m\ ss\s")));
                 }
             }
             else
             {
-                sb.Append("None");
+                sb.AppendLine("None");
             }
 
-            return sb.ToString();
+            // Display results. If we have alerts then add a details button to display them.
+            var choice = await QuestionDialog.ShowAsync("Completed", sb.ToString(), "Ok", alerts?.Count() > 0 ? "Details" : null);
+            if (choice != null && choice == "Details")
+            {
+                await Navigation.PushAsync(new AlertsPage(alerts!));
+            }
         }
     }
 }

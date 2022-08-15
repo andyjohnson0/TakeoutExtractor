@@ -39,7 +39,7 @@
                         <Grid
                             RowSpacing="10"
                             ColumnSpacing="5"
-                            RowDefinitions="40, 40, 40" ColumnDefinitions="1.5*, 7*, 1*">
+                            RowDefinitions="40, 40, 40, 40" ColumnDefinitions="1.5*, 7*, 1*">
                             <Label
                                 Grid.Row="0" Grid.Column="0"
                                 Text="Input folder" 
@@ -78,6 +78,14 @@
                                 Grid.Row="2" Grid.Column="1"
                                 x:Name="CreateLogFileCbx"
                                 SemanticProperties.Hint="Create a log file"/>
+                            <Label
+                                Grid.Row="3" Grid.Column="0"
+                                Text="Stop on error" 
+                                HorizontalOptions="End" VerticalOptions="Center"/>
+                            <CheckBox
+                                Grid.Row="3" Grid.Column="1"
+                                x:Name="StopOnErrorCbx"
+                                SemanticProperties.Hint="Stop if an error occurs"/>
                         </Grid>
                     </VerticalStackLayout>
                 </Border>

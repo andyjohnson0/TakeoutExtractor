@@ -23,5 +23,17 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         {
             get { return this.InputGroupCount != 0 ? (decimal)this.OutputFileCount / (decimal)this.InputGroupCount : 0M; }
         }
+
+        public void Add(ExtractorAlert alert)
+        {
+            alerts.Add(alert);
+        }
+
+        private List<ExtractorAlert> alerts = new List<ExtractorAlert>();
+
+        public IEnumerable<ExtractorAlert> Alerts
+        {
+            get { return alerts; }
+        }
     }
 }
