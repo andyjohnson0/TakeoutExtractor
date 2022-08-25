@@ -17,7 +17,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         }
 
 
-
         protected override void OnAppearing()
         {
 #if DEBUG
@@ -34,6 +33,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSuffix) ? PhotoOptions.Defaults.OriginalsSuffix : "";
             PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSubdirName) ? PhotoOptions.Defaults.OriginalsSubdirName : "";
             PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OrganiseBy;
+
+            // Do a chage event on the keep originals checkbox to ensure that associated controls are correctly enabled/disabled.
+            OnPhotosKeepOriginalsChanged(this, new CheckedChangedEventArgs(PhotosKeepOriginalsCbx.IsChecked));
         }
 
 
