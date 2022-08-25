@@ -75,17 +75,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             var results = new List<IExtractorResults>();
             try
             {
-                var inSubDir = globalOptions.InputDir.GetDirectories().First(d => d.Name == "Google Photos");
-                var opt = mediaOptions.FirstOrDefault(o => o is PhotoOptions);
-                if ((inSubDir != null) && (opt != null))
-                {
-                    var pe = new PhotoExtractor((opt as PhotoOptions)!, inSubDir, globalOptions.OutputDir, logFileWtr);
-                    pe.Progress += Extractor_Progress;
-                    pe.Alert += Extractor_Alert;
-                    results.Add(await pe.ExtractAsync(cancellationToken));
-                    pe.Progress -= Extractor_Progress;
-                    pe.Alert -= Extractor_Alert;
-                }
+                results.AddRange(await ExtractAsync(globalOptions.InputDir, globalOptions.OutputDir, cancellationToken, logFileWtr));
             }
             finally
             {
@@ -102,25 +92,41 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         }
 
 
-        /// <summary>
-        /// Perform extraction
-        /// </summary>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>IExtractorResults collection</returns>
-        /// <exception cref="InvalidOperationException">Invalid options.</exception>
-        /// <exception cref="OperationCanceledException">The operation was cancelled.</exception>
-        public IEnumerable<IExtractorResults> Extract(CancellationToken cancellationToken)
+        private async Task<IEnumerable<IExtractorResults>> ExtractAsync(
+            DirectoryInfo di,
+            DirectoryInfo outputDir,
+            CancellationToken cancellationToken,
+            Utf8JsonWriter? logFileWtr)
         {
-            try
+            var results = new List<IExtractorResults>();
+
+            foreach (var subDir in di.EnumerateDirectories())
             {
-                // Defer to the async version.
-                return Task.Run(async () => await ExtractAsync(cancellationToken)).Result;
+                if (subDir == null)
+                    continue;
+
+                // Photos
+                if (subDir.Name == "Google Photos")
+                {
+                    var opt = mediaOptions.FirstOrDefault(o => o is PhotoOptions);
+                    if (opt != null)
+                    {
+                        var pe = new PhotoExtractor((opt as PhotoOptions)!, subDir, outputDir, logFileWtr);
+                        pe.Progress += Extractor_Progress;
+                        pe.Alert += Extractor_Alert;
+                        results.Add(await pe.ExtractAsync(cancellationToken));
+                        pe.Progress -= Extractor_Progress;
+                        pe.Alert -= Extractor_Alert;
+                    }
+                }
+                else
+                {
+                    // Recurse into unknown subdir.
+                    results.AddRange(await ExtractAsync(subDir, outputDir, cancellationToken, logFileWtr));
+                }
             }
-            catch (AggregateException ex)
-            {
-                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex.InnerException!).Throw();
-                return null;  // Not reached
-            }
+
+            return results;
         }
 
 
