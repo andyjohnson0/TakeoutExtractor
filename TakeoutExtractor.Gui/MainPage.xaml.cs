@@ -14,18 +14,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         public MainPage()
         {
             InitializeComponent();
-        }
 
-
-        protected override void OnAppearing()
-        {
-#if DEBUG
-            InputDirEntry.Text = "D:\\Temp\\takeout-20220331T163017Z-001\\Takeout";
-            OutputDirEntry.Text = "D:\\Temp\\TakeoutData";
-#endif
+            // Global controls
             CreateLogFileCbx.IsChecked = GlobalOptions.Defaults.CreateLogFile;
             StopOnErrorCbx.IsChecked = GlobalOptions.Defaults.StopOnError;
 
+            // Phot controls.
             PhotosExtractCbx.IsChecked = true;
             PhotosFileNameFormatTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OutputFileNameFormat) ? PhotoOptions.Defaults.OutputFileNameFormat : "";
             PhotosUpdateExifCbx.IsChecked = PhotoOptions.Defaults.UpdateExif;
@@ -33,7 +27,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSuffix) ? PhotoOptions.Defaults.OriginalsSuffix : "";
             PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSubdirName) ? PhotoOptions.Defaults.OriginalsSubdirName : "";
             PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OrganiseBy;
-
             // Do a chage event on the keep originals checkbox to ensure that associated controls are correctly enabled/disabled.
             OnPhotosKeepOriginalsChanged(this, new CheckedChangedEventArgs(PhotosKeepOriginalsCbx.IsChecked));
         }
