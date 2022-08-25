@@ -41,7 +41,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         {
             var msg = string.Format("Takeout Extractor v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutExtractor for info.",
                                     Assembly.GetExecutingAssembly().GetName().Version!.ToString());
-            DisplayAlert("About TakeoutExtractor", msg, "Ok");
+            DisplayAlert("About Takeout Extractor", msg, "Ok");
         }
 
 
