@@ -98,8 +98,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
 
-            var fn = Path.GetFileNameWithoutExtension(fi.Name) + str + Path.GetExtension(fi.Name);
-            return new FileInfo(Path.Combine(fi.DirectoryName!, fn));
+            if (!string.IsNullOrEmpty(str))
+            {
+                var fn = Path.GetFileNameWithoutExtension(fi.Name) + str + Path.GetExtension(fi.Name);
+                return new FileInfo(Path.Combine(fi.DirectoryName!, fn));
+            }
+            else
+            {
+                return fi;
+            }
         }
 
 

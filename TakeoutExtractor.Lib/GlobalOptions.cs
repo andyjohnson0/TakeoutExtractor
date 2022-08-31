@@ -21,7 +21,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// <summary>
         /// Stop when an error occurs
         /// </summary>
-        public bool StopOnError { get; set; } = true;
+        public bool StopOnError { get; set; } = false;
 
         /// <summary>
         /// Create json log file
@@ -36,6 +36,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         {
             InputDir = null,
             OutputDir = null,
+            StopOnError = false,
             CreateLogFile = false
         };
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace uk.andyjohnson.TakeoutExtractor.Lib
+namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 {
     public class PhotoResults : IExtractorResults
     {
@@ -21,7 +21,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
         public decimal Coverage
         {
-            get { return this.InputGroupCount != 0 ? (decimal)this.OutputFileCount / (decimal)this.InputGroupCount : 0M; }
+            get { return InputGroupCount != 0 ? OutputFileCount / (decimal)InputGroupCount : 0M; }
         }
 
         public void Add(ExtractorAlert alert)

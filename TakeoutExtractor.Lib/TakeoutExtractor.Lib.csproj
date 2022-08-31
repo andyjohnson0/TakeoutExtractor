@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="PhotoLocation.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="ExifLibrary">
       <HintPath>..\Third party\ExifLibrary.dll</HintPath>
     </Reference>

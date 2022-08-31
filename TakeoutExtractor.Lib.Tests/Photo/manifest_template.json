@@ -1,0 +1,37 @@
+{
+  "title": "$Title$",
+  "description": "$Description$",
+  "imageViews": "1",
+  "creationTime": {
+    "timestamp": "$CreationTime_Timestamp$",
+    "formatted": "$CreationTime_Formatted$"
+  },
+  "photoTakenTime": {
+    "timestamp": "$CreationTime_Timestamp$",
+    "formatted": "$CreationTime_Formatted$"
+  },
+  "geoData": {
+    "latitude": $EditedLocation_Latitude$,
+    "longitude": $EditedLocation_Longitude$,
+    "altitude": $EditedLocation_Altitude$,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "geoDataExif": {
+    "latitude": $ExifLocation_Latitude$,
+    "longitude": $ExifLocation_Longitude$,
+    "altitude": $ExifLocation_Altitude$,
+    "latitudeSpan": 0.0,
+    "longitudeSpan": 0.0
+  },
+  "url": "https://lh3.googleusercontent.com/deadbeefdeadbeefdeadbeefdeadbeef",
+  "googlePhotosOrigin": {
+    "mobileUpload": {
+      "deviceType": "ANDROID_PHONE"
+    }
+  },
+  "photoLastModifiedTime": {
+    "timestamp": "$ModifiedTime_Timestamp$",
+    "formatted": "$ModifiedTime_Formatted$"
+  }
+}
