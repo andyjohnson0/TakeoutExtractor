@@ -136,7 +136,7 @@
 
                                 <Label
                                     Grid.Row="1" Grid.Column="0"
-                                    Text="Update EXIF timestamps" 
+                                    Text="Update EXIF information" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <CheckBox
                                     Grid.Row="1" Grid.Column="1"
