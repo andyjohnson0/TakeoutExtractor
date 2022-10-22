@@ -1,5 +1,26 @@
 #Change Log
 
+##2022-19-22 v0.6
+
+Core photo extraction:
+- Improved file matching, including for long file names and files distinguished only by "(1)" suffixes. Added tests for these cases.
+- Made core test driver more generic and now tests for output edited files
+- Extract GPS location and altitude from sidecar and conditionally populate EXIF fields
+- Added tests for location/altitude handling.
+- Added additional tests for .
+
+GUI:
+- Added check for existing files in putput directory.
+- Allow alerts to be attached to exceptions.
+- Handle exceptions as unrecoverable errors.
+- Added details column to Alerts page
+- Added View->Alerts menu option to allow access to last extraction results.
+- Alerts page displays alerts breakdown count.
+- stop on error global setting defaults to false
+
+Various refactorings.
+
+
 ##2022-08-25 v0.5
 
 Extractors return results and error/warning/info objects that are presented and logged. Option to stop on first error.
