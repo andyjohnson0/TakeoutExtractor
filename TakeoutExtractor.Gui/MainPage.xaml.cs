@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using uk.andyjohnson.TakeoutExtractor.Lib;
 using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
-using Microsoft.Maui.Controls.Compatibility.Platform.UWP;
+
 
 namespace uk.andyjohnson.TakeoutExtractor.Gui
 {

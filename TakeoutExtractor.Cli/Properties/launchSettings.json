@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "TakeoutPhotoOrganiser": {
-      "commandName": "Project",
-      "commandLineArgs": "-i \"D:\\Temp\\takeout-20190406T142256Z-001\\Takeout\" -o \"D:\\Temp\\TakeoutData\" -lf true photo -ox true -od Original -os _original -fd ym"
-    }
-  }
-}

@@ -1,17 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>uk.andyjohnson.TakeoutExtractor.Lib</RootNamespace>
-
-	<Description>Takeout Extractor core library</Description>
-	<Version>0.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="PhotoLocation.cs" />
+    <Folder Include="Photo\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -24,7 +24,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui.Platforms.Windows
             params string[] optionLabels)
         {
             var dlg = new MessageDialog(content, title);
-            var hwnd = ((MauiWinUIWindow)App.Current!.Windows[0].Handler.PlatformView!).WindowHandle;
+            var hwnd = ((MauiWinUIWindow)Application.Current!.Windows[0].Handler.PlatformView!).WindowHandle;
             WinRT.Interop.InitializeWithWindow.Initialize(dlg, hwnd);
             foreach (var optionLabel in optionLabels)
             {

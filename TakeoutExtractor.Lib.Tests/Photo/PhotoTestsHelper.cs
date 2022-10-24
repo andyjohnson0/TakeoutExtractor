@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using ExifLibrary;
 using System.Diagnostics;
 using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
+using System.Reflection;
 
 namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo
 {
@@ -80,7 +81,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo
 
             // Create a plausible json sidecar
             string templateStr;
-            using (var templateStm = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo.manifest_template.json"))
+            using (var templateStm = Assembly.GetExecutingAssembly().GetManifestResourceStream("uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo.manifest_template.json"))
             {
                 if (templateStm == null)
                     throw new InvalidOperationException("Failed to load json template");

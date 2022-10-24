@@ -28,7 +28,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui.Platforms.Windows
             folderPicker.FileTypeFilter.Add("*");
 
             // Get the current window's HWND by passing in the Window object and associate the HWND with the file picker
-            var hwnd = ((MauiWinUIWindow)App.Current!.Windows[0].Handler.PlatformView!).WindowHandle;
+            var hwnd = ((MauiWinUIWindow)Application.Current!.Windows[0].Handler.PlatformView!).WindowHandle;
             WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 
             // Display picker
