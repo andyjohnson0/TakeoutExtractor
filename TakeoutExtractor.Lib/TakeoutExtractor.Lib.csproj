@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>uk.andyjohnson.TakeoutExtractor.Lib</RootNamespace>
+    <Version>0.6.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
