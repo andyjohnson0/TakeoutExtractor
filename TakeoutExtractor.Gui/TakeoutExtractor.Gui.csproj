@@ -3,8 +3,6 @@
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041.0</TargetFrameworks>
-		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-tizen</TargetFrameworks> -->
 		<OutputType>Exe</OutputType>
 		<RootNamespace>andyjohnson.uk.TakeoutExtractor.Gui</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -13,7 +11,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>TakeoutExtractor.Gui</ApplicationTitle>
+		<ApplicationTitle>Takeout Extractor</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>uk.andyjohnson.takeoutextractor.gui</ApplicationId>
@@ -21,8 +19,8 @@
 		<ApplicationIdGuid Condition="'$(Configuration)' != 'Release'">CFF1B00D-439D-43AF-888D-3A8BE0A0B56A</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>0.6</ApplicationDisplayVersion>
-		<ApplicationVersion>6</ApplicationVersion>
+		<ApplicationDisplayVersion>0.6.2</ApplicationDisplayVersion>
+		<ApplicationVersion>8</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -41,23 +39,25 @@
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-		<AssemblyVersion>0.6.1</AssemblyVersion>
-		<FileVersion>0.6.1</FileVersion>
+		<AssemblyVersion>0.6.2</AssemblyVersion>
+		<FileVersion>0.6.2</FileVersion>
 		<RepositoryUrl>https://github.com/andyjohnson0/TakeoutExtractor</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageId>uk.andyjohnson.TakeoutExtractor.Gui</PackageId>
+		<Description>Extract information from a Google Takeout archive</Description>
+		<PackageProjectUrl>https://github.com/andyjohnson0/TakeoutExtractor</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
-
+		
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
@@ -75,6 +75,11 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\TakeoutExtractor.Lib\TakeoutExtractor.Lib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\Images\" />
+	  <Folder Include="Resources\Splash\" />
 	</ItemGroup>
 
 </Project>

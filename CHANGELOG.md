@@ -1,5 +1,11 @@
 #Change Log
 
+##2022-11-04 v0.6.2
+
+- Restored previous output package names: tex and tex-gui.
+- Misc cleanup including removing unused platform targets.
+
+
 ##2022-11-02 v0.6.1
 
 Core photo extraction:
