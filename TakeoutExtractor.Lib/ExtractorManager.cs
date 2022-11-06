@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.IO;
+using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
 
 namespace uk.andyjohnson.TakeoutExtractor.Lib
 {
@@ -55,7 +56,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 throw new InvalidOperationException("Input directory not specified");
             if (globalOptions?.OutputDir == null)
                 throw new InvalidOperationException("Output directory not specified");
-
 
             if (!globalOptions.OutputDir!.Exists)
             {

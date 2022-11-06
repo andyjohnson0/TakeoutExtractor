@@ -7,6 +7,11 @@
 
     <VerticalStackLayout>
 
+        <Label
+            x:Name="alertsBreakdownCountsLabel"
+            FontAttributes="Bold"
+            Padding="20"/>
+
         <CollectionView
             x:Name="alertsCollView">
             <CollectionView.HeaderTemplate>
@@ -17,6 +22,7 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="4*" />
                             <ColumnDefinition Width="4*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
@@ -29,6 +35,9 @@
                         <Label
                             Grid.Column="2"
                             Text="File" />
+                        <Label
+                            Grid.Column="3"
+                            Text="" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.HeaderTemplate>
@@ -41,7 +50,8 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <Label 
                             Grid.Column="0"
@@ -50,21 +60,28 @@
                             Grid.Column="1"
                             Text="{Binding Description}" />
                         <Label
-                            Grid.Column="2">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span
-                                        Text="{Binding AssociatedFile}"
-                                        TextColor="Blue"
-                                        TextDecorations="Underline">
-                                        <Span.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding FileTapCommand}"
-                                                CommandParameter="{Binding AssociatedFile}" />
-                                        </Span.GestureRecognizers>
-                                    </Span>
-                                </FormattedString>
-                            </Label.FormattedText>
+                            Grid.Column="2"
+                            Text="{Binding AssociatedFile}"
+                            TextColor="Blue"
+                            TextDecorations="Underline">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    NumberOfTapsRequired="1"
+                                    Tapped="OnFileTapped" 
+                                    CommandParameter="{Binding AssociatedFile}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <Label
+                            Grid.Column="3"
+                            Text="Details"
+                            TextColor="Blue"
+                            TextDecorations="Underline">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    NumberOfTapsRequired="1"
+                                    Tapped="OnDetailsTapped" 
+                                    CommandParameter="{Binding FullDescription}"/>
+                            </Label.GestureRecognizers>
                         </Label>
                     </Grid>
                 </DataTemplate>

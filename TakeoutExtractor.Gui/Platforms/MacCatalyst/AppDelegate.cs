@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace uk.andyjohnson.TakeoutExtractor.Gui
+namespace TakeoutExtractor.Gui
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using uk.andyjohnson.TakeoutExtractor.Lib;
-
+using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
 
 namespace uk.andyjohnson.TakeoutExtractor.Cli
 {
@@ -166,7 +166,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("            -os suffix");
             Console.WriteLine("                Filename suffix for original photos/videos");
             Console.WriteLine("            -ux true | false");
-            Console.WriteLine("                Update EXIF timestamps in output files. Default: true.");
+            Console.WriteLine("                Update edited EXIF information in output files. Default: true.");
             Console.WriteLine();
             Console.WriteLine("(end)");
             Console.WriteLine();

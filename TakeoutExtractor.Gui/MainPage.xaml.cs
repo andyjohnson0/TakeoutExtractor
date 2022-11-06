@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Primitives;
 using System.Reflection;
 using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using uk.andyjohnson.TakeoutExtractor.Lib;
+using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
 
 
 namespace uk.andyjohnson.TakeoutExtractor.Gui
@@ -14,6 +16,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         public MainPage()
         {
             InitializeComponent();
+
+            ViewErrorsWarnings.IsEnabled = false;
 
             // Global controls
             CreateLogFileCbx.IsChecked = GlobalOptions.Defaults.CreateLogFile;
@@ -32,12 +36,20 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         }
 
 
-        private void ExitCommandClicked(object sender, EventArgs e)
+        // Results of the last extraction operation.
+        private IEnumerable<ExtractorAlert>? alerts = null;
+
+
+        private void OnFileExitCommand(object sender, EventArgs e)
         {
             Application.Current!.Quit();
         }
+        private async void OnViewAlertsCommand(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new AlertsPage(this.alerts!));
+        }
 
-        private void HelpCommandClicked(object sender, EventArgs e)
+        private void OnHelpAboutCommand(object sender, EventArgs e)
         {
             var msg = string.Format("Takeout Extractor v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutExtractor for info.",
                                     Assembly.GetExecutingAssembly().GetName().Version!.ToString());
@@ -88,6 +100,19 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             // Show the overlay that give feedback progress.
             var progressOverlay = new ProgressOverlay();
             progressOverlay.Show(MainGrid);
+
+            // Check for existing files / directories in the output folder
+            var outputDi = new DirectoryInfo(OutputDirEntry.Text);
+            if (outputDi.Exists && (outputDi.GetDirectories().Length > 0 || outputDi.GetFiles().Length > 0))
+            {
+                var choice = await QuestionDialog.ShowAsync("Proceed?", 
+                                                            "The output folder contains files and/or directories. " + 
+                                                            "If they have the same names as files generated during the extraction " +
+                                                            "then unneccessary duplicates may be created. Do you wish to proceed?",
+                                                            "Ok", "Cancel");
+                if (choice != "Ok")
+                    return;
+            }
 
             // Set-up extractor and options.
             var globalOptions = new GlobalOptions()
@@ -141,7 +166,25 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             }
             catch(Exception ex)
             {
-                await DisplayAlert("Error", $"An error occurred: {ex.Message}", "Ok");
+                // An exception has occurred. Treat this as an unrecoverable error and create an alert for it.
+
+                // Try to receover any alerts that might have been attached to the exception's Data collection,
+                // either as a single object or a collection.
+                var data = ex.DataDict().FirstOrDefault().Value;
+                if (data is ExtractorAlert)
+                    data = new ExtractorAlert?[] { data as ExtractorAlert };
+                var recoveredAlerts = (data is IEnumerable<ExtractorAlert>) ? new List<ExtractorAlert>((data as IEnumerable<ExtractorAlert>)!) : new List<ExtractorAlert>();
+                recoveredAlerts.Add(new ExtractorAlert(ExtractorAlertType.Error, $"An unrecoverable error occurred: {ex.Message}") { AssociatedException = ex });
+                this.alerts = recoveredAlerts;
+                this.ViewErrorsWarnings.IsEnabled = this.alerts?.Count() > 0;
+
+                // Display error and give user the option to navigate to the alerts page.
+                var choice = await QuestionDialog.ShowAsync("Error", $"An unrecoverable error occurred: {ex.Message}", 
+                                                            "Ok", this.alerts?.Count() > 0 ? "Details" : null);
+                if (choice != null && choice == "Details")
+                {
+                    await Navigation.PushAsync(new AlertsPage(this.alerts!));
+                }
             }
             finally
             {
@@ -161,8 +204,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             sb.AppendLine();
 
             sb.AppendLine("Results:");
-            var alerts = results?.SelectMany(a => a.Alerts);
-            if (alerts != null)
+            this.alerts = results?.SelectMany(a => a.Alerts);
+            if (this.alerts != null)
             {
                 var errorCount = alerts.Count(a => a.Type == ExtractorAlertType.Error);
                 var warningCount = alerts.Count(a => a.Type == ExtractorAlertType.Warning);
@@ -188,10 +231,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             }
 
             // Display results. If we have alerts then add a details button to display them.
-            var choice = await QuestionDialog.ShowAsync("Completed", sb.ToString(), "Ok", alerts?.Count() > 0 ? "Details" : null);
+            this.ViewErrorsWarnings.IsEnabled = this.alerts?.Count() > 0;
+            var choice = await QuestionDialog.ShowAsync("Completed", sb.ToString(), "Ok", this.alerts?.Count() > 0 ? "Details" : null);
             if (choice != null && choice == "Details")
             {
-                await Navigation.PushAsync(new AlertsPage(alerts!));
+                await Navigation.PushAsync(new AlertsPage(this.alerts!));
             }
         }
     }

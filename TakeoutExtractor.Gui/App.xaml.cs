@@ -1,4 +1,4 @@
-﻿namespace uk.andyjohnson.TakeoutExtractor.Gui
+﻿namespace TakeoutExtractor.Gui
 {
     public partial class App : Application
     {
@@ -6,7 +6,7 @@
         {
             InitializeComponent();
 
-            MainPage = new AppShell();
+            MainPage = new uk.andyjohnson.TakeoutExtractor.Gui.AppShell();
         }
     }
 }

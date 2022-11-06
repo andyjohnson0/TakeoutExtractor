@@ -1,33 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.1.32228.430
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20D1CF75-F5F3-44B0-B151-15FAA3F2CAB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Lib", "TakeoutExtractor.Lib\TakeoutExtractor.Lib.csproj", "{587E53E3-463E-4FEA-B5DD-A68F06BB4BD9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Cli", "TakeoutExtractor.Cli\TakeoutExtractor.Cli.csproj", "{A3147897-E124-4892-851A-A4283799CACF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Cli.Tests", "TakeoutExtractor.Cli.Tests\TakeoutExtractor.Cli.Tests.csproj", "{DB87FA1A-0FD2-4BCC-A09A-53D003EE9DBB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Lib.Tests", "TakeoutExtractor.Lib.Tests\TakeoutExtractor.Lib.Tests.csproj", "{B01B1898-044B-4BFE-9C4A-D866DB7F81CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Gui", "TakeoutExtractor.Gui\TakeoutExtractor.Gui.csproj", "{BDF2B10C-D9A4-482B-B1CD-B4234362394F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{04141A77-833C-4803-A7AD-63D73EE018B6}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.md = CHANGELOG.md
 		LICENSE.md = LICENSE.md
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Cli.Tests", "TakeoutExtractor.Cli.Tests\TakeoutExtractor.Cli.Tests.csproj", "{8483D05F-B375-4DE5-8EFA-05DAB3A48954}"
-	ProjectSection(ProjectDependencies) = postProject
-		{68EF4FFA-C4D9-484F-8682-D4BDF2064CCF} = {68EF4FFA-C4D9-484F-8682-D4BDF2064CCF}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Cli", "TakeoutExtractor.Cli\TakeoutExtractor.Cli.csproj", "{68EF4FFA-C4D9-484F-8682-D4BDF2064CCF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{089F5117-CEFF-4083-95D5-E0EC9B916096} = {089F5117-CEFF-4083-95D5-E0EC9B916096}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Lib", "TakeoutExtractor.Lib\TakeoutExtractor.Lib.csproj", "{089F5117-CEFF-4083-95D5-E0EC9B916096}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Lib.Tests", "TakeoutExtractor.Lib.Tests\TakeoutExtractor.Lib.Tests.csproj", "{F97EB773-37C4-4C8A-8D27-DD6D80475890}"
-	ProjectSection(ProjectDependencies) = postProject
-		{089F5117-CEFF-4083-95D5-E0EC9B916096} = {089F5117-CEFF-4083-95D5-E0EC9B916096}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakeoutExtractor.Gui", "TakeoutExtractor.Gui\TakeoutExtractor.Gui.csproj", "{D0222C6B-89D7-4736-A686-68D247E22635}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,33 +26,33 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8483D05F-B375-4DE5-8EFA-05DAB3A48954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8483D05F-B375-4DE5-8EFA-05DAB3A48954}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8483D05F-B375-4DE5-8EFA-05DAB3A48954}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8483D05F-B375-4DE5-8EFA-05DAB3A48954}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68EF4FFA-C4D9-484F-8682-D4BDF2064CCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68EF4FFA-C4D9-484F-8682-D4BDF2064CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68EF4FFA-C4D9-484F-8682-D4BDF2064CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68EF4FFA-C4D9-484F-8682-D4BDF2064CCF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{089F5117-CEFF-4083-95D5-E0EC9B916096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{089F5117-CEFF-4083-95D5-E0EC9B916096}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{089F5117-CEFF-4083-95D5-E0EC9B916096}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{089F5117-CEFF-4083-95D5-E0EC9B916096}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F97EB773-37C4-4C8A-8D27-DD6D80475890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F97EB773-37C4-4C8A-8D27-DD6D80475890}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F97EB773-37C4-4C8A-8D27-DD6D80475890}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F97EB773-37C4-4C8A-8D27-DD6D80475890}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0222C6B-89D7-4736-A686-68D247E22635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0222C6B-89D7-4736-A686-68D247E22635}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0222C6B-89D7-4736-A686-68D247E22635}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{D0222C6B-89D7-4736-A686-68D247E22635}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0222C6B-89D7-4736-A686-68D247E22635}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0222C6B-89D7-4736-A686-68D247E22635}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{587E53E3-463E-4FEA-B5DD-A68F06BB4BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{587E53E3-463E-4FEA-B5DD-A68F06BB4BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{587E53E3-463E-4FEA-B5DD-A68F06BB4BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{587E53E3-463E-4FEA-B5DD-A68F06BB4BD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3147897-E124-4892-851A-A4283799CACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3147897-E124-4892-851A-A4283799CACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3147897-E124-4892-851A-A4283799CACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3147897-E124-4892-851A-A4283799CACF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB87FA1A-0FD2-4BCC-A09A-53D003EE9DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB87FA1A-0FD2-4BCC-A09A-53D003EE9DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB87FA1A-0FD2-4BCC-A09A-53D003EE9DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB87FA1A-0FD2-4BCC-A09A-53D003EE9DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B01B1898-044B-4BFE-9C4A-D866DB7F81CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01B1898-044B-4BFE-9C4A-D866DB7F81CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B01B1898-044B-4BFE-9C4A-D866DB7F81CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B01B1898-044B-4BFE-9C4A-D866DB7F81CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDF2B10C-D9A4-482B-B1CD-B4234362394F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDF2B10C-D9A4-482B-B1CD-B4234362394F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDF2B10C-D9A4-482B-B1CD-B4234362394F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BDF2B10C-D9A4-482B-B1CD-B4234362394F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDF2B10C-D9A4-482B-B1CD-B4234362394F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDF2B10C-D9A4-482B-B1CD-B4234362394F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E52CE172-7141-4C63-A1AC-E69E7B305541}
+		SolutionGuid = {6043B063-746C-4340-839C-19F34AF42F47}
 	EndGlobalSection
 EndGlobal

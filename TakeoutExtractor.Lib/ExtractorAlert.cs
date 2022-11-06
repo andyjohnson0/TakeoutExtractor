@@ -55,6 +55,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         public string Description { get; private set; }
 
         /// <summary>
+        /// Full (muli-line formatted) description of the event.
+        /// </summary>
+        public string FullDescription
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                using (var wtr = new StringWriter(sb))
+                {
+                    this.Write(wtr);
+                }
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
         /// Optional file associated with the event.
         /// </summary>
         public FileInfo? AssociatedFile { get; set; }

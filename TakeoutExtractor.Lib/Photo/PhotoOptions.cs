@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace uk.andyjohnson.TakeoutExtractor.Lib
+namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 {
     /// <summary>
     /// Options for PhotoExtractor
@@ -71,13 +71,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         {
             try
             {
-                DateTime.UtcNow.ToString(this.OutputFileNameFormat);
+                DateTime.UtcNow.ToString(OutputFileNameFormat);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw new InvalidOperationException("Invalid output format option");
             }
-            if (this.KeepOriginalsForEdited && string.IsNullOrEmpty(this.OriginalsSuffix) && string.IsNullOrEmpty(this.OriginalsSubdirName))
+            if (KeepOriginalsForEdited && string.IsNullOrEmpty(OriginalsSuffix) && string.IsNullOrEmpty(OriginalsSubdirName))
             {
                 throw new InvalidOperationException("Originals suffix and/or originals subdirectory must be specified");
             }

@@ -1,8 +1,8 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="uk.andyjohnson.TakeoutExtractor.Gui.WinUI.App"
+    x:Class="TakeoutExtractor.Gui.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:uk.andyjohnson.TakeoutExtractor.Gui.WinUI">
+    xmlns:local="using:TakeoutExtractor.Gui.WinUI">
 
 </maui:MauiWinUIApplication>

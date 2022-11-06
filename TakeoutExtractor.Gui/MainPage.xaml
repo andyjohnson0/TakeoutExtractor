@@ -8,13 +8,20 @@
             Text="File">
             <MenuFlyoutItem
                 Text="Exit"
-                Clicked="ExitCommandClicked" />
+                Clicked="OnFileExitCommand" />
+        </MenuBarItem>
+        <MenuBarItem
+            Text="View">
+            <MenuFlyoutItem
+                x:Name="ViewErrorsWarnings"
+                Text="Errors and Warnings"
+                Clicked="OnViewAlertsCommand" />
         </MenuBarItem>
         <MenuBarItem
             Text="Help">
             <MenuFlyoutItem
-                Text="About TakeoutExtractor"
-                Clicked="HelpCommandClicked" />
+                 Text="About TakeoutExtractor"
+                Clicked="OnHelpAboutCommand" />
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 
@@ -129,12 +136,12 @@
 
                                 <Label
                                     Grid.Row="1" Grid.Column="0"
-                                    Text="Update EXIF timestamps" 
+                                    Text="Update EXIF information" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <CheckBox
                                     Grid.Row="1" Grid.Column="1"
                                     x:Name="PhotosUpdateExifCbx"
-                                    SemanticProperties.Hint="Update EXIF timestamps"
+                                    SemanticProperties.Hint="Update edited EXIF information"
                                     HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label

@@ -1,7 +1,7 @@
 namespace uk.andyjohnson.TakeoutExtractor.Gui;
 
 using uk.andyjohnson.TakeoutExtractor.Lib;
-
+using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
 
 public partial class ProgressOverlay : ContentView
 {

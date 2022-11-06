@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace uk.andyjohnson.TakeoutExtractor.Gui
+namespace TakeoutExtractor.Gui
 {
     public class Program
     {
