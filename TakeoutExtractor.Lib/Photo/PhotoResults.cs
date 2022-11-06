@@ -35,17 +35,5 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         {
             get { return alerts; }
         }
-
-        public void Add(ExtractorAlert alert)
-        {
-            alerts.Add(alert);
-        }
-
-        private List<ExtractorAlert> alerts = new List<ExtractorAlert>();
-
-        public IEnumerable<ExtractorAlert> Alerts
-        {
-            get { return alerts; }
-        }
     }
 }
