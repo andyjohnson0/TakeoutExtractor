@@ -7,14 +7,40 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
     /// </summary>
     public class PhotoMetadata
     {
-        public string title = default!;                 // Original filename. Required.
-        public string? description;                     // Used-provided description. Optional
-        public DateTime takenTime;                      // UTC, required. Time that the photo was taken.
-        public DateTime creationTime;                   // UTC, required. Time that the file was created (on the phone? on google photos?)
-        public DateTime? lastModifiedTime;              // UTC, can be null. Time that the file/photo was last changed (including on google photos).
+        /// <summary>
+        /// Original filename. Required.
+        /// </summary>
+        public string title = default!;
 
-        public LatLonAltLocation exifLocation;         // Decimal lat/lon/altitude position as recorded by the device
-        public LatLonAltLocation editedLocation;       // Decimal lat/lon/altitude position as entered on the website
+        /// <summary>
+        /// Used-provided description. Optional and can be null.
+        /// </summary>
+        public string? description;
+
+        /// <summary>
+        /// Time that the photo was taken. UTC, required. 
+        /// </summary>
+        public DateTime takenTime;
+
+        /// <summary>
+        /// Time that the file was created (on the phone? on google photos?). UTC, required.
+        /// </summary>
+        public DateTime creationTime;
+
+        /// <summary>
+        /// Time that the file/photo was last changed (including on google photos). UTC, can be null. 
+        /// </summary>
+        public DateTime? lastModifiedTime;
+
+        /// <summary>
+        /// Decimal lat/lon/altitude position as recorded by the device
+        /// </summary>
+        public LatLonAltLocation exifLocation;
+
+        /// <summary>
+        /// Decimal lat/lon/altitude position as entered on the website
+        /// </summary>
+        public LatLonAltLocation editedLocation;
 
 
         /// <summary>

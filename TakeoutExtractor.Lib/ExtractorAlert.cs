@@ -64,7 +64,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 var sb = new StringBuilder();
                 using (var wtr = new StringWriter(sb))
                 {
-                    this.Write(wtr);
+                    Task.Run(() => this.WriteAsync(wtr));
                 }
                 return sb.ToString();
             }
@@ -95,13 +95,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// Write the alert to a text stream
         /// </summary>
         /// <param name="wtr">Text writer</param>
-        public void Write(TextWriter wtr)
+        public async Task WriteAsync(TextWriter wtr)
         {
-            wtr.WriteLine($"{Timestamp.ToString("u")} {Type} {Description}");
+            await wtr.WriteLineAsync($"{Timestamp.ToString("u")} {Type} {Description}");
             if (AssociatedFile != null)
-                wtr.WriteLine($"File: {AssociatedFile.FullName}");
+                await wtr.WriteLineAsync($"File: {AssociatedFile.FullName}");
             if (AssociatedDirectory != null)
-                wtr.WriteLine($"Directory: {AssociatedDirectory.FullName}");
+                await wtr.WriteLineAsync($"Directory: {AssociatedDirectory.FullName}");
             if (AssociatedObject != null)
             {
                 var e = AssociatedObject as System.Collections.IEnumerable;
@@ -109,42 +109,39 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                     e = new object[] { AssociatedObject };
                 foreach (var o in e)
                 {
-                    wtr.WriteLine($"Info: {o}");
+                    await wtr.WriteLineAsync($"Info: {o}");
                 }
             }
         }
 
 
         /// <summary>
-        /// Write the alert to a ISON stream
+        /// Write the alert to a structured text stream
         /// </summary>
         /// <param name="wtr">JSON stream writer</param>
-        public void Write(Utf8JsonWriter wtr)
+        public async Task WriteAsync(StructuredTextWriter wtr)
         {
-            wtr.WriteStartObject();
-            wtr.WriteString("Time", Timestamp.ToString("u")); 
-            wtr.WriteString("Type", Type.ToString());
-            wtr.WriteString("Description", Description);
+            await wtr.WriteStartObjectAsync("Alert");
+            await wtr.WriteStringAsync("Time", Timestamp.ToString("u"));
+            await wtr.WriteStringAsync("Type", Type.ToString());
+            await wtr.WriteStringAsync("Description", Description);
             if (AssociatedFile != null)
-                wtr.WriteString("File", AssociatedFile.FullName);
+                await wtr.WriteStringAsync("File", AssociatedFile.FullName);
             if (AssociatedDirectory != null)
-                wtr.WriteString("Directory", AssociatedDirectory.FullName);
+                await wtr.WriteStringAsync("Directory", AssociatedDirectory.FullName);
             if (AssociatedObject != null)
             {
-                wtr.WritePropertyName("Object");
-                wtr.WriteStartObject();
+                await wtr.WriteStartArrayAsync("Info");
                 var e = AssociatedObject as System.Collections.IEnumerable;
                 if (e == null)
                     e = new object[] { AssociatedObject };
                 foreach (var o in e)
                 {
-                    wtr.WriteStartArray("Values");
-                    wtr.WriteStringValue(o.ToString());
-                    wtr.WriteEndArray();
+                    await wtr.WriteStringAsync("Value", o.ToString()!);
                 }
-                wtr.WriteEndObject();
+                await wtr.WriteEndArrayAsync();
             }
-            wtr.WriteEndObject();
+            await wtr.WriteEndObjectAsync();
         }
     }
 }

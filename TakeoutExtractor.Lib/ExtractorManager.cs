@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.IO;
+
 using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
+
 
 namespace uk.andyjohnson.TakeoutExtractor.Lib
 {
@@ -62,14 +63,27 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 globalOptions.OutputDir.Create();
             }
 
-            Utf8JsonWriter? logFileWtr = null;
-            if (globalOptions.CreateLogFile)
+            FileStream? logFileStm = null;
+            System.Text.Json.Utf8JsonWriter? logFileJsonWtr = null;
+            System.Xml.XmlWriter? logFileXmlWtr = null;
+            StructuredTextWriter? logFileWtr = null;
+            if (globalOptions.LogFile != GlobalOptions.LogFileType.None)
             {
-                var stm = new FileStream(Path.Combine(globalOptions.OutputDir.FullName, "logfile.json"), FileMode.Create, FileAccess.Write);
-                logFileWtr = new Utf8JsonWriter(stm, new JsonWriterOptions() { Indented = true });
-                logFileWtr.WriteStartObject();
-                logFileWtr.WriteStartObject("ExtractionLog");
-                logFileWtr.WriteString("Started", DateTime.UtcNow.ToString("u"));
+                var logFileName = Path.Combine(globalOptions.OutputDir.FullName, globalOptions.LogFile == GlobalOptions.LogFileType.Json ? "logfile.json" : "logfile.xml");
+                logFileStm = new FileStream(logFileName, FileMode.Create, FileAccess.Write);
+                if (globalOptions.LogFile == GlobalOptions.LogFileType.Json)
+                {
+                    logFileJsonWtr = new System.Text.Json.Utf8JsonWriter(logFileStm, new System.Text.Json.JsonWriterOptions() { Indented = true });
+                    logFileWtr = new StructuredTextWriter(logFileJsonWtr);
+                }
+                else
+                {
+                    logFileXmlWtr = System.Xml.XmlWriter.Create(logFileStm, new System.Xml.XmlWriterSettings() { Indent = true, Async = true });
+                    logFileWtr = new StructuredTextWriter(logFileXmlWtr);
+                }
+                await logFileWtr.WriteStartDocumentAsync();
+                await logFileWtr.WriteStartObjectAsync("ExtractionLog");
+                await logFileWtr.WriteStringAsync("Started", DateTime.UtcNow.ToString("u"));
             }
 
             var results = new List<IExtractorResults>();
@@ -81,10 +95,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             {
                 if (logFileWtr != null)
                 {
-                    logFileWtr.WriteString("Finished", DateTime.UtcNow.ToString("u"));
-                    logFileWtr.WriteEndObject();
-                    logFileWtr.WriteEndObject();
+                    await logFileWtr.WriteStringAsync("Finished", DateTime.UtcNow.ToString("u"));
+                    await logFileWtr.WriteEndObjectAsync();
+                    await logFileWtr.WriteEndDocumentAsync();
                     await logFileWtr.FlushAsync();
+                }
+                if (logFileJsonWtr != null)
+                {
+                    await logFileJsonWtr.DisposeAsync();
+                }
+                if (logFileXmlWtr != null)
+                {
+                    await logFileXmlWtr.DisposeAsync();
+                }
+                if (logFileStm != null)
+                {
+                    await logFileStm.DisposeAsync();
                 }
             }
 
@@ -96,7 +122,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             DirectoryInfo di,
             DirectoryInfo outputDir,
             CancellationToken cancellationToken,
-            Utf8JsonWriter? logFileWtr)
+            StructuredTextWriter? logFileWtr)
         {
             var results = new List<IExtractorResults>();
 

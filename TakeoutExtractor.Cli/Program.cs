@@ -15,16 +15,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
     {
         static async Task<int> Main(string[] args)
         {
-            var msg = string.Format("Takeout Extractor v{0} by Andy Johnson. See https://github.com/andyjohnson0/TakeoutExtractor for info.",
-                                    Assembly.GetExecutingAssembly().GetName().Version!.ToString());
-            Console.WriteLine(msg);
-            Console.WriteLine("Use /? or /h for help");
+            // Parse command-line
+            var commands = new string[] { "photo" };
+            var cl = CommandLine.Create(args, commands);
+            if (cl.Count == 0)
+            {
+                ShowHelp();
+                return 0;
+            }
 
             //
             var globalOptions = new GlobalOptions();
             var mediaOptions = new List<IExtractorOptions>();
-            var commands = new string[] { "photo" };
-            var cl = CommandLine.Create(args, commands);
             foreach(var kvp in cl)
             {
                 switch (kvp.Key)
@@ -39,7 +41,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                         {
                             InputDir = kvp.Value.GetArgDir("i", required: true),
                             OutputDir = kvp.Value.GetArgDir("o", required: true),
-                            CreateLogFile = kvp.Value.GetArgBool("lf", defaultValue: GlobalOptions.Defaults.CreateLogFile),
+                            LogFile = kvp.Value.GetArgEnum<GlobalOptions.LogFileType>("lf",
+                                                                                      new string?[] { "none", "json", "xml" },
+                                                                                      defaultValue: GlobalOptions.Defaults.LogFile),
+
                             StopOnError = kvp.Value.GetArgBool("se", defaultValue: GlobalOptions.Defaults.StopOnError)
                         };
                         break;
@@ -47,6 +52,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                         var opt = new PhotoOptions()
                         {
                             OutputFileNameFormat = kvp.Value.GetArgString("fm", defaultValue: PhotoOptions.Defaults.OutputFileNameFormat)!,
+                            OutputFileNameTimeKind = kvp.Value.GetArgEnum<DateTimeKind>("ft",
+                                                                                        new string?[] { null, "utc", "local" },
+                                                                                        defaultValue: PhotoOptions.Defaults.OutputFileNameTimeKind),
                             KeepOriginalsForEdited = kvp.Value.GetArgBool("ox", defaultValue: PhotoOptions.Defaults.KeepOriginalsForEdited),
                             OriginalsSubdirName = kvp.Value.GetArgString("od", defaultValue: PhotoOptions.Defaults.OriginalsSubdirName),
                             OriginalsSuffix = kvp.Value.GetArgString("os", defaultValue: PhotoOptions.Defaults.OriginalsSuffix),
@@ -87,7 +95,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                 Console.WriteLine($"{errorCount} error, {warningCount} warning, {infoCount} information");
                 foreach(var alert in alerts)
                 {
-                    alert.Write(Console.Out);
+                    await alert.WriteAsync(Console.Out);
                 }
 
                 // All done
@@ -144,8 +152,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("Global options:");
             Console.WriteLine("    -i  input_dir");
             Console.WriteLine("    -o  output_dir");
-            Console.WriteLine("    -lf true/false");
-            Console.WriteLine("        Create json logfile in root output dir. Default: false.");
+            Console.WriteLine("    -lf none | json | sml");
+            Console.WriteLine("        Create logfile of specified type. Default: none.");
             Console.WriteLine("    -se true/false");
             Console.WriteLine("        Stop on error. Default: false.");
             Console.WriteLine("    -h");
@@ -156,7 +164,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("        Extract phots and videos");
             Console.WriteLine("        Options:");
             Console.WriteLine("            -fm format_str");
-            Console.WriteLine("                Time-based format for output file names. E.g. \"yyyyMMdd_HHmmss.\"");
+            Console.WriteLine("                Time-based format for output file names. Default \"yyyyMMdd_HHmmss.\"");
+            Console.WriteLine("            -ft time_kind");
+            Console.WriteLine("                Kind of time for output file name. Values can be utc or local. Default: local");
             Console.WriteLine("            -fd y | ym | ymb");
             Console.WriteLine("                Create subdirectories for year, year and month, or year and month and day. Default: none.");
             Console.WriteLine("            -ox true/false");

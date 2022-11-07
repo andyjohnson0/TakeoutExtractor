@@ -1,5 +1,25 @@
 #Change Log
 
+##2022-11-18 v0.7
+
+Added config option for time kind used for photo output file naming. Options are local time or UTC, default is local time to
+match EXIF value.
+- Added combo to Gui project.
+- Added -ft option to Cli project.
+
+Allow selectable log file format - json or xml.
+- Added combo to Gui project.
+- Modified -lf option to Cli project to take new values.
+
+Gui
+- Gui starts maximised and flashes its takbar icon on completion (unless manually cancelled).
+- Re-organised main page so that start button is immediately visible.
+- Restored origonal grey theme and added a little colour.
+- Various minor fit and finish changes.
+
+Added enum parsing tests.
+
+
 ##2022-11-04 v0.6.2
 
 - Restored previous output package names: tex and tex-gui.
