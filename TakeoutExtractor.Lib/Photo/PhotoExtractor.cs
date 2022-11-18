@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Text.Json;
 using System.IO;
 
 using ExifLibrary;
@@ -27,7 +26,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             PhotoOptions options,
             DirectoryInfo inputDir,
             DirectoryInfo outputDir,
-            Utf8JsonWriter? logFileWtr)
+            StructuredTextWriter? logFileWtr)
         {
             this.options = options;
             this.inputDir = inputDir;
@@ -38,7 +37,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         private PhotoOptions options;
         private DirectoryInfo inputDir;
         private DirectoryInfo outputDir;
-        private Utf8JsonWriter? logFileWtr;
+        private StructuredTextWriter? logFileWtr;
 
 
         /// <summary>
@@ -70,8 +69,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 
             if (logFileWtr != null)
             {
-                logFileWtr.WriteStartObject("PhotosAndVideos");
-                logFileWtr.WriteStartArray("ExtractedFiles");
+                await logFileWtr.WriteStartObjectAsync("PhotosAndVideos");
+                await logFileWtr.WriteStartArrayAsync("ExtractedFiles");
             }
 
             // Do it.
@@ -82,20 +81,20 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 
             if (logFileWtr != null)
             {
-                logFileWtr.WriteEndArray();
+                await logFileWtr.WriteEndArrayAsync();
 
-                logFileWtr.WriteStartObject("Results");
-                logFileWtr.WriteString("TimeTaken", results.Duration.ToString("hh\\:mm\\:ss"));
-                logFileWtr.WriteNumber("InputGroupTotalCount", results.InputGroupCount);
-                logFileWtr.WriteNumber("InputGroupEditedCount", results.InputEditedCount);
-                logFileWtr.WriteNumber("InputGroupUneditedCount", results.InputUneditedCount);
-                logFileWtr.WriteNumber("OutputTotalFileCount", results.OutputFileCount);
-                logFileWtr.WriteNumber("OutputEditedFileCount", results.OutputEditedCount);
-                logFileWtr.WriteNumber("OutputUneditedFileCount", results.OutputUneditedCount);
-                logFileWtr.WriteNumber("CoveragePercent", results.Coverage * 100M);
-                logFileWtr.WriteEndObject();
+                await logFileWtr.WriteStartObjectAsync("Results");
+                await logFileWtr.WriteStringAsync("TimeTaken", results.Duration.ToString("hh\\:mm\\:ss"));
+                await logFileWtr.WriteNumberAsync("InputGroupTotalCount", results.InputGroupCount);
+                await logFileWtr.WriteNumberAsync("InputGroupEditedCount", results.InputEditedCount);
+                await logFileWtr.WriteNumberAsync("InputGroupUneditedCount", results.InputUneditedCount);
+                await logFileWtr.WriteNumberAsync("OutputTotalFileCount", results.OutputFileCount);
+                await logFileWtr.WriteNumberAsync("OutputEditedFileCount", results.OutputEditedCount);
+                await logFileWtr.WriteNumberAsync("OutputUneditedFileCount", results.OutputUneditedCount);
+                await logFileWtr.WriteNumberAsync("CoveragePercent", results.Coverage * 100M);
+                await logFileWtr.WriteEndObjectAsync();
 
-                logFileWtr.WriteEndObject();
+                await logFileWtr.WriteEndObjectAsync();
             }
 
             return results;
@@ -420,9 +419,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         /// <param name="filenameSuffix">File name suffix. Can be null.</param>
         /// <param name="title">Image title. Can be null.</param>
         /// <param name="description">Image description. Can be null.</param>
-        /// <param name="takenTime">Time that the photo was taken. Must not null.</param>
-        /// <param name="creationTime">Time that the photo was created on the camera. Must not null.</param>
-        /// <param name="lastModifiedTime">Last modified time (on phone or Google Photos). Can be null.</param>
+        /// <param name="takenTime">Time that the photo was taken. Must not null. Must be UTC.</param>
+        /// <param name="creationTime">Time that the photo was created on the camera. Must not null. Must be UTC.</param>
+        /// <param name="lastModifiedTime">Last modified time (on phone or Google Photos). Can be null. Must be UTC.</param>
         /// <param name="location">Location that the photo was taken at.</param>
         /// <param name="results">Results object. Must not be null.</param>
         /// <returns>FileInfo object referring to the created file.</returns>
@@ -447,13 +446,20 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                 throw new ArgumentNullException(nameof(outDir));
             if (!outDir.Exists)
                 throw new ArgumentException("Output directory does not exist", nameof(sourceFile));
+            if (takenTime.Kind != DateTimeKind.Utc)
+                throw new ArgumentException($"Taken time must be UTC but is {takenTime.Kind}", nameof(takenTime));
+            if (creationTime.Kind != DateTimeKind.Utc)
+                throw new ArgumentException($"Creation time must be UTC but is {creationTime.Kind}", nameof(creationTime));
+            if (lastModifiedTime != null && lastModifiedTime.Value.Kind != DateTimeKind.Utc)
+                throw new ArgumentException($"Last modofoed time must be UTC but is {lastModifiedTime.Value.Kind}", nameof(lastModifiedTime));
 
             for (int i = 0; i < 9999; i++)
             {
                 // Build the output file name. Because images can have timestamps that differ by less than a second, we prepend
                 // a uniqieness suffix if necessary to make the filename uniqie.
                 var uniqSuffix = i == 0 ? "" : string.Format("-{0:000}", i);
-                var filename = creationTime.ToString(options.OutputFileNameFormat) + uniqSuffix + filenameSuffix + sourceFile.Extension;
+                var t = (this.options.OutputFileNameTimeKind == DateTimeKind.Utc) ? creationTime.ToUniversalTime() : creationTime.ToLocalTime();
+                var filename = t.ToString(options.OutputFileNameFormat) + uniqSuffix + filenameSuffix + sourceFile.Extension;
                 var destFile = new FileInfo(Path.Combine(outDir.FullName, filename));
                 if (destFile.Exists)
                 {
@@ -524,21 +530,19 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 
                 if (logFileWtr != null)
                 {
-                    logFileWtr.WriteStartObject();
+                    await logFileWtr.WriteStartObjectAsync("Item");
                     if (sourceFile.IsImageFile())
-                        logFileWtr.WriteString("Type", "Photo");
+                        await logFileWtr.WriteStringAsync("Type", "Photo");
                     else if (sourceFile.IsVideoFile())
-                        logFileWtr.WriteString("Type", "Video");
+                        await logFileWtr.WriteStringAsync("Type", "Video");
                     else
-                        logFileWtr.WriteString("Type", "Unknown");
-                    logFileWtr.WriteString("Source", sourceFile.FullName);
-                    logFileWtr.WriteString("Output", destFile.FullName);
-                    logFileWtr.WriteString("CreationTime", creationTime.ToString("u"));
+                        await logFileWtr.WriteStringAsync("Type", "Unknown");
+                    await logFileWtr.WriteStringAsync("Source", sourceFile.FullName);
+                    await logFileWtr.WriteStringAsync("Output", destFile.FullName);
+                    await logFileWtr.WriteStringAsync("CreationTime", creationTime.ToString("u"));
                     if (lastModifiedTime.HasValue)
-                        logFileWtr.WriteString("ModifiedTime", lastModifiedTime.Value.ToString("u"));
-                    else
-                        logFileWtr.WriteNull("ModifiedTime");
-                    logFileWtr.WriteEndObject();
+                        await logFileWtr.WriteStringAsync("ModifiedTime", lastModifiedTime.Value.ToString("u"));
+                    await logFileWtr.WriteEndObjectAsync();
                 }
 
                 return destFile;
@@ -584,7 +588,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         {
             if (logFileWtr != null)
             {
-                alert.Write(logFileWtr);
+                Task.Run(() => alert.WriteAsync(logFileWtr));
             }
 
             if (Alert != null)

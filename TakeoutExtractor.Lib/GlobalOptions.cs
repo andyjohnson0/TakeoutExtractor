@@ -24,10 +24,19 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         public bool StopOnError { get; set; } = false;
 
         /// <summary>
-        /// Create json log file
+        /// Type of log file.
         /// </summary>
-        public bool CreateLogFile { get; set; } = false;
+        public enum LogFileType
+        {
+            None = 0,
+            Json,
+            Xml
+        };
 
+        /// <summary>
+        /// Type of log file to create.
+        /// </summary>
+        public LogFileType LogFile { get; set; } = GlobalOptions.LogFileType.None;
 
         /// <summary>
         /// Default values
@@ -37,7 +46,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             InputDir = null,
             OutputDir = null,
             StopOnError = false,
-            CreateLogFile = false
+            LogFile = LogFileType.None
         };
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using uk.andyjohnson.TakeoutExtractor.Lib;
 using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
-
+using andyjohnson.uk.TakeoutExtractor.Gui;
 
 namespace uk.andyjohnson.TakeoutExtractor.Gui
 {
@@ -20,12 +20,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             ViewErrorsWarnings.IsEnabled = false;
 
             // Global controls
-            CreateLogFileCbx.IsChecked = GlobalOptions.Defaults.CreateLogFile;
+            LogFileKindPicker.SelectedItem = LogFileKindPicker.Items.First(x => x.Equals(GlobalOptions.Defaults.LogFile.ToString(), 
+                                                                                         StringComparison.InvariantCultureIgnoreCase));
             StopOnErrorCbx.IsChecked = GlobalOptions.Defaults.StopOnError;
 
-            // Phot controls.
+            // Phot0 controls.
             PhotosExtractCbx.IsChecked = true;
             PhotosFileNameFormatTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OutputFileNameFormat) ? PhotoOptions.Defaults.OutputFileNameFormat : "";
+            PhotosFileNameTimeKindPicker.SelectedItem = PhotosFileNameTimeKindPicker.Items.First(x => x.Equals(PhotoOptions.Defaults.OutputFileNameTimeKind.ToString(), 
+                                                                                                               StringComparison.InvariantCultureIgnoreCase));
             PhotosUpdateExifCbx.IsChecked = PhotoOptions.Defaults.UpdateExif;
             PhotosKeepOriginalsCbx.IsChecked = PhotoOptions.Defaults.KeepOriginalsForEdited;
             PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSuffix) ? PhotoOptions.Defaults.OriginalsSuffix : "";
@@ -38,6 +41,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
 
         // Results of the last extraction operation.
         private IEnumerable<ExtractorAlert>? alerts = null;
+
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            this.Window.ShowWindow(WindowExt.WindowState.Maximised);
+        }
+
 
 
         private void OnFileExitCommand(object sender, EventArgs e)
@@ -97,9 +109,19 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             object sender,
             EventArgs e)
         {
-            // Show the overlay that give feedback progress.
-            var progressOverlay = new ProgressOverlay();
-            progressOverlay.Show(MainGrid);
+            const int numFlashes = 4;   // Number of times to flash window on completion
+
+            //
+            if (string.IsNullOrEmpty(InputDirEntry.Text))
+            {
+                await DisplayAlert("Error", "Please specify an input folder", "Ok");
+                return;
+            }
+            if (string.IsNullOrEmpty(OutputDirEntry.Text))
+            {
+                await DisplayAlert("Error", "Please specify an output folder", "Ok");
+                return;
+            }
 
             // Check for existing files / directories in the output folder
             var outputDi = new DirectoryInfo(OutputDirEntry.Text);
@@ -119,7 +141,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             {
                 InputDir = new DirectoryInfo(InputDirEntry.Text),
                 OutputDir = new DirectoryInfo(OutputDirEntry.Text),
-                CreateLogFile = CreateLogFileCbx.IsChecked,
+                LogFile = Enum.Parse<GlobalOptions.LogFileType>(LogFileKindPicker.SelectedItem.ToString()!, true),
                 StopOnError = StopOnErrorCbx.IsChecked
             };
             var mediaOptions = new List<IExtractorOptions>();
@@ -128,6 +150,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 var photoOptions = new PhotoOptions()
                 {
                     OutputFileNameFormat = PhotosFileNameFormatTxt.Text,
+                    OutputFileNameTimeKind = Enum.Parse<DateTimeKind>(PhotosFileNameTimeKindPicker.SelectedItem.ToString()!, true), 
                     UpdateExif = PhotosUpdateExifCbx.IsChecked,
                     KeepOriginalsForEdited = PhotosKeepOriginalsCbx.IsChecked,
                     OriginalsSuffix = PhotosKeepOriginalsCbx.IsChecked ? PhotosSuffixOriginalsTxt.Text : "",
@@ -137,6 +160,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 mediaOptions.Add(photoOptions);
             }
             var extractor = new ExtractorManager(globalOptions, mediaOptions);
+
+            // Show the overlay that give feedback progress.
+            var progressOverlay = new ProgressOverlay();
+            progressOverlay.Show(MainGrid);
             extractor.Progress += (sender, e) =>
             {
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -158,6 +185,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             {
                 var results = await Task.Run(() => extractor.ExtractAsync(cancellationTokenSource.Token));
                 progressOverlay.Close();
+                this.Window.FlashWindow(numFlashes);
                 await DisplayResults(results);
             }
             catch(OperationCanceledException)
@@ -179,6 +207,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 this.ViewErrorsWarnings.IsEnabled = this.alerts?.Count() > 0;
 
                 // Display error and give user the option to navigate to the alerts page.
+                this.Window.FlashWindow(numFlashes);
                 var choice = await QuestionDialog.ShowAsync("Error", $"An unrecoverable error occurred: {ex.Message}", 
                                                             "Ok", this.alerts?.Count() > 0 ? "Details" : null);
                 if (choice != null && choice == "Details")

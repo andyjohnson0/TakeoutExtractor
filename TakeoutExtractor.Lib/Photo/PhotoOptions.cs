@@ -16,11 +16,25 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         /// </summary>
         public string OutputFileNameFormat { get; set; } = "yyyyMMdd_HHmmss";
 
+        /// <summary>
+        /// Kind of date/time used doe output file name.
+        /// If value is Vnspecified then local time kind is used.
+        /// </summary>
+        public DateTimeKind OutputFileNameTimeKind { get; set; } = DateTimeKind.Local;
+
+        /// <summary>
+        /// Kinds of output organisation.
+        /// </summary>
         public enum OutputFileOrganisation
         {
+            /// <summary>Place all output files in the same directory.</summary>
             None = 0,
+            /// <summary>Create seperate directors for each year.</summary>
             Year,
+            /// <summary>Create seperate directors for each year, and month sub-directories.</summary>
             YearMonth,
+            /// <summary></summary>
+            /// <summary>Create seperate directors for each year and month, and day sub-directories.</summary>
             YearMonthDay
         }
 
@@ -47,13 +61,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         /// </summary>
         public bool UpdateExif { get; set; } = true;
 
-
         /// <summary>
         /// Default values
         /// </summary>
         public static readonly PhotoOptions Defaults = new PhotoOptions()
         {
             OutputFileNameFormat = "yyyyMMdd_HHmmss",
+            OutputFileNameTimeKind = DateTimeKind.Local,
             OrganiseBy = OutputFileOrganisation.None,
             KeepOriginalsForEdited = false,
             OriginalsSuffix = "_original",

@@ -42,7 +42,9 @@
                             Padding="30,30">
                         <Label
                             Text="General" 
-                            FontAttributes="Bold" VerticalOptions="Center"/>
+                            FontSize="Subtitle"
+                            FontAttributes="Bold"
+                            VerticalOptions="Center"/>
                         <Grid
                             RowSpacing="10"
                             ColumnSpacing="5"
@@ -81,10 +83,19 @@
                                 Grid.Row="2" Grid.Column="0"
                                 Text="Create log file" 
                                 HorizontalOptions="End" VerticalOptions="Center"/>
-                            <CheckBox
+                            <Picker 
                                 Grid.Row="2" Grid.Column="1"
-                                x:Name="CreateLogFileCbx"
-                                SemanticProperties.Hint="Create a log file"/>
+                                x:Name="LogFileKindPicker"
+                                SemanticProperties.Hint="Type of log file to create"
+                                HorizontalOptions="Start" VerticalOptions="Center">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>None</x:String>
+                                        <x:String>Json</x:String>
+                                        <x:String>Xml</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
                             <Label
                                 Grid.Row="3" Grid.Column="0"
                                 Text="Stop on error" 
@@ -96,11 +107,21 @@
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
+                
+                <Button 
+                    x:Name="StartBtn"
+                    Text="Start"
+                    FontAttributes="Bold"
+                    SemanticProperties.Hint="Start the extraction"
+                    HorizontalOptions="Center"
+                    Padding="15"
+                    Clicked="OnStartBtnClicked" />                
 
-                <!--- Options are below in Border objects -->
-
+                <!-- Start container for content-specific options -->
                 <VerticalStackLayout
                     Spacing="25">
+                    
+                    <!--- Options are below in Border objects -->
 
                     <Border>
                         <VerticalStackLayout
@@ -114,13 +135,15 @@
                                     CheckedChanged="OnPhotosExtractChanged"/>
                                 <Label
                                     Text="Photos and Videos" 
-                                    FontAttributes="Bold" VerticalOptions="Center"/>
+                                    FontAttributes="Bold"
+                                    FontSize="Subtitle"
+                                    VerticalOptions="Center"/>
                             </HorizontalStackLayout>
 
                             <Grid
                                 x:Name="PhotosOptionsGrid"
                                 RowSpacing="10" ColumnSpacing="5"
-                                RowDefinitions="60,60,60,60,60,60" ColumnDefinitions="1.5*, 8.5*" 
+                                RowDefinitions="60,60,60,60,60,60,60" ColumnDefinitions="1.5*, 8.5*" 
                                 VerticalOptions="Center">
 
                                 <Label
@@ -136,53 +159,70 @@
 
                                 <Label
                                     Grid.Row="1" Grid.Column="0"
+                                    Text="Output filename time" 
+                                    HorizontalOptions="End" VerticalOptions="Center"/>
+                                <Picker 
+                                    Grid.Row="1" Grid.Column="1"
+                                    x:Name="PhotosFileNameTimeKindPicker"
+                                    SemanticProperties.Hint="Use UTC or local time in output filenames"
+                                    HorizontalOptions="Start" VerticalOptions="Center">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>Local</x:String>
+                                            <x:String>UTC</x:String>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+
+                                <Label
+                                    Grid.Row="2" Grid.Column="0"
                                     Text="Update EXIF information" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <CheckBox
-                                    Grid.Row="1" Grid.Column="1"
+                                    Grid.Row="2" Grid.Column="1"
                                     x:Name="PhotosUpdateExifCbx"
                                     SemanticProperties.Hint="Update edited EXIF information"
                                     HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
-                                    Grid.Row="2" Grid.Column="0"
+                                    Grid.Row="3" Grid.Column="0"
                                     Text="Save original versions" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <CheckBox
-                                    Grid.Row="2" Grid.Column="1"
+                                    Grid.Row="3" Grid.Column="1"
                                     x:Name="PhotosKeepOriginalsCbx"
                                     SemanticProperties.Hint="Save original version of photos and videos"
                                     CheckedChanged="OnPhotosKeepOriginalsChanged"
                                     HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
-                                    Grid.Row="3" Grid.Column="0"
+                                    Grid.Row="4" Grid.Column="0"
                                     Text="Originals suffix" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <Entry 
-                                    Grid.Row="3" Grid.Column="1"
+                                    Grid.Row="4" Grid.Column="1"
                                     x:Name="PhotosSuffixOriginalsTxt"
                                     Placeholder="File name suffix for original versions"
                                     SemanticProperties.Hint="Suffix added to original file names"
                                     HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
-                                    Grid.Row="4" Grid.Column="0"
+                                    Grid.Row="5" Grid.Column="0"
                                     Text="Originals subdirectory" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <Entry 
-                                    Grid.Row="4" Grid.Column="1"
+                                    Grid.Row="5" Grid.Column="1"
                                     x:Name="PhotosSubdirOriginalsTxt"
                                     Placeholder="Subdirectory for original versions"
                                     SemanticProperties.Hint="Subdirectory for original files"
                                     HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
-                                    Grid.Row="5" Grid.Column="0"
+                                    Grid.Row="6" Grid.Column="0"
                                     Text="Subdirectory organisation" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <Picker 
-                                    Grid.Row="5" Grid.Column="1"
+                                    Grid.Row="6" Grid.Column="1"
                                     x:Name="PhotosSubdirOrganisationPicker"
                                     SemanticProperties.Hint="Organise out put in subdirectories based on create time"
                                     HorizontalOptions="Start" VerticalOptions="Center">
@@ -200,14 +240,7 @@
                     </Border>
 
                 </VerticalStackLayout>
-
-
-                <Button 
-                    x:Name="StartBtn"
-                    Text="Start"
-                    SemanticProperties.Hint="Start the extraction"
-                    HorizontalOptions="Center"
-                    Clicked="OnStartBtnClicked" />
+                <!-- End container for content-specific options -->
 
             </VerticalStackLayout>
         </Grid>

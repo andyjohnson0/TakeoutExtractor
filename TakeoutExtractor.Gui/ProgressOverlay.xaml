@@ -6,6 +6,7 @@
         HorizontalOptions="CenterAndExpand"
         VerticalOptions="CenterAndExpand"
         Padding="30,30"
+        Opacity="0.8"
         SizeChanged="Border_SizeChanged">
         <VerticalStackLayout
             Spacing="25" >

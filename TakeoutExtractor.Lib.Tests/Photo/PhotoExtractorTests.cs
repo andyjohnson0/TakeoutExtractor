@@ -216,7 +216,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo
 
                 // Do the extraction.
                 // We hook into the extractor's Progress event to record the input->output file mappings.
-                var options = new PhotoOptions() { KeepOriginalsForEdited = true, UpdateExif = true };
+                var options = new PhotoOptions() { KeepOriginalsForEdited = true, UpdateExif = true, OutputFileNameTimeKind = DateTimeKind.Utc };
                 var extractor = new PhotoExtractor(options, inDir, outDir, null);
                 var fileMappings = new Dictionary<string, string>();
                 extractor.Progress += (o, e) =>
@@ -237,6 +237,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo
                 //    - Check that the input file was extracted according to the evidence in the fileMappings dictionary.
                 //    - Check that corresponding files contain the same image
                 //    - Check that the timestamps are correct.
+                //    - Check that the filename is correct.
                 //    - Check that the location is correct.
                 //    - If there is an edited file then the original will be in the original subdirectory (if specified) and will have a suffix.
                 //    - If there is no edited file then the original will be in the main output directory and will have no suffix..
@@ -253,6 +254,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo
                     Assert.AreEqual(sourceFileTimestamps[i].modifiedTime.HasValue, sourceFiles[i].editedFile != null);
                     Assert.AreEqual(sourceFileTimestamps[i].creationTime.ToString("u"), outputOriginalFile.LastWriteTimeUtc.ToString("u"));
 
+                    Assert.IsTrue(outputOriginalFile.Name.StartsWith(sourceFileTimestamps[i].creationTime.ToString(options.OutputFileNameFormat)));
+
                     FileInfo? outputEditedlFile = null;
                     var inputEditedFile = sourceFiles[i].editedFile;
                     if (inputEditedFile != null)
@@ -265,6 +268,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo
                         Assert.AreEqual(sourceFileTimestamps[i].creationTime.ToString("u"), outputEditedlFile.CreationTimeUtc.ToString("u"));
                         Assert.IsTrue(sourceFileTimestamps[i].modifiedTime.HasValue);
                         Assert.AreEqual(sourceFileTimestamps[i].modifiedTime!.Value.ToString("u"), outputEditedlFile.LastWriteTimeUtc.ToString("u"));
+
+                        Assert.IsTrue(outputEditedlFile.Name.StartsWith(sourceFileTimestamps[i].creationTime.ToString(options.OutputFileNameFormat)));
                     }
 
                     Assert.IsTrue(PhotoTestsHelper.ValidateExtractedImagePair(sourceFiles[i].originalFile, outputOriginalFile,
