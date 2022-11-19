@@ -24,7 +24,7 @@ Run `tex /h` for help.
 ## Built With
 
 - Visual Studio 2022, v17.3 or later for .net Maui support. .net 6.0, with nullable reference type checking enabled
-- Fork of [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) with bug-fixes, available at https://github.com/andyjohnson0/exiflibrary.
+- Fork of [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) with bug-fixes, included in the `ThirdParty` directory with source available at https://github.com/andyjohnson0/exiflibrary.
 
 
 ## Author
