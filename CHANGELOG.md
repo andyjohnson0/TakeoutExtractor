@@ -1,5 +1,15 @@
 #Change Log
 
+##2022-11-30 0.8
+
+Gui:
+- Added a simple splash screen for Windows and Mac.
+- Improved look of project's app icon and fixed project file so that it is used.
+- Conditional gui app title to distinguish development and installed versions.
+- Main window (except progress dialog) is disabled during extraction.
+- Added some support for styling, but this appers to be broken at present - see https://github.com/dotnet/maui/issues/6596
+
+
 ##2022-11-18 v0.7
 
 Added config option for time kind used for photo output file naming. Options are local time or UTC, default is local time to

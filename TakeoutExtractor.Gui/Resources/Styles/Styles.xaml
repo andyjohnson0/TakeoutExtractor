@@ -5,10 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Style TargetType="Border">
-        <Setter Property="Stroke" Value="{StaticResource Gray950}" />
+        <Setter Property="Stroke" Value="{DynamicResource BorderOutlineColour}" />
         <Setter Property="StrokeShape" Value="RoundRectangle 5,5,5,5"/>
         <Setter Property="StrokeThickness" Value="2"/>
-        <Setter Property="Background" Value="{StaticResource Gray050}"/>
     </Style>
 
     <Style TargetType="Button">
@@ -16,5 +15,5 @@
         <Setter Property="BackgroundColor" Value="{StaticResource Blue}" />
         <Setter Property="BorderColor" Value="{StaticResource Blue}" />
     </Style>
-    
+
 </ResourceDictionary>

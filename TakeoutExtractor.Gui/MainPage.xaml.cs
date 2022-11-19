@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 using uk.andyjohnson.TakeoutExtractor.Lib;
 using uk.andyjohnson.TakeoutExtractor.Lib.Photo;
-using andyjohnson.uk.TakeoutExtractor.Gui;
+using uk.andyjohnson.TakeoutExtractor.Gui;
+
 
 namespace uk.andyjohnson.TakeoutExtractor.Gui
 {
@@ -17,6 +18,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         {
             InitializeComponent();
 
+            // Theme support
+            Application.Current!.RequestedThemeChanged += (s, a) => { App.SetAppTheme(a.RequestedTheme); };
+
+            // Menu options
             ViewErrorsWarnings.IsEnabled = false;
 
             // Global controls
@@ -48,18 +53,32 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             base.OnAppearing();
 
             this.Window.ShowWindow(WindowExt.WindowState.Maximised);
-        }
 
+
+#if RELEASE && (WINDOWS || MACCATALYST)
+            var splash = new SplashOverlay();
+            splash.Show(this.MainGrid, new TimeSpan(0, 0, 3));
+#endif
+        }
 
 
         private void OnFileExitCommand(object sender, EventArgs e)
         {
             Application.Current!.Quit();
         }
+
         private async void OnViewAlertsCommand(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new AlertsPage(this.alerts!));
         }
+
+        //private void OnViewThemeCommand(object sender, EventArgs e)
+        //{
+        //    if (sender == ViewDarkTheme)
+        //        App.SetAppTheme(AppTheme.Dark);
+        //    else if (sender == ViewLightTheme)
+        //        App.SetAppTheme(AppTheme.Light);
+        //}
 
         private void OnHelpAboutCommand(object sender, EventArgs e)
         {
@@ -161,6 +180,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             }
             var extractor = new ExtractorManager(globalOptions, mediaOptions);
 
+            // Disable the window and menu items.
+            this.MainGrid.SetEnabledAll(false);
+            this.MenuBarItems.SetEnabledAll(false);
+
             // Show the overlay that give feedback progress.
             var progressOverlay = new ProgressOverlay();
             progressOverlay.Show(MainGrid);
@@ -220,6 +243,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 // Hide the overlay.
                 progressOverlay.Close();
                 progressOverlay = null;
+
+                // Re-enable the window and menu items.
+                this.MainGrid.SetEnabledAll(true);
+                this.MenuBarItems.SetEnabledAll(true);
             }
         }
 

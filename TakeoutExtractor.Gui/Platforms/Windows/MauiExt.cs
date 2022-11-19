@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace andyjohnson.uk.TakeoutExtractor.Gui.Platforms.Windows
+namespace uk.andyjohnson.TakeoutExtractor.Gui.Platforms.Windows
 {
     /// <summary>
-    /// Windows-specific extensions to the MAUI Window class.
+    /// Windows-specific extensions to MAUI classes.
     /// </summary>
     internal static class WindowExt
     {
