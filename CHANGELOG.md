@@ -1,6 +1,6 @@
 #Change Log
 
-##2022-11-30 0.8
+##2022-12-03 0.8
 
 Gui:
 - Added a simple splash screen for Windows and Mac.
