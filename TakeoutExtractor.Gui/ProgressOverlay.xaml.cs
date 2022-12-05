@@ -23,12 +23,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
 		/// Show the overlay as child of a supplied Grid container.
 		/// </summary>
 		/// <param name="parent">Parent container</param>
-		public void Show(Grid parent)
+		public void Show(Layout parent)
 		{
 			this.ZIndex = 99;
-			this.SetValue(Grid.RowProperty, 0);
-			this.SetValue(Grid.ColumnProperty, 0);
 			parent.Children.Add(this);
+			this.IsVisible = true;
 		}
 
 

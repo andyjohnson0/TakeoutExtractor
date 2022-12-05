@@ -9,7 +9,7 @@
 
     <RootNamespace>uk.andyjohnson.TakeoutExtractor.Cli.Tests</RootNamespace>
 
-    <Version>0.7.0</Version>
+    <Version>0.8.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

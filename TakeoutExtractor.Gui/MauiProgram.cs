@@ -1,4 +1,4 @@
-﻿namespace TakeoutExtractor.Gui
+﻿namespace uk.andyjohnson.TakeoutExtractor.Gui
 {
     public static class MauiProgram
     {

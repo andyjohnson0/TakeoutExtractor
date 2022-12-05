@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="uk.andyjohnson.TakeoutExtractor.Gui.SplashOverlay">
+    <Border
+        StrokeThickness="0"
+        HorizontalOptions="CenterAndExpand"
+        VerticalOptions="CenterAndExpand"
+        Padding="0,0">
+        <VerticalStackLayout>
+            <Image
+                Source="splash_overlay.png"
+                Opacity="0.9"
+                HeightRequest="300"
+                WidthRequest="300"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+        </VerticalStackLayout>
+    </Border>
+</ContentView>
