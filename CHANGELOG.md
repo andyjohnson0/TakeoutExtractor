@@ -8,6 +8,7 @@ Gui:
 - Conditional gui app title to distinguish development and installed versions.
 - Main window (except progress dialog) is disabled during extraction.
 - Added some support for styling, but this appers to be broken at present - see https://github.com/dotnet/maui/issues/6596
+- Restored Android and iOS targets, as this seems to be the only way to render the project pubishable - see https://github.com/dotnet/maui/issues/11816
 
 
 ##2022-11-18 v0.7

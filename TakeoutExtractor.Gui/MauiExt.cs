@@ -15,7 +15,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         /// Recursively enables/disables a layout and its children
         /// </summary>
         /// <param name="self">The layoutr</param>
-        /// <param name="isEnabled"Enable or disable></param>
+        /// <param name="isEnabled">Enable or disable></param>
         public static void SetEnabledAll(
             this Layout self,
             bool isEnabled)
