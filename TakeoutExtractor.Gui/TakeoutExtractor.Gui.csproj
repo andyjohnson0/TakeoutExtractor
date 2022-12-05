@@ -43,6 +43,14 @@
 		<PackageId>uk.andyjohnson.TakeoutExtractor.Gui</PackageId>
 		<Description>Extract information from a Google Takeout archive</Description>
 		<PackageProjectUrl>https://github.com/andyjohnson0/TakeoutExtractor</PackageProjectUrl>
+		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<PackageCertificateThumbprint>187B8610DC0125E447E7EE5F145798F1C282061C</PackageCertificateThumbprint>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
 
 	<ItemGroup>
