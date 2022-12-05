@@ -14,15 +14,17 @@ named copy of the image and video files in a takeout dataset and restores their 
 
 1. Build the solution in Visual Studio 2022
 
-2. The command-line extractor, `tex.exe`, will be found in `TakeoutExtractorCli\bin\Release\net6.0\`.
+2. The Gui-extractor, tex-gui.exe, will be found in `TakeoutExtractorGui\bin\Release\net6.0\`.
+
+3. The command-line extractor, `tex.exe`, will be found in `TakeoutExtractorCli\bin\Release\net6.0\`.
 Run `tex /h` for help.
+
 
 
 ## Built With
 
-- Visual Studio 2022. Maui-based gui currently requires VS2022 7.3.0 preview 2.0 or later.
-- .net 6.0, with nullable reference type checking enabled
-- [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) v2.1.4 or later, via nuget
+- Visual Studio 2022, v17.3 or later for .net Maui support. .net 6.0, with nullable reference type checking enabled
+- Fork of [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) with bug-fixes, included in the `ThirdParty` directory with source available at https://github.com/andyjohnson0/exiflibrary.
 
 
 ## Author
