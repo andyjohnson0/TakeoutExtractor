@@ -52,7 +52,16 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui.Platforms.MacCatalyst
             if (parentController != null)
                 parentController.PresentViewController(picker, true, null);
 
-            return await tcs.Task;
+            // Should just be able to return await tcs.Task, but for some reason this gives a path that is something like
+            // "/Users/andy/Projects/TakeoutExtractor/TakeoutExtractor.Gui/bin/Debug/net6.0-maccatalyst/maccatalyst-x64/tex-gui.app/file:/Users/andy/Documents/takeout-20220808T195316Z-001/"
+            // so we break it down.
+            var di = await tcs.Task;
+            var path = di.FullName;
+            const string scheme = "file:";
+            var i = path.IndexOf(scheme);
+            if (i != -1)
+                path = path.Substring(i + scheme.Length);
+            return new DirectoryInfo(path);
         }
 
 
