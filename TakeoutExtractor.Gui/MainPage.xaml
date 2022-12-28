@@ -104,7 +104,8 @@
                             <CheckBox
                                 Grid.Row="3" Grid.Column="1"
                                 x:Name="StopOnErrorCbx"
-                                SemanticProperties.Hint="Stop if an error occurs"/>
+                                SemanticProperties.Hint="Stop if an error occurs"
+                                HorizontalOptions="Start" VerticalOptions="Center"/>
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
