@@ -16,17 +16,6 @@
                 x:Name="ViewErrorsWarnings"
                 Text="Errors and Warnings"
                 Clicked="OnViewAlertsCommand" />
-            <!--<MenuFlyoutSubItem
-                Text="Theme">
-                <MenuFlyoutItem
-                    x:Name="ViewDarkTheme"
-                    Text="Dark"
-                    Clicked="OnViewThemeCommand" />
-                <MenuFlyoutItem
-                    x:Name="ViewLightTheme"
-                    Text="Light"
-                    Clicked="OnViewThemeCommand" />
-            </MenuFlyoutSubItem>-->
         </MenuBarItem>
         <MenuBarItem
             Text="Help">
@@ -38,7 +27,8 @@
 
     <ScrollView
         Orientation="Vertical"
-        VerticalScrollBarVisibility="Always">
+        VerticalScrollBarVisibility="Always"
+        BackgroundColor="{AppThemeBinding Light={StaticResource OffWhite}, Dark={StaticResource OffBlack}}">
         <Grid
             x:Name="MainGrid">
 
