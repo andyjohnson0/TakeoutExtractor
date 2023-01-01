@@ -126,7 +126,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         {
             var results = new List<IExtractorResults>();
 
-            foreach (var subDir in di.EnumerateDirectories())
+            foreach (var subDir in di.EnumerateDirectories().OrderBy(d => d.Name))
             {
                 if (subDir == null)
                     continue;

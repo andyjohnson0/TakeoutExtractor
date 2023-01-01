@@ -7,6 +7,7 @@ using System.IO;
 
 using ExifLibrary;
 using System.Reflection.Metadata.Ecma335;
+using System.Collections.Immutable;
 
 namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 {
@@ -125,7 +126,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 
         #region Implementation
 
-        private const string starDotJason = "*.json";
+        private const string dotJason = ".json";
+        private const string starDotJason = "*" + dotJason;
         private const int maxImageFileNamePartLen = 47;  // Max length of the name part of a source file
 
 
@@ -145,8 +147,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             PhotoResults results,
             CancellationToken cancellationToken)
         {
-            // Process all json manifests in 'inDir'
-            foreach (var sidecarFile in inDir.EnumerateFiles(starDotJason))
+            // Process all json manifests in 'inDir' in name order.
+            foreach (var sidecarFile in inDir.EnumerateFiles(starDotJason).OrderBy(f => f.Name))
             {
                 // Check for cancellation
                 cancellationToken.ThrowIfCancellationRequested();
@@ -154,8 +156,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                 await ProcessInputFileAsync(sidecarFile, outDir, options, results);
             }
 
-            // Recurse all subdirectories of 'inDir'.
-            foreach (var subDir in inDir.EnumerateDirectories())
+            // Recurse all subdirectories of 'inDir' in name order.
+            foreach (var subDir in inDir.EnumerateDirectories().OrderBy(d => d.Name))
             {
                 await ProcessInputDirAsync(subDir, outDir, options, results, cancellationToken);
             }
@@ -361,7 +363,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             if (!jsonManifestFile.Exists)
                 throw new InvalidOperationException($"Manifest file does not exist: {jsonManifestFile.FullName}");
 
-            // This is all a bit gnarly.
+            // Well, this is all a bit gnarly.
             // It isn't possible to determine the file name of the edited file, if it exists, because it may contains various suffixes
             // that the photo software uses to indicate that it is edited. All we know is that its name will begin wth the same characters
             // as the original file name, then there will be a suffix indicating that it is the edited version, then the uniqueness suffix
@@ -373,33 +375,42 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             // 2. We want original_a5025662-cb40-45dd-be98-684ee48aa226_I.jpg to match original_a5025662-cb40-45dd-be98-684ee48aa226_I(1).jpg.
             //    Here the (1) is being used to distinguish the edited from its origial, which has 47 characters in its file name and is as long
             //    as it can be..
+            
+            // Find all files that match the original image filename, without uniqueness suffix.
             var editedPattern = Path.GetFileNameWithoutExtension(originalFile.Name);
             if (uniquenessSuffix != "")
                 editedPattern = editedPattern.Replace(uniquenessSuffix, "");
             editedPattern += "*" + uniquenessSuffix + Path.GetExtension(originalFile.Name);
-            var matchingFiles = new List<FileInfo>(jsonManifestFile.Directory!.GetFiles(editedPattern));
+            var matchingFiles = new List<FileInfo>(jsonManifestFile.Directory!.GetFiles(editedPattern).OrderBy(f => f.Name));
+
+            // Remove the original image file itself from the match results.
             var i = matchingFiles.FindIndex(f => f.Name == originalFile.Name);
             if (i != -1)
+            {
                 matchingFiles.RemoveAt(i);
+            }
+
+            // For each of the remaining matches
             foreach (var matchingFile in matchingFiles)
             {
-                var possManifest = new FileInfo(Path.Combine(originalFile.DirectoryName!, Path.GetFileNameWithoutExtension(originalFile.Name) + ".json"));
+                // Is there a manifest for this matching file?
+                var possManifest = new FileInfo(Path.Combine(matchingFile.DirectoryName!, Path.GetFileNameWithoutExtension(matchingFile.Name) + dotJason));
                 if (possManifest.Exists && possManifest.FullName != jsonManifestFile.FullName)
                 {
-                    // There is a manifest for this matching image file and its not the current manifest. So its not a match.
+                    // There is a manifest for this matching edited image file and its not the current manifest.
+                    // So the image corresponding image file is not a match.
                     continue;
                 }
 
                 // Match long file names.
                 if (Path.GetFileNameWithoutExtension(matchingFile.FullName).Length >= maxImageFileNamePartLen &&
-                     Path.GetFileNameWithoutExtension(matchingFile.FullName).StartsWith(Path.GetFileNameWithoutExtension(originalFile.FullName)))
+                    Path.GetFileNameWithoutExtension(matchingFile.FullName).StartsWith(Path.GetFileNameWithoutExtension(originalFile.FullName)))
                 {
                     return matchingFile;
                 }
 
-                //
-                if (matchingFile.FullName != originalFile.FullName &&
-                     ExtractUniquenessSuffix(matchingFile) == ExtractUniquenessSuffix(originalFile))
+                // 
+                if (matchingFile.FullName != originalFile.FullName && ExtractUniquenessSuffix(matchingFile) == ExtractUniquenessSuffix(originalFile))
                 {
                     return matchingFile;
                 }

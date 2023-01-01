@@ -6,7 +6,8 @@
         HorizontalOptions="CenterAndExpand"
         VerticalOptions="CenterAndExpand"
         Padding="30,30"
-        Opacity="0.8"
+        BackgroundColor="{AppThemeBinding Light={StaticResource OffWhite}, Dark={StaticResource OffBlack}}"
+        Opacity="0.7"
         SizeChanged="Border_SizeChanged">
         <VerticalStackLayout
             Spacing="25" >
