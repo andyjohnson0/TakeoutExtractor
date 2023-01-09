@@ -12,9 +12,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
     [TestClass]
     public class FileInfoExtTests
     {
-        private const string shortPath = @"C:\foo\bar\filename1234567890.txt";
-        private const string longPath = @"C:\foo12345678\bar123456\baz1234\fn.txt";
-        private const string longName = @"C:\foo1234\thisisaveryverylongfilename.txt";
+        private readonly FileInfo shortPathFi = new FileInfo("/foo/bar/filename1234567890.txt");
+        private readonly FileInfo longPathFi = new FileInfo("/foo12345678/bar123456/baz1234/fn.txt");
+        private readonly FileInfo longNameFi = new FileInfo("/foo1234/thisisaveryverylongfilename.txt");
 
 
 
@@ -23,40 +23,39 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [TestMethod]
         public void CompactName_NoChange()
         {
-            Assert.AreEqual(longPath, new FileInfo(longPath).CompactName(longPath.Length + 1));
-            Assert.AreEqual(longPath, new FileInfo(longPath).CompactName(longPath.Length));
+            Assert.AreEqual(longPathFi.FullName, longPathFi.CompactName(longPathFi.FullName.Length + 1));
+            Assert.AreEqual(longPathFi.FullName, longPathFi.CompactName(longPathFi.FullName.Length));
         }
 
 
         [TestMethod]
         public void CompactName_Shorten()
         {
-            var parts = longPath.Split(Path.DirectorySeparatorChar);
+            var parts = longPathFi.FullName.Split(Path.DirectorySeparatorChar);
 
             // Remove longest section
-            Assert.AreEqual(longPath.Replace(parts[1], "..."), 
-                            new FileInfo(longPath).CompactName(longPath.Length - parts[1].Length + 3));
+            Assert.AreEqual(longPathFi.FullName.Replace(parts[1], "..."), 
+                            longPathFi.CompactName(longPathFi.FullName.Length - parts[1].Length + 3));
 
             // Remove two longest section
-            Assert.AreEqual(longPath.Replace(parts[1], "...").Replace(parts[2], "..."), 
-                            new FileInfo(longPath).CompactName(longPath.Length - parts[1].Length + 3 - parts[2].Length + 3));
+            Assert.AreEqual(longPathFi.FullName.Replace(parts[1], "...").Replace(parts[2], "..."), 
+                            longPathFi.CompactName(longPathFi.FullName.Length - parts[1].Length + 3 - parts[2].Length + 3));
         }
 
 
         [TestMethod]
         public void CompactName_DontShortenFileName()
         {
-            var fi = new FileInfo(longName);
-            var path = fi.CompactName(fi.FullName.Length - 10);
-            Assert.IsTrue(path.Length < fi.FullName.Length);  // Check that it compacted something
-            Assert.IsTrue(path.Contains(fi.Name));
+            var path = longNameFi.CompactName(longNameFi.FullName.Length - 10);
+            Assert.IsTrue(path.Length < longNameFi.FullName.Length);  // Check that it compacted something
+            Assert.IsTrue(path.Contains(longNameFi.Name));
         }
 
 
         [TestMethod]
         public void CompactName_UnableToShorten1()
         {
-            var fi = new FileInfo(@"D:\filename.txt");  // Can't shorten: "D:" is shorter than elipsis
+            var fi = new FileInfo("/filename.txt");  // Can't shorten: "" is shorter than elipsis
             var path = fi.CompactName(1);
             Assert.AreEqual(fi.FullName, path);
         }
@@ -68,7 +67,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         public void CompactName_Validation1()
         {
             
-            new FileInfo(longPath).CompactName(0);
+            longPathFi.CompactName(0);
         }
 
         [TestMethod]
@@ -76,7 +75,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         public void CompactName_Validation2()
         {
 
-            new FileInfo(longPath).CompactName(-1);
+            longPathFi.CompactName(-1);
         }
 
         #endregion CompactName
@@ -89,25 +88,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [TestMethod]
         public void TrimName_NoChange()
         {
-            var fi1 = new FileInfo(shortPath);
-            var fi2 = fi1.TrimName(999);
+            var fi2 = shortPathFi.TrimName(999);
             Assert.IsNotNull(fi2);
-            Assert.AreEqual(fi1.FullName, fi2.FullName);
+            Assert.AreEqual(shortPathFi.FullName, fi2.FullName);
         }
 
 
         [TestMethod]
         public void TrimName_Changed()
         {
-            var fi1 = new FileInfo(shortPath);
-
-            var fi2 = fi1.TrimName(10);
+            var fi2 = shortPathFi.TrimName(10);
             Assert.IsNotNull(fi2);
-            Assert.AreEqual(@"C:\foo\bar\filename12.txt", fi2.FullName);
+            Assert.AreEqual(new FileInfo("/foo/bar/filename12.txt").FullName, fi2.FullName);
 
-            fi2 = fi1.TrimName(1);
+            fi2 = shortPathFi.TrimName(1);
             Assert.IsNotNull(fi2);
-            Assert.AreEqual(@"C:\foo\bar\f.txt", fi2.FullName);
+            Assert.AreEqual(new FileInfo("/foo/bar/f.txt").FullName, fi2.FullName);
         }
 
 
@@ -115,8 +111,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void TrimName_ValidationZeroLength()
         {
-            var fi1 = new FileInfo(shortPath);
-            var fi2 = fi1.TrimName(0);
+            var fi2 = shortPathFi.TrimName(0);
         }
 
 
@@ -124,8 +119,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void TrimName_ValidationNegativeLength()
         {
-            var fi1 = new FileInfo(shortPath);
-            var fi2 = fi1.TrimName(-1);
+            var fi2 = shortPathFi.TrimName(-1);
         }
 
         #endregion TrimName
@@ -136,19 +130,17 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [TestMethod]
         public void AppendToName_Append()
         {
-            var fi1 = new FileInfo(shortPath);
-            var fi2 = fi1.AppendToName("_ABC");
+            var fi2 = shortPathFi.AppendToName("_ABC");
             Assert.IsNotNull(fi2);
-            Assert.AreEqual(@"C:\foo\bar\filename1234567890_ABC.txt", fi2.FullName);
+            Assert.AreEqual(new FileInfo("/foo/bar/filename1234567890_ABC.txt").FullName, fi2.FullName);
         }
 
         [TestMethod]
         public void AppendToName_AppendEmpty()
         {
-            var fi1 = new FileInfo(shortPath);
-            var fi2 = fi1.AppendToName("");
+            var fi2 = shortPathFi.AppendToName("");
             Assert.IsNotNull(fi2);
-            Assert.AreEqual(shortPath, fi2.FullName);
+            Assert.AreEqual(shortPathFi.FullName, fi2.FullName);
         }
 
 
@@ -156,8 +148,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void AppendToName_AppendNull()
         {
-            var fi1 = new FileInfo(shortPath);
-            var fi2 = fi1.AppendToName(null!);
+            var fi2 = shortPathFi.AppendToName(null!);
         }
 
         #endregion AppendToName
@@ -168,36 +159,36 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [TestMethod]
         public void IsImageFile()
         {
-            Assert.IsTrue(new FileInfo(@"C:\foo\myimage.jpg").IsImageFile());
-            Assert.IsTrue(new FileInfo(@"C:\foo\myimage.jpeg").IsImageFile());
-            Assert.IsTrue(new FileInfo(@"C:\foo\myimage.png").IsImageFile());
-            Assert.IsTrue(new FileInfo(@"C:\foo\myimage.gif").IsImageFile());
+            Assert.IsTrue(new FileInfo("/foo/myimage.jpg").IsImageFile());
+            Assert.IsTrue(new FileInfo("/foo/myimage.jpeg").IsImageFile());
+            Assert.IsTrue(new FileInfo("/foo/myimage.png").IsImageFile());
+            Assert.IsTrue(new FileInfo("/foo/myimage.gif").IsImageFile());
 
-            Assert.IsFalse(new FileInfo(@"C:\foo\mydoc.txt").IsImageFile());
-            Assert.IsFalse(new FileInfo(@"C:\foo\myfile").IsImageFile());
+            Assert.IsFalse(new FileInfo("/foo/mydoc.txt").IsImageFile());
+            Assert.IsFalse(new FileInfo("/foo/myfile").IsImageFile());
         }
 
         [TestMethod]
         public void IsImageFileWithExif()
         {
-            Assert.IsTrue(new FileInfo(@"C:\foo\myimage.jpg").IsImageFileWithExif());
-            Assert.IsTrue(new FileInfo(@"C:\foo\myimage.jpeg").IsImageFileWithExif());
-            Assert.IsTrue(new FileInfo(@"C:\foo\myimage.png").IsImageFileWithExif());
-            Assert.IsFalse(new FileInfo(@"C:\foo\myimage.gif").IsImageFileWithExif());
+            Assert.IsTrue(new FileInfo("/foo/myimage.jpg").IsImageFileWithExif());
+            Assert.IsTrue(new FileInfo("/foo/myimage.jpeg").IsImageFileWithExif());
+            Assert.IsTrue(new FileInfo("/foo/myimage.png").IsImageFileWithExif());
+            Assert.IsFalse(new FileInfo("/foo/myimage.gif").IsImageFileWithExif());
 
-            Assert.IsFalse(new FileInfo(@"C:\foo\mydoc.txt").IsImageFileWithExif());
-            Assert.IsFalse(new FileInfo(@"C:\foo\myfile").IsImageFileWithExif());
+            Assert.IsFalse(new FileInfo("/foo/mydoc.txt").IsImageFileWithExif());
+            Assert.IsFalse(new FileInfo("/foo/myfile").IsImageFileWithExif());
         }
 
         [TestMethod]
         public void IsVideoFile()
         {
-            Assert.IsTrue(new FileInfo(@"C:\foo\myvid.mp4").IsVideoFile());
-            Assert.IsTrue(new FileInfo(@"C:\foo\myvid.mpeg4").IsVideoFile());
-            Assert.IsFalse(new FileInfo(@"C:\foo\myvid.mov").IsVideoFile());
+            Assert.IsTrue(new FileInfo("/foo/myvid.mp4").IsVideoFile());
+            Assert.IsTrue(new FileInfo("/foo/myvid.mpeg4").IsVideoFile());
+            Assert.IsFalse(new FileInfo("/foo/myvid.mov").IsVideoFile());
 
-            Assert.IsFalse(new FileInfo(@"C:\foo\mydoc.txt").IsVideoFile());
-            Assert.IsFalse(new FileInfo(@"C:\foo\myfile").IsVideoFile());
+            Assert.IsFalse(new FileInfo("/foo/mydoc.txt").IsVideoFile());
+            Assert.IsFalse(new FileInfo("/foo/myfile").IsVideoFile());
         }
 
 

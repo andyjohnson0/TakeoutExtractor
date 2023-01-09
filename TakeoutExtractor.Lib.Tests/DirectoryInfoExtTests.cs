@@ -16,8 +16,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [TestMethod]
         public void ImmediateSubdir()
         {
-            var d1 = new DirectoryInfo(@"C:\foo\bar");
-            var d2 = new DirectoryInfo(@"C:\foo\bar\baz");
+            var d1 = new DirectoryInfo("/foo/bar");
+            var d2 = new DirectoryInfo("/foo/bar/baz");
 
             Assert.IsTrue(d2.IsSubirOf(d1));
             Assert.IsFalse(d1.IsSubirOf(d2));
@@ -27,8 +27,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [TestMethod]
         public void NonImmediateSubdir()
         {
-            var d1 = new DirectoryInfo(@"C:\foo\");
-            var d2 = new DirectoryInfo(@"C:\foo\bar\baz");
+            var d1 = new DirectoryInfo("/foo/");
+            var d2 = new DirectoryInfo("/foo/bar/baz");
 
             Assert.IsTrue(d2.IsSubirOf(d1));
             Assert.IsFalse(d1.IsSubirOf(d2));
@@ -38,7 +38,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [TestMethod]
         public void SameDirs()
         {
-            var d1 = new DirectoryInfo(@"C:\foo\bar\baz");
+            var d1 = new DirectoryInfo("/foo/bar/baz");
 
             Assert.IsTrue(d1.IsSubirOf(d1));
         }
@@ -48,7 +48,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Validation()
         {
-            var d1 = new DirectoryInfo(@"C:\foo\");
+            var d1 = new DirectoryInfo("/foo/");
             DirectoryInfo? d2 = null;
 
             d1.IsSubirOf(d2!);
