@@ -7,6 +7,7 @@ using System.IO;
 
 using ExifLibrary;
 using System.Reflection.Metadata.Ecma335;
+using System.Collections.Immutable;
 
 namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 {
@@ -145,8 +146,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             PhotoResults results,
             CancellationToken cancellationToken)
         {
-            // Process all json manifests in 'inDir'
-            foreach (var sidecarFile in inDir.EnumerateFiles(starDotJason))
+            // Process all json manifests in 'inDir' in name order.
+            foreach (var sidecarFile in inDir.EnumerateFiles(starDotJason).OrderBy(f => f.Name))
             {
                 // Check for cancellation
                 cancellationToken.ThrowIfCancellationRequested();
@@ -154,8 +155,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                 await ProcessInputFileAsync(sidecarFile, outDir, options, results);
             }
 
-            // Recurse all subdirectories of 'inDir'.
-            foreach (var subDir in inDir.EnumerateDirectories())
+            // Recurse all subdirectories of 'inDir' in name order.
+            foreach (var subDir in inDir.EnumerateDirectories().OrderBy(d => d.Name))
             {
                 await ProcessInputDirAsync(subDir, outDir, options, results, cancellationToken);
             }
