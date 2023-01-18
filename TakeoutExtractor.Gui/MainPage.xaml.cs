@@ -18,9 +18,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         {
             InitializeComponent();
 
-            // Theme support
-            Application.Current!.RequestedThemeChanged += (s, a) => { App.SetAppTheme(a.RequestedTheme); };
-
             // Menu options
             ViewErrorsWarnings.IsEnabled = false;
 
@@ -67,18 +64,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             Application.Current!.Quit();
         }
 
+
         private async void OnViewAlertsCommand(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new AlertsPage(this.alerts!));
         }
 
-        //private void OnViewThemeCommand(object sender, EventArgs e)
-        //{
-        //    if (sender == ViewDarkTheme)
-        //        App.SetAppTheme(AppTheme.Dark);
-        //    else if (sender == ViewLightTheme)
-        //        App.SetAppTheme(AppTheme.Light);
-        //}
 
         private void OnHelpAboutCommand(object sender, EventArgs e)
         {

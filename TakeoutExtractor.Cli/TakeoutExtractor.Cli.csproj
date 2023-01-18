@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>uk.andyjohnson.TakeoutExtractor.Cli</RootNamespace>
-    <Version>0.8.0</Version>
+    <Version>0.9.0</Version>
     <AssemblyName>tex</AssemblyName>
   </PropertyGroup>
 

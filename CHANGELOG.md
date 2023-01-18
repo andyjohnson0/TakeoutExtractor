@@ -1,6 +1,18 @@
 #Change Log
 
-##2022-12-03 0.8
+##2023-01-18 v0.9
+
+Multi-platform release: now includes a Mac Catalyst version.
+
+Principal changes to support multiple platforms:
+- Directory and file enumeration ordered specifically by name to ensure consistent results across platforms.
+- Implemented DisplayAlert() for Mac platform.
+- Removed partial themes support - AppThemeBinding is sufficient.
+- Documented edited file matching code.
+- Updated tests to use Unix-style paths for cross-platform.
+
+
+##2022-12-03 v0.8
 
 Gui:
 - Added a simple splash screen for Windows and Mac.

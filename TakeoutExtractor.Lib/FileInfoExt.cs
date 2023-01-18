@@ -53,6 +53,23 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
 
         /// <summary>
+        /// Compactify a compacted path by repeatedby replacing long path elements with
+        /// elipsis unntil the length of the path is below a specified maximum.
+        /// </summary>
+        /// <param name="fi">FileInfo object</param>
+        /// <param name="maxRequestedLen">Requested maximum path length. It may not be possible to achieve this.</param>
+        /// <returns>Path with a length that is (as near as possible) less than or equal to the requested maximum.</returns>
+        /// <exception cref="ArgumentNullException">Invalid argument</exception>
+        /// <exception cref="ArgumentException">Invalid argument</exception>
+        public static string CompactName(
+            this FileInfo fi,
+            long maxRequestedLen)
+        {
+            return fi.CompactName((int)maxRequestedLen);
+        }
+
+
+        /// <summary>
         /// Trim the name part of a FileInfo object, reatining the directory and extension parts.
         /// </summary>
         /// <param name="fi">FileInfo object</param>
@@ -79,6 +96,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
             {
                 return fi;
             }
+        }
+
+
+        /// <summary>
+        /// Trim the name part of a FileInfo object, reatining the directory and extension parts.
+        /// </summary>
+        /// <param name="fi">FileInfo object</param>
+        /// <param name="maxNameLen">Maximum name length</param>
+        /// <returns>Modified FileInfo object.</returns>
+        /// <exception cref="ArgumentException">Invalid argument</exception>
+        /// <exception cref="ArgumentNullException">Invalid argument</exception>
+        public static FileInfo TrimName(
+            this FileInfo fi,
+            long maxNameLen)
+        {
+            return fi.TrimName((int)maxNameLen);
         }
 
 
@@ -152,7 +185,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// <summary>
         /// Determine if the FileInfo object refers to a video file.
         /// </summary>
-        /// <param name="fi"></param>
+        /// <param name="fi">FileInfo object.</param>
         /// <returns>True if a video fies, otherwise false</returns>
         /// <exception cref="ArgumentNullException">Invalid argument</exception>
         public static bool IsVideoFile(
