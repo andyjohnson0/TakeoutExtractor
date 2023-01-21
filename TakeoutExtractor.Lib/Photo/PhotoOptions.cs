@@ -25,7 +25,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         /// <summary>
         /// Kinds of output organisation.
         /// </summary>
-        public enum OutputFileOrganisation
+        public enum OutputDirsDateOrganisation
         {
             /// <summary>Place all output files in the same directory.</summary>
             None = 0,
@@ -39,22 +39,14 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         }
 
         /// <summary>
-        /// Store output files in directories by date/time of creation
+        /// Organise directories by date/time of creation
         /// </summary>
-        public OutputFileOrganisation OrganiseBy { get; set; } = OutputFileOrganisation.None;
+        public OutputDirsDateOrganisation OrganiseByDate { get; set; } = OutputDirsDateOrganisation.None;
 
         /// <summary>
         /// Extract and retain original photo/video files if there is an edited version.
         /// </summary>
         public bool KeepOriginalsForEdited { get; set; } = false;
-
-        // File name suffix for original ophoto/video files.
-        public string? OriginalsSuffix { get; set; } = "_original";
-
-        /// <summary>
-        /// Subdirectory name for original ophoto/video files.
-        /// </summary>
-        public string? OriginalsSubdirName { get; set; } = "original";
 
         /// <summary>
         /// Update image exif information using values in json manifest.
@@ -68,10 +60,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         {
             OutputFileNameFormat = "yyyyMMdd_HHmmss",
             OutputFileNameTimeKind = DateTimeKind.Local,
-            OrganiseBy = OutputFileOrganisation.None,
+            OrganiseByDate = OutputDirsDateOrganisation.None,
             KeepOriginalsForEdited = false,
-            OriginalsSuffix = "_original",
-            OriginalsSubdirName = "original",
             UpdateExif = true
         };
 
@@ -90,10 +80,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             catch (Exception)
             {
                 throw new InvalidOperationException("Invalid output format option");
-            }
-            if (KeepOriginalsForEdited && string.IsNullOrEmpty(OriginalsSuffix) && string.IsNullOrEmpty(OriginalsSubdirName))
-            {
-                throw new InvalidOperationException("Originals suffix and/or originals subdirectory must be specified");
             }
         }
     }

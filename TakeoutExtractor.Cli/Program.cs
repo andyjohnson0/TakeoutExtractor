@@ -56,12 +56,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                                                                                         new string?[] { null, "utc", "local" },
                                                                                         defaultValue: PhotoOptions.Defaults.OutputFileNameTimeKind),
                             KeepOriginalsForEdited = kvp.Value.GetArgBool("ox", defaultValue: PhotoOptions.Defaults.KeepOriginalsForEdited),
-                            OriginalsSubdirName = kvp.Value.GetArgString("od", defaultValue: PhotoOptions.Defaults.OriginalsSubdirName),
-                            OriginalsSuffix = kvp.Value.GetArgString("os", defaultValue: PhotoOptions.Defaults.OriginalsSuffix),
                             UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: PhotoOptions.Defaults.UpdateExif),
-                            OrganiseBy = kvp.Value.GetArgEnum<PhotoOptions.OutputFileOrganisation>("fd",
+                            OrganiseByDate = kvp.Value.GetArgEnum<PhotoOptions.OutputDirsDateOrganisation>("fd",
                                                                                                    new string?[] { null, "y", "ym", "ymd" },
-                                                                                                   defaultValue: PhotoOptions.Defaults.OrganiseBy)
+                                                                                                   defaultValue: PhotoOptions.Defaults.OrganiseByDate)
                         };
                         mediaOptions.Add(opt);
                         break;
@@ -171,10 +169,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("                Create subdirectories for year, year and month, or year and month and day. Default: none.");
             Console.WriteLine("            -ox true/false");
             Console.WriteLine("                Extract original photos/video versions. Default: false.");
-            Console.WriteLine("            -od sub_dir");
-            Console.WriteLine("                Put original photos/videos in subdir");
-            Console.WriteLine("            -os suffix");
-            Console.WriteLine("                Filename suffix for original photos/videos");
             Console.WriteLine("            -ux true | false");
             Console.WriteLine("                Update edited EXIF information in output files. Default: true.");
             Console.WriteLine();

@@ -194,37 +194,14 @@
                                     Grid.Row="3" Grid.Column="1"
                                     x:Name="PhotosKeepOriginalsCbx"
                                     SemanticProperties.Hint="Save original version of photos and videos"
-                                    CheckedChanged="OnPhotosKeepOriginalsChanged"
                                     HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
                                     Grid.Row="4" Grid.Column="0"
-                                    Text="Originals suffix" 
-                                    HorizontalOptions="End" VerticalOptions="Center" />
-                                <Entry 
-                                    Grid.Row="4" Grid.Column="1"
-                                    x:Name="PhotosSuffixOriginalsTxt"
-                                    Placeholder="File name suffix for original versions"
-                                    SemanticProperties.Hint="Suffix added to original file names"
-                                    HorizontalOptions="Start" VerticalOptions="Center"/>
-
-                                <Label
-                                    Grid.Row="5" Grid.Column="0"
-                                    Text="Originals subdirectory" 
-                                    HorizontalOptions="End" VerticalOptions="Center" />
-                                <Entry 
-                                    Grid.Row="5" Grid.Column="1"
-                                    x:Name="PhotosSubdirOriginalsTxt"
-                                    Placeholder="Subdirectory for original versions"
-                                    SemanticProperties.Hint="Subdirectory for original files"
-                                    HorizontalOptions="Start" VerticalOptions="Center"/>
-
-                                <Label
-                                    Grid.Row="6" Grid.Column="0"
                                     Text="Subdirectory organisation" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <Picker 
-                                    Grid.Row="6" Grid.Column="1"
+                                    Grid.Row="4" Grid.Column="1"
                                     x:Name="PhotosSubdirOrganisationPicker"
                                     SemanticProperties.Hint="Organise out put in subdirectories based on create time"
                                     HorizontalOptions="Start" VerticalOptions="Center">

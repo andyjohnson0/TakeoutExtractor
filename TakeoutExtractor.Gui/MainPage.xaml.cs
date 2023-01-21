@@ -33,11 +33,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                                                                                                                StringComparison.InvariantCultureIgnoreCase));
             PhotosUpdateExifCbx.IsChecked = PhotoOptions.Defaults.UpdateExif;
             PhotosKeepOriginalsCbx.IsChecked = PhotoOptions.Defaults.KeepOriginalsForEdited;
-            PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSuffix) ? PhotoOptions.Defaults.OriginalsSuffix : "";
-            PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSubdirName) ? PhotoOptions.Defaults.OriginalsSubdirName : "";
-            PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OrganiseBy;
-            // Do a chage event on the keep originals checkbox to ensure that associated controls are correctly enabled/disabled.
-            OnPhotosKeepOriginalsChanged(this, new CheckedChangedEventArgs(PhotosKeepOriginalsCbx.IsChecked));
+            PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OrganiseByDate;
         }
 
 
@@ -104,15 +100,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosOptionsGrid.IsVisible = e.Value;
         }
 
-        void OnPhotosKeepOriginalsChanged(object sender, CheckedChangedEventArgs e)
-        {
-            PhotosSuffixOriginalsTxt.IsEnabled = e.Value;
-            PhotosSubdirOriginalsTxt.IsEnabled = e.Value;
-
-            // Perform required operation after examining e.Value
-            //SemanticScreenReader.Announce(PhotosKeepOriginalsLbl.Text);
-        }
-
 
 
         private async void OnStartBtnClicked(
@@ -163,9 +150,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                     OutputFileNameTimeKind = Enum.Parse<DateTimeKind>(PhotosFileNameTimeKindPicker.SelectedItem.ToString()!, true), 
                     UpdateExif = PhotosUpdateExifCbx.IsChecked,
                     KeepOriginalsForEdited = PhotosKeepOriginalsCbx.IsChecked,
-                    OriginalsSuffix = PhotosKeepOriginalsCbx.IsChecked ? PhotosSuffixOriginalsTxt.Text : "",
-                    OriginalsSubdirName = PhotosKeepOriginalsCbx.IsChecked ? PhotosSubdirOriginalsTxt.Text : "",
-                    OrganiseBy = (PhotoOptions.OutputFileOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
+                    OrganiseByDate = (PhotoOptions.OutputDirsDateOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
                 };
                 mediaOptions.Add(photoOptions);
             }

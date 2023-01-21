@@ -35,10 +35,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             this.logFileWtr = logFileWtr;
         }
 
-        private PhotoOptions options;
-        private DirectoryInfo inputDir;
-        private DirectoryInfo outputDir;
-        private StructuredTextWriter? logFileWtr;
+        private readonly PhotoOptions options;
+        private readonly DirectoryInfo inputDir;
+        private readonly DirectoryInfo outputDir;
+        private readonly StructuredTextWriter? logFileWtr;
 
 
         /// <summary>
@@ -63,11 +63,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         /// <exception cref="OperationCanceledException">The operation was cancelled.</exception>
         public async Task<PhotoResults> ExtractAsync(CancellationToken cancellationToken)
         {
-            // Validate options.
-            // If keeping originals then, to prevent file name clash, subdir and/or suffix option must be set.
-            if (options.KeepOriginalsForEdited && string.IsNullOrEmpty(options.OriginalsSubdirName) && string.IsNullOrEmpty(options.OriginalsSuffix))
-                throw new InvalidOperationException("Original file subdir and/or suffix option must be set to prevent file name clash");
-
             if (logFileWtr != null)
             {
                 await logFileWtr.WriteStartObjectAsync("PhotosAndVideos");
@@ -126,9 +121,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 
         #region Implementation
 
+        // File matching patterns.
         private const string dotJason = ".json";
         private const string starDotJason = "*" + dotJason;
-        private const int maxImageFileNamePartLen = 47;  // Max length of the name part of a source file
+
+        // Max length of the name part of a source file
+        private const int maxImageFileNamePartLen = 47;  
+
+        // File name suffix for original ophoto/video files.
+        private const string originalsSuffix = "_original";
+
+        /// Subdirectory name for original ophoto/video files.
+        private const string originalsSubdirName = "originals";
 
 
         /// <summary>
@@ -247,9 +251,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                 // Optionally create original. 
                 if (options.KeepOriginalsForEdited)
                 {
-                    if (!string.IsNullOrEmpty(options.OriginalsSubdirName))
-                        destDir = destDir.CreateSubdirectory(options.OriginalsSubdirName);
-                    outFile = await CreateOutputFileAsync(originalFile, destDir, options.OriginalsSuffix,
+                    destDir = destDir.CreateSubdirectory(originalsSubdirName);
+                    outFile = await CreateOutputFileAsync(originalFile, destDir, originalsSuffix,
                                                             mi.title, mi.description, mi.takenTime, mi.creationTime, mi.creationTime,
                                                             mi.exifLocation,
                                                             results);
@@ -301,18 +304,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                 outputDir = outputDir.CreateSubdirectory("Unknown");
             }
 
-            if (options.OrganiseBy == PhotoOptions.OutputFileOrganisation.Year ||
-                options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonth ||
-                options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonthDay)
+            if (options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.Year ||
+                options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonth ||
+                options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonthDay)
             {
                 outputDir = outputDir.CreateSubdirectory(originalFileCreationTime.Year.ToString("D4"));
             }
-            if (options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonth ||
-                options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonthDay)
+            if (options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonth ||
+                options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonthDay)
             {
                 outputDir = outputDir.CreateSubdirectory(originalFileCreationTime.Month.ToString("D2"));
             }
-            if (options.OrganiseBy == PhotoOptions.OutputFileOrganisation.YearMonthDay)
+            if (options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonthDay)
             {
                 outputDir = outputDir.CreateSubdirectory(originalFileCreationTime.Day.ToString("D2"));
             }
