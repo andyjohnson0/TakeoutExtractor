@@ -35,10 +35,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             this.logFileWtr = logFileWtr;
         }
 
-        private readonly PhotoOptions options;
-        private readonly DirectoryInfo inputDir;
-        private readonly DirectoryInfo outputDir;
-        private readonly StructuredTextWriter? logFileWtr;
+        private PhotoOptions options;
+        private DirectoryInfo inputDir;
+        private DirectoryInfo outputDir;
+        private StructuredTextWriter? logFileWtr;
 
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         // Max length of the name part of a source file
         private const int maxImageFileNamePartLen = 47;  
 
-        // File name suffix for original ophoto/video files.
+        // File name suffix for original ohoto/video files.
         private const string originalsSuffix = "_original";
 
         /// Subdirectory name for original ophoto/video files.
