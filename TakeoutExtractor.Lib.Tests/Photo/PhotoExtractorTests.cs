@@ -216,7 +216,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests.Photo
 
                 // Do the extraction.
                 // We hook into the extractor's Progress event to record the input->output file mappings.
-                var options = new PhotoOptions() { KeepOriginalsForEdited = true, UpdateExif = true, OutputFileNameTimeKind = DateTimeKind.Utc };
+                var options = new PhotoOptions()
+                { 
+                    UpdateExif = true,
+                    OutputFileNameTimeKind = DateTimeKind.Utc,
+                    OutputFileVersionOrganisation = PhotoFileVersionOrganisation.AllVersionsOriginalsSubdir, 
+                    OutputDirOrganisation = PhotoDirOrganisation.None
+                };
                 var extractor = new PhotoExtractor(options, inDir, outDir, null);
                 var fileMappings = new Dictionary<string, string>();
                 extractor.Progress += (o, e) =>

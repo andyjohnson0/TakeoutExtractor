@@ -32,17 +32,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosFileNameTimeKindPicker.SelectedItem = PhotosFileNameTimeKindPicker.Items.First(x => x.Equals(PhotoOptions.Defaults.OutputFileNameTimeKind.ToString(), 
                                                                                                                StringComparison.InvariantCultureIgnoreCase));
             PhotosUpdateExifCbx.IsChecked = PhotoOptions.Defaults.UpdateExif;
-            PhotosKeepOriginalsCbx.IsChecked = PhotoOptions.Defaults.KeepOriginalsForEdited;
-            PhotosSuffixOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSuffix) ? PhotoOptions.Defaults.OriginalsSuffix : "";
-            PhotosSubdirOriginalsTxt.Text = !string.IsNullOrEmpty(PhotoOptions.Defaults.OriginalsSubdirName) ? PhotoOptions.Defaults.OriginalsSubdirName : "";
-            PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OrganiseBy;
-            // Do a chage event on the keep originals checkbox to ensure that associated controls are correctly enabled/disabled.
-            OnPhotosKeepOriginalsChanged(this, new CheckedChangedEventArgs(PhotosKeepOriginalsCbx.IsChecked));
+            PhotoFileOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OutputFileVersionOrganisation;
+            PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OutputDirOrganisation;
         }
 
 
         // Results of the last extraction operation.
         private IEnumerable<ExtractorAlert>? alerts = null;
+
+        // Has the splash been displayed?
+#if RELEASE && (WINDOWS || MACCATALYST)
+        private bool splashShown = false;
+#endif
 
 
         protected override void OnAppearing()
@@ -53,8 +54,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
 
 
 #if RELEASE && (WINDOWS || MACCATALYST)
-            var splash = new SplashOverlay();
-            splash.Show(this.MainGrid, new TimeSpan(0, 0, 3));
+            if (!splashShown)
+            {
+                var splash = new SplashOverlay();
+                splash.Show(this.MainGrid, new TimeSpan(0, 0, 3));
+                splashShown = true;
+            }
 #endif
         }
 
@@ -104,15 +109,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosOptionsGrid.IsVisible = e.Value;
         }
 
-        void OnPhotosKeepOriginalsChanged(object sender, CheckedChangedEventArgs e)
-        {
-            PhotosSuffixOriginalsTxt.IsEnabled = e.Value;
-            PhotosSubdirOriginalsTxt.IsEnabled = e.Value;
-
-            // Perform required operation after examining e.Value
-            //SemanticScreenReader.Announce(PhotosKeepOriginalsLbl.Text);
-        }
-
 
 
         private async void OnStartBtnClicked(
@@ -133,8 +129,28 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 return;
             }
 
-            // Check for existing files / directories in the output folder
             var outputDi = new DirectoryInfo(OutputDirEntry.Text);
+
+            // If output folder doesn't exist then prompt to create it.
+            if (!outputDi.Exists)
+            {
+                var choice = await QuestionDialog.ShowAsync("Create Output Folder?", 
+                                                            "The output folder does not exist. Do you wish to create it and proceed?",
+                                                            "Ok", "Cancel");
+                if (choice != "Ok")
+                    return;
+                try
+                {
+                    outputDi.Create();
+                }
+                catch(IOException)
+                {
+                    await DisplayAlert("Error", "The output directory could not be created.", "Ok");
+                    return;
+                }
+            }
+
+            // Check for existing files / directories in the output folder
             if (outputDi.Exists && (outputDi.GetDirectories().Length > 0 || outputDi.GetFiles().Length > 0))
             {
                 var choice = await QuestionDialog.ShowAsync("Proceed?", 
@@ -162,10 +178,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                     OutputFileNameFormat = PhotosFileNameFormatTxt.Text,
                     OutputFileNameTimeKind = Enum.Parse<DateTimeKind>(PhotosFileNameTimeKindPicker.SelectedItem.ToString()!, true), 
                     UpdateExif = PhotosUpdateExifCbx.IsChecked,
-                    KeepOriginalsForEdited = PhotosKeepOriginalsCbx.IsChecked,
-                    OriginalsSuffix = PhotosKeepOriginalsCbx.IsChecked ? PhotosSuffixOriginalsTxt.Text : "",
-                    OriginalsSubdirName = PhotosKeepOriginalsCbx.IsChecked ? PhotosSubdirOriginalsTxt.Text : "",
-                    OrganiseBy = (PhotoOptions.OutputFileOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
+                    OutputFileVersionOrganisation = (PhotoFileVersionOrganisation)PhotoFileOrganisationPicker.SelectedIndex,
+                    OutputDirOrganisation = (PhotoDirOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
                 };
                 mediaOptions.Add(photoOptions);
             }

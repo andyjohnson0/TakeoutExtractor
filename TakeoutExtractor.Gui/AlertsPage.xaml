@@ -4,90 +4,89 @@
              xmlns:local="clr-namespace:uk.andyjohnson.TakeoutExtractor.Gui"
              x:Class="uk.andyjohnson.TakeoutExtractor.Gui.AlertsPage"
              Title="Errors and Warnings">
-
-    <VerticalStackLayout>
-
-        <Label
-            x:Name="alertsBreakdownCountsLabel"
-            FontAttributes="Bold"
-            Padding="20"/>
-
-        <CollectionView
-            x:Name="alertsCollView">
-            <CollectionView.HeaderTemplate>
-                <DataTemplate>
-                    <Grid Padding="20">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <Label 
-                            Grid.Column="0"
-                            Text="Type" />
-                        <Label
-                            Grid.Column="1"
-                            Text="Description" />
-                        <Label
-                            Grid.Column="2"
-                            Text="File" />
-                        <Label
-                            Grid.Column="3"
-                            Text="" />
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.HeaderTemplate>
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="20">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <Label 
-                            Grid.Column="0"
-                            Text="{Binding Type}" />
-                        <Label
-                            Grid.Column="1"
-                            Text="{Binding Description}" />
-                        <Label
-                            Grid.Column="2"
-                            Text="{Binding AssociatedFile}"
-                            TextColor="Blue"
-                            TextDecorations="Underline">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    NumberOfTapsRequired="1"
-                                    Tapped="OnFileTapped" 
-                                    CommandParameter="{Binding AssociatedFile}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                        <Label
-                            Grid.Column="3"
-                            Text="Details"
-                            TextColor="Blue"
-                            TextDecorations="Underline">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    NumberOfTapsRequired="1"
-                                    Tapped="OnDetailsTapped" 
-                                    CommandParameter="{Binding FullDescription}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-    </VerticalStackLayout>
-    
+    <ScrollView
+        Orientation="Vertical"
+        VerticalScrollBarVisibility="Always">
+        <VerticalStackLayout>
+            <Label
+                x:Name="alertsBreakdownCountsLabel"
+                FontAttributes="Bold"
+                Padding="20"/>
+            <CollectionView
+                x:Name="alertsCollView">
+                <CollectionView.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid Padding="20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Label 
+                                    Grid.Column="0"
+                                    Text="Type" />
+                            <Label
+                                    Grid.Column="1"
+                                    Text="Description" />
+                            <Label
+                                    Grid.Column="2"
+                                    Text="File" />
+                            <Label
+                                    Grid.Column="3"
+                                    Text="" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.HeaderTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Label 
+                                    Grid.Column="0"
+                                    Text="{Binding Type}" />
+                            <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Description}" />
+                            <Label
+                                    Grid.Column="2"
+                                    Text="{Binding AssociatedFile}"
+                                    TextColor="{AppThemeBinding Light={StaticResource Blue}, Dark={StaticResource OffWhite}}"
+                                    TextDecorations="Underline">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                            NumberOfTapsRequired="1"
+                                            Tapped="OnFileTapped" 
+                                            CommandParameter="{Binding AssociatedFile}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label
+                                    Grid.Column="3"
+                                    Text="Details"
+                                    TextColor="{AppThemeBinding Light={StaticResource Blue}, Dark={StaticResource OffWhite}}"
+                                    TextDecorations="Underline">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                            NumberOfTapsRequired="1"
+                                            Tapped="OnDetailsTapped" 
+                                            CommandParameter="{Binding FullDescription}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
