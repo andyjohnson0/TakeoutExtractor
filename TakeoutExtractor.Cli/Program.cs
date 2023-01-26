@@ -55,11 +55,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                             OutputFileNameTimeKind = kvp.Value.GetArgEnum<DateTimeKind>("ft",
                                                                                         new string?[] { null, "utc", "local" },
                                                                                         defaultValue: PhotoOptions.Defaults.OutputFileNameTimeKind),
-                            KeepOriginalsForEdited = kvp.Value.GetArgBool("ox", defaultValue: PhotoOptions.Defaults.KeepOriginalsForEdited),
+                            OutputFileVersionOrganisation = kvp.Value.GetArgEnum<PhotoFileVersionOrganisation>("fv",
+                                                                                                               new string?[] { null, "lv", "lvo", "avs", "avx", "ev", "ov" },
+                                                                                                               defaultValue: PhotoOptions.Defaults.OutputFileVersionOrganisation),
                             UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: PhotoOptions.Defaults.UpdateExif),
-                            OrganiseByDate = kvp.Value.GetArgEnum<PhotoOptions.OutputDirsDateOrganisation>("fd",
-                                                                                                   new string?[] { null, "y", "ym", "ymd" },
-                                                                                                   defaultValue: PhotoOptions.Defaults.OrganiseByDate)
+                            OutputDirOrganisation = kvp.Value.GetArgEnum<PhotoDirOrganisation>("fd",
+                                                                                               new string?[] { null, "y", "ym", "ymd" },
+                                                                                               defaultValue: PhotoOptions.Defaults.OutputDirOrganisation)
                         };
                         mediaOptions.Add(opt);
                         break;
@@ -159,16 +161,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine();
             Console.WriteLine("Commands:");
             Console.WriteLine("    photo");
-            Console.WriteLine("        Extract phots and videos");
+            Console.WriteLine("        Extract photos and videos");
             Console.WriteLine("        Options:");
             Console.WriteLine("            -fm format_str");
             Console.WriteLine("                Time-based format for output file names. Default \"yyyyMMdd_HHmmss.\"");
             Console.WriteLine("            -ft time_kind");
             Console.WriteLine("                Kind of time for output file name. Values can be utc or local. Default: local");
+            Console.WriteLine("            -fv lv | lvo | avs | avx | ev | ov");
+            Console.WriteLine("                Determines whether and how original and edited versions are placed in the output. Values can be:");
+            Console.WriteLine("                    lv:  latest version only");
+            Console.WriteLine("                    lvo: latest version, with originals in a subdirectory");
+            Console.WriteLine("                    avs: all versions in same directory, with filename suffixes to disambiguate");
+            Console.WriteLine("                    avx: all versions in separate original and edited directories");
+            Console.WriteLine("                    ev:  edited versions only");
+            Console.WriteLine("                    ov:  original versions only");
             Console.WriteLine("            -fd y | ym | ymb");
             Console.WriteLine("                Create subdirectories for year, year and month, or year and month and day. Default: none.");
-            Console.WriteLine("            -ox true/false");
-            Console.WriteLine("                Extract original photos/video versions. Default: false.");
             Console.WriteLine("            -ux true | false");
             Console.WriteLine("                Update edited EXIF information in output files. Default: true.");
             Console.WriteLine();

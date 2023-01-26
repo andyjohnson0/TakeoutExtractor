@@ -188,22 +188,33 @@
 
                                 <Label
                                     Grid.Row="3" Grid.Column="0"
-                                    Text="Save original versions" 
+                                    Text="File organisation" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
-                                <CheckBox
+                                <Picker 
                                     Grid.Row="3" Grid.Column="1"
-                                    x:Name="PhotosKeepOriginalsCbx"
-                                    SemanticProperties.Hint="Save original version of photos and videos"
-                                    HorizontalOptions="Start" VerticalOptions="Center"/>
+                                    x:Name="PhotoFileOrganisationPicker"
+                                    HorizontalOptions="Start" VerticalOptions="Center"
+                                    SemanticProperties.Hint="Organise extracted photos based on whether original or edited">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>Latest version only</x:String>
+                                            <x:String>Latest version with originals in sub-folder</x:String>
+                                            <x:String>All versions in same folder</x:String>
+                                            <x:String>All versions in separate sub-folders</x:String>
+                                            <x:String>Edited version only</x:String>
+                                            <x:String>Original version only</x:String>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
 
                                 <Label
                                     Grid.Row="4" Grid.Column="0"
-                                    Text="Subdirectory organisation" 
+                                    Text="Folder organisation" 
                                     HorizontalOptions="End" VerticalOptions="Center" />
                                 <Picker 
                                     Grid.Row="4" Grid.Column="1"
                                     x:Name="PhotosSubdirOrganisationPicker"
-                                    SemanticProperties.Hint="Organise out put in subdirectories based on create time"
+                                    SemanticProperties.Hint="Organise extracted photos in folders based on create time"
                                     HorizontalOptions="Start" VerticalOptions="Center">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">

@@ -20,25 +20,25 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         /// Coonstructor. Initialise a PhotoExtractor object.
         /// </summary>
         /// <param name="options">Photo options</param>
-        /// <param name="inputDir">Root input directory</param>
-        /// <param name="outputDir">Root output directory</param>
+        /// <param name="inputRootDir">Root input directory</param>
+        /// <param name="outputRootDir">Root output directory</param>
         /// <param name="logFileWtr">Log file writer. Can be null.</param>
         public PhotoExtractor(
             PhotoOptions options,
-            DirectoryInfo inputDir,
-            DirectoryInfo outputDir,
+            DirectoryInfo inputRootDir,
+            DirectoryInfo outputRootDir,
             StructuredTextWriter? logFileWtr)
         {
             this.options = options;
-            this.inputDir = inputDir;
-            this.outputDir = outputDir;
+            this.inputRootDir = inputRootDir;
+            this.outputRootDir = outputRootDir;
             this.logFileWtr = logFileWtr;
         }
 
-        private PhotoOptions options;
-        private DirectoryInfo inputDir;
-        private DirectoryInfo outputDir;
-        private StructuredTextWriter? logFileWtr;
+        private readonly PhotoOptions options;
+        private readonly DirectoryInfo inputRootDir;
+        private readonly DirectoryInfo outputRootDir;
+        private readonly StructuredTextWriter? logFileWtr;
 
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             // Do it.
             var results = new PhotoResults();
             results.StartTime = DateTime.UtcNow;
-            await ProcessInputDirAsync(inputDir, outputDir, options, results, cancellationToken);
+            await ProcessInputDirAsync(inputRootDir, outputRootDir, options, results, cancellationToken);
             results.Duration = DateTime.UtcNow - results.StartTime;
 
             if (logFileWtr != null)
@@ -128,11 +128,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         // Max length of the name part of a source file
         private const int maxImageFileNamePartLen = 47;  
 
-        // File name suffix for original ohoto/video files.
+        // File name suffix for original photo/video files.
         private const string originalsSuffix = "_original";
 
-        /// Subdirectory name for original ophoto/video files.
+        /// Subdirectory name for original photo/video files.
         private const string originalsSubdirName = "originals";
+
+
+        // File name suffix for edited photo/video files.
+        private const string editedSuffix = "_edited";
+
+        /// Subdirectory name for original photo/video files.
+        private const string editedSubdirName = "edited";
 
 
         /// <summary>
@@ -210,8 +217,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             string uniquenessSuffix = ExtractUniquenessSuffix(sidecarFile);
 
             // Finally, try to build the original filename and check that it referes to a file that exists.
-            var originalFile = new FileInfo(Path.Combine(sidecarFile.Directory!.ToString(), originalFilename)).TrimName(maxImageFileNamePartLen).AppendToName(uniquenessSuffix);
-            if (originalFile == null || !originalFile.Exists)
+            FileInfo originalFile = new FileInfo(Path.Combine(sidecarFile.Directory!.ToString(), originalFilename)).TrimName(maxImageFileNamePartLen).AppendToName(uniquenessSuffix);
+            if (!originalFile.Exists)
             {
                 var alert = new ExtractorAlert(ExtractorAlertType.Error, $"Failed to identify original content file for {sidecarFile}")
                 {
@@ -232,94 +239,167 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             else
                 results.InputUneditedCount += 1;
 
-            // Create output directory if necessary.
-            DirectoryInfo destDir = CreateOutputDir(outDir, originalFile, mi.creationTime, options);
-
-            // Create the output files by copying and renaming the original and optional edited file.
-            if (editedFile != null)
+            // At this point we're ready to create the outputs
+            try
             {
-                // We have an edited file, and an original file too.
-
-                // Create edited.
-                var outFile = await CreateOutputFileAsync(editedFile, destDir, null,
-                                                            mi.title, mi.description, mi.takenTime, mi.creationTime, mi.lastModifiedTime,
-                                                            mi.editedLocation != GeoLocation.NullLatLonAltLocation ? mi.editedLocation : mi.exifLocation,
-                                                            results);
-                RaiseProgress(editedFile, outFile);
-                results.OutputFileCount += 1;
-
-                // Optionally create original. 
-                if (options.KeepOriginalsForEdited)
+                // Create output directory, if not already created, and output files.
+                var destDir = CreateOutputDir(outDir, originalFile, mi.creationTime, options);
+                return await CreateOutputFilesAsync(destDir, originalFile, editedFile, mi, results);
+            }
+            catch(Exception ex)
+            {
+                // No file extension. This rarely happens.
+                var alert = new ExtractorAlert(ExtractorAlertType.Error, $"Failed to create outputs for {sidecarFile}")
                 {
-                    destDir = destDir.CreateSubdirectory(originalsSubdirName);
-                    outFile = await CreateOutputFileAsync(originalFile, destDir, originalsSuffix,
-                                                            mi.title, mi.description, mi.takenTime, mi.creationTime, mi.creationTime,
-                                                            mi.exifLocation,
-                                                            results);
-                    RaiseProgress(originalFile, outFile);
-                    results.OutputEditedCount += 1;
-                }
+                    AssociatedFile = sidecarFile,
+                    AssociatedException = ex
+                };
+                results.Add(alert);
+                RaiseAlert(alert);
+                return false;
             }
-            else
-            {
-                // We have an original file only.
-                var outFile = await CreateOutputFileAsync(originalFile, destDir, null,
-                                                            mi.title, mi.description, mi.takenTime, mi.creationTime, mi.creationTime,
-                                                            mi.editedLocation != GeoLocation.NullLatLonAltLocation ? mi.editedLocation : mi.exifLocation,
-                                                            results);
-                RaiseProgress(originalFile, outFile);
-                results.OutputFileCount += 1;
-                results.OutputUneditedCount += 1;
-            }
-
-            return true;
         }
-
 
 
         /// <summary>
         /// Create and return the output directory given the file media type, creation time, and options.
         /// </summary>
-        /// <param name="outputDir">Base output directory</param>
+        /// <param name="outputBaseDir">Base output directory</param>
         /// <param name="originalFile">Original file. Determines name of created directory.</param>
-        /// <param name="creationTimeCreationTime">Original file's creation time.</param>
+        /// <param name="originalFileCreationTime">Original file's creation time.</param>
         /// <param name="options">Options.</param>
         /// <returns>The created output directory.</returns>
         private static DirectoryInfo CreateOutputDir(
-            DirectoryInfo outputDir,
+            DirectoryInfo outputBaseDir,
             FileInfo originalFile,
             DateTime originalFileCreationTime,
             PhotoOptions options)
         {
             if (originalFile.IsImageFile())
             {
-                outputDir = outputDir.CreateSubdirectory("Photos");
+                outputBaseDir = outputBaseDir.CreateSubdirectory("Photos");
             }
             else if (originalFile.IsVideoFile())
             {
-                outputDir = outputDir.CreateSubdirectory("Videos");
+                outputBaseDir = outputBaseDir.CreateSubdirectory("Videos");
             }
             else
             {
-                outputDir = outputDir.CreateSubdirectory("Unknown");
+                outputBaseDir = outputBaseDir.CreateSubdirectory("Unknown");
             }
 
-            if (options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.Year ||
-                options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonth ||
-                options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonthDay)
+            if (options.OutputDirOrganisation == PhotoDirOrganisation.Year ||
+                options.OutputDirOrganisation == PhotoDirOrganisation.YearMonth ||
+                options.OutputDirOrganisation == PhotoDirOrganisation.YearMonthDay)
             {
-                outputDir = outputDir.CreateSubdirectory(originalFileCreationTime.Year.ToString("D4"));
+                outputBaseDir = outputBaseDir.CreateSubdirectory(originalFileCreationTime.Year.ToString("D4"));
             }
-            if (options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonth ||
-                options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonthDay)
+            if (options.OutputDirOrganisation == PhotoDirOrganisation.YearMonth ||
+                options.OutputDirOrganisation == PhotoDirOrganisation.YearMonthDay)
             {
-                outputDir = outputDir.CreateSubdirectory(originalFileCreationTime.Month.ToString("D2"));
+                outputBaseDir = outputBaseDir.CreateSubdirectory(originalFileCreationTime.Month.ToString("D2"));
             }
-            if (options.OrganiseByDate == PhotoOptions.OutputDirsDateOrganisation.YearMonthDay)
+            if (options.OutputDirOrganisation == PhotoDirOrganisation.YearMonthDay)
             {
-                outputDir = outputDir.CreateSubdirectory(originalFileCreationTime.Day.ToString("D2"));
+                outputBaseDir = outputBaseDir.CreateSubdirectory(originalFileCreationTime.Day.ToString("D2"));
             }
-            return outputDir;
+            return outputBaseDir;
+        }
+
+
+        private async Task<bool> CreateOutputFilesAsync(
+            DirectoryInfo outputBaseDir,
+            FileInfo originalFile,
+            FileInfo? editedFile,
+            PhotoMetadata mi,
+            PhotoResults results)
+        {
+            // Determine the output directories and file name suffixes.
+            // This implements the file placement strategy for different PhotoFileVersionOrganisation values in options.OutputFileVersionOrganisation.
+            DirectoryInfo? originalOutputDir = null;
+            DirectoryInfo? editedOutputDir = null;
+            string? originalOutputSuffix = null;
+            string? editedOutputSuffix = null;
+            switch(this.options.OutputFileVersionOrganisation)
+            {
+                case PhotoFileVersionOrganisation.LatestVersionOnly:
+                    // Latest version only
+                    if (editedFile != null)
+                    {
+                        editedOutputDir = outputBaseDir;
+                    }
+                    else
+                    {
+                        originalOutputDir = outputBaseDir;
+                    }
+                    break;
+                case PhotoFileVersionOrganisation.AllVersionsOriginalsSubdir:
+                    // Latest version with originals in sub-folder
+                    if (editedFile != null)
+                    {
+                        editedOutputDir = outputBaseDir;
+                        originalOutputDir = outputBaseDir.AppendSubdirectory(originalsSubdirName);
+                    }
+                    else
+                    {
+                        originalOutputDir = outputBaseDir;
+                    }
+                    break;
+                case PhotoFileVersionOrganisation.AllVersionsSameDir:
+                    // All versions in same folder
+                    originalOutputDir = outputBaseDir;
+                    if (editedFile != null)
+                    {
+                        originalOutputSuffix = PhotoExtractor.originalsSuffix;
+                        editedOutputDir = outputBaseDir;
+                        editedOutputSuffix = PhotoExtractor.editedSuffix;
+                    }
+                    break;
+                case PhotoFileVersionOrganisation.AllVersionsSeparateSubdirs:
+                    // All versions each in separate sub-folders
+                    originalOutputDir = outputBaseDir.AppendSubdirectory(PhotoExtractor.originalsSubdirName);
+                    if (editedFile != null)
+                        editedOutputDir = outputBaseDir.AppendSubdirectory(PhotoExtractor.editedSubdirName);
+                    break;
+                case PhotoFileVersionOrganisation.EditedVersionsOnly:
+                    // Edited versionss only
+                    if (editedFile != null)
+                    {
+                        editedOutputDir = outputBaseDir;
+                    }
+                    break;
+                case PhotoFileVersionOrganisation.OriginalVersionsOnly:
+                    // Original versions only
+                    originalOutputDir = outputBaseDir;
+                    break;
+            }
+
+            //assert originalOutputDir is not null etc
+            //    assert have original
+            // assert not same
+
+            if (originalOutputDir != null && originalFile != null)
+            {
+                var outFile = await CreateOutputFileAsync(originalFile, originalOutputDir, originalOutputSuffix,
+                                                          mi.title, mi.description, mi.takenTime, mi.creationTime, mi.creationTime,
+                                                          mi.exifLocation,
+                                                          results);
+                RaiseProgress(originalFile, outFile);
+                if (editedOutputDir == null)
+                    results.OutputUneditedCount += 1;
+            }
+            if (editedOutputDir != null && editedFile != null)
+            {
+                var outFile = await CreateOutputFileAsync(editedFile, editedOutputDir, editedOutputSuffix,
+                                                          mi.title, mi.description, mi.takenTime, mi.creationTime, mi.lastModifiedTime,
+                                                          mi.editedLocation != GeoLocation.NullLatLonAltLocation ? mi.editedLocation : mi.exifLocation,
+                                                          results);
+                RaiseProgress(editedFile, outFile);
+                results.OutputEditedCount += 1;
+            }
+            results.OutputFileCount += 1;
+
+            return true;
         }
 
 
@@ -425,11 +505,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 
 
 
+
+
+
+
         /// <summary>
-        /// Create an output file.
+        /// Create an output file in a specified output directory.
         /// </summary>
-        /// <param name="sourceFile">Source file</param>
-        /// <param name="outDir">Directory to create file in.</param>
+        /// <param name="sourceFile">Source file. File must exist.</param>
+        /// <param name="outDir">Directory to create file in. The directory is created if it does not exist.</param>
         /// <param name="filenameSuffix">File name suffix. Can be null.</param>
         /// <param name="title">Image title. Can be null.</param>
         /// <param name="description">Image description. Can be null.</param>
@@ -458,14 +542,17 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                 throw new ArgumentException("Source file does not exist", nameof(sourceFile));
             if (outDir == null)
                 throw new ArgumentNullException(nameof(outDir));
-            if (!outDir.Exists)
-                throw new ArgumentException("Output directory does not exist", nameof(sourceFile));
             if (takenTime.Kind != DateTimeKind.Utc)
                 throw new ArgumentException($"Taken time must be UTC but is {takenTime.Kind}", nameof(takenTime));
             if (creationTime.Kind != DateTimeKind.Utc)
                 throw new ArgumentException($"Creation time must be UTC but is {creationTime.Kind}", nameof(creationTime));
             if (lastModifiedTime != null && lastModifiedTime.Value.Kind != DateTimeKind.Utc)
                 throw new ArgumentException($"Last modofoed time must be UTC but is {lastModifiedTime.Value.Kind}", nameof(lastModifiedTime));
+
+            if (!outDir.Exists)
+            {
+                outDir.Create();
+            }
 
             for (int i = 0; i < 9999; i++)
             {

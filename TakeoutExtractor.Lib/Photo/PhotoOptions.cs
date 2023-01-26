@@ -7,6 +7,42 @@ using System.Threading.Tasks;
 namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 {
     /// <summary>
+    /// 
+    /// </summary>
+    public enum PhotoFileVersionOrganisation
+    {
+        /// <summary>Latest version only</summary>
+        LatestVersionOnly,
+        /// <summary>Latest version with originals in sub-folder</summary>
+        AllVersionsOriginalsSubdir,
+        /// <summary>All versions in same folder</summary>
+        AllVersionsSameDir,
+        /// <summary>All versions each in separate sub-folders</summary>
+        AllVersionsSeparateSubdirs,
+        /// <summary>Edited versionss only</summary>
+        EditedVersionsOnly,
+        /// <summary>Original versions only</summary>
+        OriginalVersionsOnly
+    }
+
+    /// <summary>
+    /// Kinds of output organisation.
+    /// </summary>
+    public enum PhotoDirOrganisation
+    {
+        /// <summary>Place all output files in the same directory.</summary>
+        None = 0,
+        /// <summary>Create seperate directors for each year.</summary>
+        Year,
+        /// <summary>Create seperate directors for each year, and month sub-directories.</summary>
+        YearMonth,
+        /// <summary></summary>
+        /// <summary>Create seperate directors for each year and month, and day sub-directories.</summary>
+        YearMonthDay
+    }
+
+
+    /// <summary>
     /// Options for PhotoExtractor
     /// </summary>
     public class PhotoOptions : IExtractorOptions
@@ -16,42 +52,31 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         /// </summary>
         public string OutputFileNameFormat { get; set; } = "yyyyMMdd_HHmmss";
 
+
         /// <summary>
         /// Kind of date/time used doe output file name.
         /// If value is Vnspecified then local time kind is used.
         /// </summary>
         public DateTimeKind OutputFileNameTimeKind { get; set; } = DateTimeKind.Local;
 
+
         /// <summary>
-        /// Kinds of output organisation.
+        /// Organise output files by version.
         /// </summary>
-        public enum OutputDirsDateOrganisation
-        {
-            /// <summary>Place all output files in the same directory.</summary>
-            None = 0,
-            /// <summary>Create seperate directors for each year.</summary>
-            Year,
-            /// <summary>Create seperate directors for each year, and month sub-directories.</summary>
-            YearMonth,
-            /// <summary></summary>
-            /// <summary>Create seperate directors for each year and month, and day sub-directories.</summary>
-            YearMonthDay
-        }
+        public PhotoFileVersionOrganisation OutputFileVersionOrganisation { get; set; } = PhotoFileVersionOrganisation.LatestVersionOnly;
+
 
         /// <summary>
         /// Organise directories by date/time of creation
         /// </summary>
-        public OutputDirsDateOrganisation OrganiseByDate { get; set; } = OutputDirsDateOrganisation.None;
+        public PhotoDirOrganisation OutputDirOrganisation { get; set; } = PhotoDirOrganisation.None;
 
-        /// <summary>
-        /// Extract and retain original photo/video files if there is an edited version.
-        /// </summary>
-        public bool KeepOriginalsForEdited { get; set; } = false;
 
         /// <summary>
         /// Update image exif information using values in json manifest.
         /// </summary>
         public bool UpdateExif { get; set; } = true;
+
 
         /// <summary>
         /// Default values
@@ -60,8 +85,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
         {
             OutputFileNameFormat = "yyyyMMdd_HHmmss",
             OutputFileNameTimeKind = DateTimeKind.Local,
-            OrganiseByDate = OutputDirsDateOrganisation.None,
-            KeepOriginalsForEdited = false,
+            OutputFileVersionOrganisation = PhotoFileVersionOrganisation.LatestVersionOnly,
+            OutputDirOrganisation = PhotoDirOrganisation.None,
             UpdateExif = true
         };
 

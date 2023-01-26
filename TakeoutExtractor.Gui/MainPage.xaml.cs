@@ -32,8 +32,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
             PhotosFileNameTimeKindPicker.SelectedItem = PhotosFileNameTimeKindPicker.Items.First(x => x.Equals(PhotoOptions.Defaults.OutputFileNameTimeKind.ToString(), 
                                                                                                                StringComparison.InvariantCultureIgnoreCase));
             PhotosUpdateExifCbx.IsChecked = PhotoOptions.Defaults.UpdateExif;
-            PhotosKeepOriginalsCbx.IsChecked = PhotoOptions.Defaults.KeepOriginalsForEdited;
-            PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OrganiseByDate;
+            PhotoFileOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OutputFileVersionOrganisation;
+            PhotosSubdirOrganisationPicker.SelectedIndex = (int)PhotoOptions.Defaults.OutputDirOrganisation;
         }
 
 
@@ -149,8 +149,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                     OutputFileNameFormat = PhotosFileNameFormatTxt.Text,
                     OutputFileNameTimeKind = Enum.Parse<DateTimeKind>(PhotosFileNameTimeKindPicker.SelectedItem.ToString()!, true), 
                     UpdateExif = PhotosUpdateExifCbx.IsChecked,
-                    KeepOriginalsForEdited = PhotosKeepOriginalsCbx.IsChecked,
-                    OrganiseByDate = (PhotoOptions.OutputDirsDateOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
+                    OutputFileVersionOrganisation = (PhotoFileVersionOrganisation)PhotoFileOrganisationPicker.SelectedIndex,
+                    OutputDirOrganisation = (PhotoDirOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
                 };
                 mediaOptions.Add(photoOptions);
             }

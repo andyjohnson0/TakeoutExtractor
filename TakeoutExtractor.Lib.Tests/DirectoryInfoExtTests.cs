@@ -13,7 +13,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
     [TestClass]
     public class DirectoryInfoExtTests
     {
-        [TestMethod]
+        #region IsSubirOf
+
+        [TestMethod, TestCategory("IsSubirOf")]
         public void ImmediateSubdir()
         {
             var d1 = new DirectoryInfo("/foo/bar");
@@ -24,7 +26,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         }
 
 
-        [TestMethod]
+        [TestMethod, TestCategory("IsSubirOf")]
         public void NonImmediateSubdir()
         {
             var d1 = new DirectoryInfo("/foo/");
@@ -35,7 +37,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         }
 
 
-        [TestMethod]
+        [TestMethod, TestCategory("IsSubirOf")]
         public void SameDirs()
         {
             var d1 = new DirectoryInfo("/foo/bar/baz");
@@ -44,7 +46,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         }
 
 
-        [TestMethod]
+        [TestMethod, TestCategory("IsSubirOf")]
         [ExpectedException(typeof(ArgumentNullException))]
         public void Validation()
         {
@@ -53,5 +55,20 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
             d1.IsSubirOf(d2!);
         }
+
+        #endregion IsSubirOf
+
+
+        #region AppendSubdirectory
+
+        [TestMethod, TestCategory("AppendSubdirectory")]
+        public void SingleDir()
+        {
+            var d1 = new DirectoryInfo("/foo/");
+
+            var d2 = d1.AppendSubdirectory("bar");
+        }
+
+        #endregion AppendSubdirectory
     }
 }
