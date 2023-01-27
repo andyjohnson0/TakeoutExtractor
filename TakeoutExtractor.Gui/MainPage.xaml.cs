@@ -120,8 +120,28 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                 return;
             }
 
-            // Check for existing files / directories in the output folder
             var outputDi = new DirectoryInfo(OutputDirEntry.Text);
+
+            // If output folder doesn't exist then prompt to create it.
+            if (!outputDi.Exists)
+            {
+                var choice = await QuestionDialog.ShowAsync("Create Output Folder?", 
+                                                            "The output folder does not exist. Do you wish to create it and proceed?",
+                                                            "Ok", "Cancel");
+                if (choice != "Ok")
+                    return;
+                try
+                {
+                    outputDi.Create();
+                }
+                catch(IOException)
+                {
+                    await DisplayAlert("Error", "The output directory could not be created.", "Ok");
+                    return;
+                }
+            }
+
+            // Check for existing files / directories in the output folder
             if (outputDi.Exists && (outputDi.GetDirectories().Length > 0 || outputDi.GetFiles().Length > 0))
             {
                 var choice = await QuestionDialog.ShowAsync("Proceed?", 
