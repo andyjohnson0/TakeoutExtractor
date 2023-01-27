@@ -239,7 +239,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             else
                 results.InputUneditedCount += 1;
 
-            // At this point we're ready to create the outputs
+            // At this point we're ready to create the outputs for this sidecar and associated source files.
             try
             {
                 // Create output directory, if not already created, and output files.
@@ -248,7 +248,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             }
             catch(Exception ex)
             {
-                // No file extension. This rarely happens.
+                // No file extension? This rarely happens.
                 var alert = new ExtractorAlert(ExtractorAlertType.Error, $"Failed to create outputs for {sidecarFile}")
                 {
                     AssociatedFile = sidecarFile,
@@ -373,11 +373,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                     originalOutputDir = outputBaseDir;
                     break;
             }
-
-            //assert originalOutputDir is not null etc
-            //    assert have original
-            // assert not same
-
+            
             if (originalOutputDir != null && originalFile != null)
             {
                 var outFile = await CreateOutputFileAsync(originalFile, originalOutputDir, originalOutputSuffix,
@@ -502,11 +498,6 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             // Not found
             return null;
         }
-
-
-
-
-
 
 
         /// <summary>
