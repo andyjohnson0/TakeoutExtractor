@@ -40,6 +40,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
         // Results of the last extraction operation.
         private IEnumerable<ExtractorAlert>? alerts = null;
 
+        // Has the splash been displayed?
+#if RELEASE && (WINDOWS || MACCATALYST)
+        private bool splashShown = false;
+#endif
+
 
         protected override void OnAppearing()
         {
@@ -49,8 +54,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
 
 
 #if RELEASE && (WINDOWS || MACCATALYST)
-            var splash = new SplashOverlay();
-            splash.Show(this.MainGrid, new TimeSpan(0, 0, 3));
+            if (!splashShown)
+            {
+                var splash = new SplashOverlay();
+                splash.Show(this.MainGrid, new TimeSpan(0, 0, 3));
+                splashShown = true;
+            }
 #endif
         }
 
