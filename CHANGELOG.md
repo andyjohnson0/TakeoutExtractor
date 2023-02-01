@@ -1,5 +1,19 @@
 #Change Log
 
+##2023-02-01 v1.0
+
+v1.0 release!
+
+Enhancements:
+- Implemented six different photo version handling strategies instead of the previous single fixed approach.
+As part of this, removed configurable handling of directory name and file suffix for original photos.
+
+Fit and finish:
+- Issue #15: Prevent splash screen from being displayed when navigating back to main page from alerts page
+- Made alerts page scrollable. Uses theme-dependant link colour for readability.
+- Prompt to create output directory if it doesn't exist
+
+
 ##2023-01-18 v0.9
 
 Multi-platform release: now includes a Mac Catalyst version.

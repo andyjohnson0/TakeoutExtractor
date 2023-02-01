@@ -28,5 +28,23 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 throw new ArgumentNullException(nameof(di));
             return self.FullName.StartsWith(di.FullName);
         }
+
+
+        /// <summary>
+        /// Append a subdirectory to the path of a DirectoryInfo object.
+        /// Does not check whether directories exist.
+        /// </summary>
+        /// <param name="self">DirectoeyInfo object.</param>
+        /// <param name="subdirName">Subdirectory name or names</param>
+        /// <returns>A DirectoryInfo object referring to the subdirectory</returns>
+        /// <exception cref="ArgumentNullException">Argument is null</exception>
+        public static DirectoryInfo AppendSubdirectory(
+            this DirectoryInfo self,
+            string subdirName)
+        {
+            if (subdirName == null)
+                throw new ArgumentNullException(nameof(subdirName));
+            return new DirectoryInfo(Path.Combine(self.FullName, subdirName));
+        }
     }
 }

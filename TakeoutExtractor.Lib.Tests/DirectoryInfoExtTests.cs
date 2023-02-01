@@ -13,7 +13,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
     [TestClass]
     public class DirectoryInfoExtTests
     {
-        [TestMethod]
+        #region IsSubirOf
+
+        [TestMethod, TestCategory("IsSubirOf")]
         public void ImmediateSubdir()
         {
             var d1 = new DirectoryInfo("/foo/bar");
@@ -24,7 +26,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         }
 
 
-        [TestMethod]
+        [TestMethod, TestCategory("IsSubirOf")]
         public void NonImmediateSubdir()
         {
             var d1 = new DirectoryInfo("/foo/");
@@ -35,7 +37,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         }
 
 
-        [TestMethod]
+        [TestMethod, TestCategory("IsSubirOf")]
         public void SameDirs()
         {
             var d1 = new DirectoryInfo("/foo/bar/baz");
@@ -44,14 +46,39 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
         }
 
 
-        [TestMethod]
+        [TestMethod, TestCategory("IsSubirOf")]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void Validation()
+        public void Validation1()
         {
             var d1 = new DirectoryInfo("/foo/");
             DirectoryInfo? d2 = null;
 
             d1.IsSubirOf(d2!);
         }
+
+        #endregion IsSubirOf
+
+
+        #region AppendSubdirectory
+
+        [TestMethod, TestCategory("AppendSubdirectory")]
+        public void SingleDir()
+        {
+            var d1 = new DirectoryInfo("/foo/");
+            var d2 = d1.AppendSubdirectory("bar");
+            var parts = d2.FullName.Split(Path.DirectorySeparatorChar);
+            Assert.AreEqual("bar", parts[parts.Length - 1]);
+        }
+
+
+        [TestMethod, TestCategory("AppendSubdirectory")]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Validation2()
+        {
+            var d1 = new DirectoryInfo("/foo/");
+            var d2 = d1.AppendSubdirectory(null!);
+        }
+
+        #endregion AppendSubdirectory
     }
 }
