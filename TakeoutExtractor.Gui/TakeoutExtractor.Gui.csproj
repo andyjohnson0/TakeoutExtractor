@@ -22,8 +22,8 @@
 		<ApplicationIdGuid Condition="'$(Configuration)' != 'Release'">CFF1B00D-439D-43AF-888D-3A8BE0A0B56A</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>0.9.0</ApplicationDisplayVersion>
-		<ApplicationVersion>11</ApplicationVersion>
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+		<ApplicationVersion>12</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -34,9 +34,9 @@
 		
 		<AssemblyName>tex-gui</AssemblyName>
 		<Title>Takeout Extractor</Title>
-		<Version>0.9</Version>
-		<AssemblyVersion>0.9.0</AssemblyVersion>
-		<FileVersion>0.9.0</FileVersion>
+		<Version>1.0</Version>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<FileVersion>1.0.0</FileVersion>
 		<RepositoryUrl>https://github.com/andyjohnson0/TakeoutExtractor</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
