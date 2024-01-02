@@ -179,7 +179,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Gui
                     OutputFileNameTimeKind = Enum.Parse<DateTimeKind>(PhotosFileNameTimeKindPicker.SelectedItem.ToString()!, true), 
                     UpdateExif = PhotosUpdateExifCbx.IsChecked,
                     OutputFileVersionOrganisation = (PhotoFileVersionOrganisation)PhotoFileOrganisationPicker.SelectedIndex,
-                    OutputDirOrganisation = (PhotoDirOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex
+                    OutputDirOrganisation = (PhotoDirOrganisation)PhotosSubdirOrganisationPicker.SelectedIndex,
+                    ExtractDeletedFiles = PhotosExtractDeletedCbx.IsChecked
                 };
                 mediaOptions.Add(photoOptions);
             }

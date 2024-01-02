@@ -56,6 +56,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                 if (commands.Contains(arg))
                 {
                     currentCommand = arg;
+                    commandToArgs.Add(currentCommand, new List<string>());
                 }
                 else
                 {

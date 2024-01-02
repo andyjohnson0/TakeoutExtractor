@@ -69,9 +69,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                         return null;
                     }
 
-                    // Get title from json manifest. Original file will be the same as the title
+                    // Get title from json manifest.Original file will be the same as the title
                     // but the name part (excluding path and ext) will have a max length of 'maxFileNameLen' chars.
-                    md.title = elem.GetString()!;
+                    md.title = elem.ValueKind == JsonValueKind.Array ? elem[0].GetString()! : elem.GetString()!;
 
                     // Get the description. This is the optional human-readable description of the file's contents.
                     if (manifestDoc.RootElement.TryGetProperty("description", out elem))
@@ -83,18 +83,22 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                     if (manifestDoc.RootElement.TryGetProperty("photoTakenTime", out elem) &&
                         elem.TryGetProperty("timestamp", out elem))
                     {
+                        // Taken time is the time that the photo was taken. This will normally be the same (of just before) the creation time.
+                        // But if the date/time has been manually edited inthe Google Photos UI then this will reflect the edited timestamp.
                         var ticksStr = long.Parse(elem.GetString()!);
                         md.takenTime = DateTime.UnixEpoch.AddSeconds(ticksStr);  // UTC
                     }
                     if (manifestDoc.RootElement.TryGetProperty("creationTime", out elem) &&
                         elem.TryGetProperty("timestamp", out elem))
                     {
+                        // Creation time is the time that the photo was added to Google Photos.
                         var ticksStr = long.Parse(elem.GetString()!);
                         md.creationTime = DateTime.UnixEpoch.AddSeconds(ticksStr);  // UTC
                     }
                     if (manifestDoc.RootElement.TryGetProperty("photoLastModifiedTime", out elem) &&
                         elem.TryGetProperty("timestamp", out elem))
                     {
+                        // Last modified time seems to be rarely used?
                         var ticksStr = long.Parse(elem.GetString()!);
                         md.lastModifiedTime = DateTime.UnixEpoch.AddSeconds(ticksStr);  // UTC
                     }

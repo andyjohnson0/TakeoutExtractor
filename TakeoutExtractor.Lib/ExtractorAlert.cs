@@ -64,10 +64,19 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 var sb = new StringBuilder();
                 using (var wtr = new StringWriter(sb))
                 {
-                    Task.Run(() => this.WriteAsync(wtr));
+                    this.Write(wtr);
                 }
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// Does the alert have a full description?
+        /// Used for control visibility binding.
+        /// </summary>
+        public bool HasFullDescription
+        {
+            get { return !string.IsNullOrEmpty(this.FullDescription); }
         }
 
         /// <summary>
@@ -95,13 +104,13 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
         /// Write the alert to a text stream
         /// </summary>
         /// <param name="wtr">Text writer</param>
-        public async Task WriteAsync(TextWriter wtr)
+        public void Write(TextWriter wtr)
         {
-            await wtr.WriteLineAsync($"{Timestamp.ToString("u")} {Type} {Description}");
+            wtr.WriteLine($"{Timestamp.ToString("u")} {Type} {Description}");
             if (AssociatedFile != null)
-                await wtr.WriteLineAsync($"File: {AssociatedFile.FullName}");
+                wtr.WriteLine($"File: {AssociatedFile.FullName}");
             if (AssociatedDirectory != null)
-                await wtr.WriteLineAsync($"Directory: {AssociatedDirectory.FullName}");
+                wtr.WriteLine($"Directory: {AssociatedDirectory.FullName}");
             if (AssociatedObject != null)
             {
                 var e = AssociatedObject as System.Collections.IEnumerable;
@@ -109,9 +118,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                     e = new object[] { AssociatedObject };
                 foreach (var o in e)
                 {
-                    await wtr.WriteLineAsync($"Info: {o}");
+                    wtr.WriteLine($"Info: {o}");
                 }
             }
+            if (AssociatedException != null)
+                wtr.WriteLine($"Error: {AssociatedException.Message}");
         }
 
 

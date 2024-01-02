@@ -35,8 +35,8 @@
 		<AssemblyName>tex-gui</AssemblyName>
 		<Title>Takeout Extractor</Title>
 		<Version>1.0</Version>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
-		<FileVersion>1.0.0</FileVersion>
+		<AssemblyVersion>1.1.0</AssemblyVersion>
+		<FileVersion>1.1.0</FileVersion>
 		<RepositoryUrl>https://github.com/andyjohnson0/TakeoutExtractor</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -45,7 +45,7 @@
 		<PackageProjectUrl>https://github.com/andyjohnson0/TakeoutExtractor</PackageProjectUrl>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-		<PackageCertificateThumbprint>187B8610DC0125E447E7EE5F145798F1C282061C</PackageCertificateThumbprint>
+		<PackageCertificateThumbprint>36B6EE0E9115324BA02A6BE8147C1AC0AD0BBBA1</PackageCertificateThumbprint>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>

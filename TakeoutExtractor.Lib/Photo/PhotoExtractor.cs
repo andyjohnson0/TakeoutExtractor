@@ -158,6 +158,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             PhotoResults results,
             CancellationToken cancellationToken)
         {
+            if (inDir.Name == "Bin" && !options.ExtractDeletedFiles)
+            {
+                // Skip the bin folder
+                return;
+            }
+
             // Process all json manifests in 'inDir' in name order.
             foreach (var sidecarFile in inDir.EnumerateFiles(starDotJason).OrderBy(f => f.Name))
             {
@@ -192,6 +198,15 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             PhotoOptions options,
             PhotoResults results)
         {
+            // Ignore common json files that are not image sidecars.
+            var ignoreFileNames = new string[] { "metadata", "print-subscriptions", "shared_album_comments", "user-generated-memory-titles" };
+            if (ignoreFileNames.Any(s => Path.GetFileNameWithoutExtension(sidecarFile.Name).StartsWith(s)))
+            {
+                // Ignore.
+                return false;
+            }
+
+            // Get metadata from sidecar.
             var mi = await PhotoMetadata.CreateFromSidecar(sidecarFile);
             if (mi == null)
             {
@@ -243,7 +258,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             try
             {
                 // Create output directory, if not already created, and output files.
-                var destDir = CreateOutputDir(outDir, originalFile, mi.creationTime, options);
+                var destDir = CreateOutputDir(outDir, originalFile, mi.takenTime, options);
                 return await CreateOutputFilesAsync(destDir, originalFile, editedFile, mi, results);
             }
             catch(Exception ex)
@@ -550,7 +565,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                 // Build the output file name. Because images can have timestamps that differ by less than a second, we prepend
                 // a uniqieness suffix if necessary to make the filename uniqie.
                 var uniqSuffix = i == 0 ? "" : string.Format("-{0:000}", i);
-                var t = (this.options.OutputFileNameTimeKind == DateTimeKind.Utc) ? creationTime.ToUniversalTime() : creationTime.ToLocalTime();
+                var t = (this.options.OutputFileNameTimeKind == DateTimeKind.Utc) ? takenTime.ToUniversalTime() : takenTime.ToLocalTime();
                 var filename = t.ToString(options.OutputFileNameFormat) + uniqSuffix + filenameSuffix + sourceFile.Extension;
                 var destFile = new FileInfo(Path.Combine(outDir.FullName, filename));
                 if (destFile.Exists)
@@ -595,7 +610,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
                         await imageFile.SaveAsync(destFile.FullName);
                         if (imageFile.Errors?.Count > 0)
                         {
-                            var imageAlert = new ExtractorAlert(ImageErrorsToAlertType(imageFile.Errors), "One or more errors occurred while updatimg image EXIF data")
+                            var imageAlert = new ExtractorAlert(ImageErrorsToAlertType(imageFile.Errors), "One or more errors occurred while updating image EXIF data")
                             {
                                 AssociatedFile = destFile,
                                 AssociatedObject = imageFile.Errors

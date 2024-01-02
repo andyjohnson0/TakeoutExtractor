@@ -61,7 +61,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                             UpdateExif = kvp.Value.GetArgBool("ux", defaultValue: PhotoOptions.Defaults.UpdateExif),
                             OutputDirOrganisation = kvp.Value.GetArgEnum<PhotoDirOrganisation>("fd",
                                                                                                new string?[] { null, "y", "ym", "ymd" },
-                                                                                               defaultValue: PhotoOptions.Defaults.OutputDirOrganisation)
+                                                                                               defaultValue: PhotoOptions.Defaults.OutputDirOrganisation),
+                            ExtractDeletedFiles = kvp.Value.GetArgBool("xd", defaultValue: false)
                         };
                         mediaOptions.Add(opt);
                         break;
@@ -95,7 +96,7 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
                 Console.WriteLine($"{errorCount} error, {warningCount} warning, {infoCount} information");
                 foreach(var alert in alerts)
                 {
-                    await alert.WriteAsync(Console.Out);
+                    alert.Write(Console.Out);
                 }
 
                 // All done
@@ -179,6 +180,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli
             Console.WriteLine("                Create subdirectories for year, year and month, or year and month and day. Default: none.");
             Console.WriteLine("            -ux true | false");
             Console.WriteLine("                Update edited EXIF information in output files. Default: true.");
+            Console.WriteLine("            -xd true | false");
+            Console.WriteLine("                Extract the deleted files in the Bin directory. Default: false.");
             Console.WriteLine();
             Console.WriteLine("(end)");
             Console.WriteLine();

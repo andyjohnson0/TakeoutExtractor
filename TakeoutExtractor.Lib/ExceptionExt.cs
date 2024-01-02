@@ -40,6 +40,25 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
 
         /// <summary>
+        /// Get data from an exception
+        /// </summary>
+        /// <param name="ex">The exception. Must not be null.</param>
+        /// <param name="key">Key. Must not be null.</param>
+        /// <returns>The data corresponding to the key, or null if there is no data for that key.</returns>
+        /// <exception cref="ArgumentNullException">Null parameter</exception>
+        public static object? GetData(
+            this Exception ex,
+            string key)
+        {
+            if (ex == null)
+                throw new ArgumentNullException(nameof(ex));
+
+            var dict = ex.DataDict();
+            return dict.ContainsKey(key) ? ex.Data[key] : null;
+        }
+
+
+        /// <summary>
         /// Convert an exceptions Data collection to an IDictionary<string, object?> collection for easier handling.</string>
         /// </summary>
         /// <param name="ex">The exception. Must not be null.</param>

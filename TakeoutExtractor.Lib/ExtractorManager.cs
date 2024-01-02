@@ -86,18 +86,34 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
                 await logFileWtr.WriteStringAsync("Started", DateTime.UtcNow.ToString("u"));
             }
 
+            bool isStopOnError = false;
             var results = new List<IExtractorResults>();
             try
             {
                 results.AddRange(await ExtractAsync(globalOptions.InputDir, globalOptions.OutputDir, cancellationToken, logFileWtr));
+            }
+            catch(Exception ex)
+            {
+                isStopOnError = (ex is InvalidOperationException) && globalOptions.StopOnError;
+                if (isStopOnError)
+                {
+                    // Get the IExtractorResults that was attached in Extractor_Alert()
+                    var r = ex.GetData("results") as IExtractorResults;
+                    if (r != null)
+                        results.Add(r);
+                }
             }
             finally
             {
                 if (logFileWtr != null)
                 {
                     await logFileWtr.WriteStringAsync("Finished", DateTime.UtcNow.ToString("u"));
-                    await logFileWtr.WriteEndObjectAsync();
-                    await logFileWtr.WriteEndDocumentAsync();
+                    if (!isStopOnError)
+                    {
+                        // Only attempt to tidy-up the logical logfile structure if we have stopped on error.
+                        await logFileWtr.WriteEndObjectAsync();
+                        await logFileWtr.WriteEndDocumentAsync();
+                    }
                     await logFileWtr.FlushAsync();
                 }
                 if (logFileJsonWtr != null)
@@ -174,7 +190,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib
 
             if ((args?.Alert?.Type == ExtractorAlertType.Error) && this.globalOptions.StopOnError)
             {
-                throw new InvalidOperationException("An error has occurred");
+                var results = new Photo.PhotoResults();
+                results.Add(args.Alert);
+                throw new InvalidOperationException("An error has occurred").AddData("results", results);
             }
         }
     }
