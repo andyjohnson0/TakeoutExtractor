@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net6.0-tizen</TargetFrameworks> -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
 		<OutputType>Exe</OutputType>
 		<RootNamespace>uk.andyjohnson.TakeoutExtractor.Gui</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -15,26 +15,27 @@
 		<!-- Display name -->
 		<ApplicationTitle Condition="'$(Configuration)' == 'Release'">Takeout Extractor</ApplicationTitle>
 		<ApplicationTitle Condition="'$(Configuration)' != 'Release'">Takeout Extractor (development)</ApplicationTitle>
-		
+
 		<!-- App Identifier -->
 		<ApplicationId>uk.andyjohnson.takeoutextractor.gui</ApplicationId>
 		<ApplicationIdGuid Condition="'$(Configuration)' == 'Release'">AD79D964-7DE4-44D0-B604-69F7925DDE60</ApplicationIdGuid>
 		<ApplicationIdGuid Condition="'$(Configuration)' != 'Release'">CFF1B00D-439D-43AF-888D-3A8BE0A0B56A</ApplicationIdGuid>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>12</ApplicationVersion>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<!-- Platforms -->
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-		
+
 		<AssemblyName>tex-gui</AssemblyName>
 		<Title>Takeout Extractor</Title>
-		<Version>1.0</Version>
+		<Version>1.1</Version>
 		<AssemblyVersion>1.1.0</AssemblyVersion>
 		<FileVersion>1.1.0</FileVersion>
 		<RepositoryUrl>https://github.com/andyjohnson0/TakeoutExtractor</RepositoryUrl>
@@ -51,12 +52,45 @@
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+		
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-maccatalyst|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-windows10.0.19041.0|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-maccatalyst|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-windows10.0.19041.0|AnyCPU'">
+	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" />
-		
+
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 
@@ -71,14 +105,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Splash\splash_embed.svg" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -86,13 +113,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="SplashOverlay.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\PublishProfiles\" />
+	  <Folder Include="Resources\Images\" />
 	</ItemGroup>
 
 </Project>
