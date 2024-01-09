@@ -1,5 +1,40 @@
 #Change Log
 
+##2024-01-08 v1.1
+
+Fixes:
+
+- Issue #16: Trailing command is lost.
+
+- Issue #17: Array error accessing manifest title element.
+
+- Issue #18: Windows GUI is not longer easy installable due to expired publishing certificate. Certificate now expires in 2034.
+
+- Issue #19: Use sidecar photoTakenTime element for file and directory naming.
+
+- Issue #20: Ignore json files that are not image sidecars. metadata.json, print-subscriptions.json, shared_album_comments.json,
+  user-generated-memory-titles.json, etc. are ignored.
+
+- Issue #20: Deleted photos/videos are extracted.
+
+Enhancements:
+
+- Migrated to .net 7 and refreshed gui project structure
+
+- Added option to ignore (default) or extract deleted photos files in the Bin folder.
+
+- Improved error detail reporting. Display alert details link only if alert has details to display.
+
+- Replaced GUI app icon and splash overlay.
+
+- Added additional readme content and a screenshot.
+
+- Include PubXml files for this solution since they contain no secrets
+
+Note: This is a source-only release as publishing the gui app on Windows is broken for unknown reasons. See issue #22.
+
+
+
 ##2023-02-01 v1.0
 
 v1.0 release!
