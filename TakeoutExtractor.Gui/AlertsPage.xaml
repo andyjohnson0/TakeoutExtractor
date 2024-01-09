@@ -74,6 +74,7 @@
                             <Label
                                     Grid.Column="3"
                                     Text="Details"
+                                    IsVisible="{Binding Path=HasFullDescription}"
                                     TextColor="{AppThemeBinding Light={StaticResource Blue}, Dark={StaticResource OffWhite}}"
                                     TextDecorations="Underline">
                                 <Label.GestureRecognizers>

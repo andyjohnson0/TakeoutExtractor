@@ -183,7 +183,7 @@
                                 <CheckBox
                                     Grid.Row="2" Grid.Column="1"
                                     x:Name="PhotosUpdateExifCbx"
-                                    SemanticProperties.Hint="Update edited EXIF information"
+                                    SemanticProperties.Hint="Update edited EXIF information (photos only)"
                                     HorizontalOptions="Start" VerticalOptions="Center"/>
 
                                 <Label
@@ -194,7 +194,7 @@
                                     Grid.Row="3" Grid.Column="1"
                                     x:Name="PhotoFileOrganisationPicker"
                                     HorizontalOptions="Start" VerticalOptions="Center"
-                                    SemanticProperties.Hint="Organise extracted photos based on whether original or edited">
+                                    SemanticProperties.Hint="Organise extracted photos and videos based on whether original or edited">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
                                             <x:String>Latest version only</x:String>
@@ -214,7 +214,7 @@
                                 <Picker 
                                     Grid.Row="4" Grid.Column="1"
                                     x:Name="PhotosSubdirOrganisationPicker"
-                                    SemanticProperties.Hint="Organise extracted photos in folders based on create time"
+                                    SemanticProperties.Hint="Organise extracted photos and videos in folders based on create time"
                                     HorizontalOptions="Start" VerticalOptions="Center">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
@@ -225,6 +225,17 @@
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>
+
+                                <Label
+                                    Grid.Row="5" Grid.Column="0"
+                                    Text="Extract deleted files" 
+                                    HorizontalOptions="End" VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="5" Grid.Column="1"
+                                    x:Name="PhotosExtractDeletedCbx"
+                                    SemanticProperties.Hint="Extract deleted photos and videos from the bin folder"
+                                    HorizontalOptions="Start" VerticalOptions="Center"/>
+
                             </Grid>
                         </VerticalStackLayout>
                     </Border>

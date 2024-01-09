@@ -1,9 +1,14 @@
 ﻿# Takout Extractor
 
 Extracts the contents of a [Google Takeout](https://takeout.google.com/) archive - re-organising it, adding missing metadata, and
-applying a uniform file naming convention.
+applying a uniform file naming convention. Runs on Windows and MacOS. Requires .NET 7 or later.
 
-This software currently processes only photo and video files. It is planned to add support for other media types in the future.
+Gui and command-line implementations are provided - see the TakeoutExtractor.Gui and TakeoutExtractor.Cli projects respectively.
+Releases include the Gui for Windows and MacOS, and the cli for Windows only.
+
+![Takeout Extractor GUI screenshot](screenshot-gui-small.png)
+
+This software currently extracts only photo and video files. It is planned to add support for other Takeout media types in the future.
 
 - *Photos and Videos* Image files in a Google takeout dataset have inconsistent naming. They also do not contain exif timestamps -
 although, confusingly, they do contain other metadata such as location information and camera settings. This software builds a uniformaly
@@ -14,22 +19,21 @@ named copy of the image and video files in a takeout dataset and restores their 
 
 1. Build the solution in Visual Studio 2022
 
-2. The Gui-extractor, tex-gui.exe, will be found in `TakeoutExtractorGui\bin\Release\net6.0\`.
-
-3. The command-line extractor, `tex.exe`, will be found in `TakeoutExtractorCli\bin\Release\net6.0\`.
+2. The command-line extractor, `tex.exe`, will be found in `TakeoutExtractorCli\bin\Release\net6.0\`.
 Run `tex /h` for help.
-
 
 
 ## Built With
 
-- Visual Studio 2022, v17.3 or later for .net Maui support. .net 6.0, with nullable reference type checking enabled
-- Fork of [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) with bug-fixes, included in the `ThirdParty` directory with source available at https://github.com/andyjohnson0/exiflibrary.
+- Visual Studio 2022. Maui-based gui currently requires VS2022 7.3.0 preview 2.0 or later.
+- .net 7.0, with nullable reference type checking enabled
+- A fork of [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) v2.1.4 with additional fixes, available at https://github.com/andyjohnson0/exiflibrary.
+  A pre-built dll is included in the ThirdParty directory.
 
 
 ## Author
 
-Andeew Johnson | [github.com/andyjohnson0](https://github.com/andyjohnson0) | https://andyjohnson.uk
+Andrew Johnson | [github.com/andyjohnson0](https://github.com/andyjohnson0) | https://andyjohnson.uk
 
 
 ## Licence
@@ -38,11 +42,10 @@ Except for third-party elements that are licened separately, this project is lic
 
 The folder picker implementations used in the gui project are based on code from [MauiFolderPickerSample](https://github.com/jfversluis/MauiFolderPickerSample)
 and https://blog.verslu.is/maui/folder-picker-with-dotnet-maui/ by Gerald Versluis. 
-Licenced as [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)] (https://creativecommons.org/licenses/by-sa/4.0/) by the original author.
+Licenced as [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/) by the original author.
 
-The [shovel icon](https://github.com/frexy/glyph-iconset/blob/master/svg/si-glyph-shovel.svg) used by the gui project is from (SmartIcon's)[https://smarticons.co/]
-excellent *Gylph* icon set at https://glyph.smarticons.co/ and https://github.com/frexy/glyph-iconset. 
-Licenced as [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/) by the original author.
+The shovel icon used by the GUI project is from [svgrepo.com](https://www.svgrepo.com) and is licenced as 
+[CC0](https://creativecommons.org/publicdomain/zero/1.0/) / Public Domain by svgrepo.
 
 
 ## Future Enhancements, TODOs, and known bugs

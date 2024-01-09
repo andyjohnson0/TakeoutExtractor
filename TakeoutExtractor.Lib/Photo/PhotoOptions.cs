@@ -79,6 +79,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
 
 
         /// <summary>
+        /// Extract the deleted file in the bin directory.
+        /// </summary>
+        public bool ExtractDeletedFiles { get; set; } = false;
+
+
+        /// <summary>
         /// Default values
         /// </summary>
         public static readonly PhotoOptions Defaults = new PhotoOptions()
@@ -87,7 +93,8 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Photo
             OutputFileNameTimeKind = DateTimeKind.Local,
             OutputFileVersionOrganisation = PhotoFileVersionOrganisation.LatestVersionOnly,
             OutputDirOrganisation = PhotoDirOrganisation.None,
-            UpdateExif = true
+            UpdateExif = true,
+            ExtractDeletedFiles = false
         };
 
 
