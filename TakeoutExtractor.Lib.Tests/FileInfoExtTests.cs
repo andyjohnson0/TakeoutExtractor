@@ -63,19 +63,17 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void CompactName_Validation1()
         {
-            
-            longPathFi.CompactName(0);
+
+            Assert.Throws<ArgumentException>(() => longPathFi.CompactName(0));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void CompactName_Validation2()
         {
 
-            longPathFi.CompactName(-1);
+            Assert.Throws<ArgumentException>(() => longPathFi.CompactName(-1));
         }
 
         #endregion CompactName
@@ -108,18 +106,16 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TrimName_ValidationZeroLength()
         {
-            var fi2 = shortPathFi.TrimName(0);
+            Assert.Throws<ArgumentException>(() => shortPathFi.TrimName(0));
         }
 
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TrimName_ValidationNegativeLength()
         {
-            var fi2 = shortPathFi.TrimName(-1);
+            Assert.Throws<ArgumentException>(() => shortPathFi.TrimName(-1));
         }
 
         #endregion TrimName
@@ -145,10 +141,9 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void AppendToName_AppendNull()
         {
-            var fi2 = shortPathFi.AppendToName(null!);
+            Assert.Throws<ArgumentNullException>(() => shortPathFi.AppendToName(null!));
         }
 
         #endregion AppendToName

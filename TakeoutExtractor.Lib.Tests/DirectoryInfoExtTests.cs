@@ -47,13 +47,12 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
 
         [TestMethod, TestCategory("IsSubirOf")]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void Validation1()
         {
             var d1 = new DirectoryInfo("/foo/");
             DirectoryInfo? d2 = null;
 
-            d1.IsSubirOf(d2!);
+            Assert.Throws<ArgumentNullException>(() => d1.IsSubirOf(d2!));
         }
 
         #endregion IsSubirOf
@@ -72,11 +71,10 @@ namespace uk.andyjohnson.TakeoutExtractor.Lib.Tests
 
 
         [TestMethod, TestCategory("AppendSubdirectory")]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void Validation2()
         {
             var d1 = new DirectoryInfo("/foo/");
-            var d2 = d1.AppendSubdirectory(null!);
+            Assert.Throws<ArgumentNullException>(() => d1.AppendSubdirectory(null!));
         }
 
         #endregion AppendSubdirectory

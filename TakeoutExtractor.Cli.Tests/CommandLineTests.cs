@@ -84,12 +84,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli.Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(CommandLineException))]
         public void EnumParseNoMatch()
         {
             var cl = new CommandLine(new string[] { "-p", "baz" });  // "baz" does not match any of the values in V
             Assert.IsNotNull(cl);
-            var e = cl.GetArgEnum<E>("p", V);
+            Assert.Throws<CommandLineException>(() => cl.GetArgEnum<E>("p", V));
         }
 
 
@@ -104,12 +103,11 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli.Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(CommandLineException))]
         public void EnumParseDefaultRequired()
         {
             var cl = new CommandLine(new string[] { "-t" });
             Assert.IsNotNull(cl);
-            var e = cl.GetArgEnum<E>("t", V, required: true);  // required overrrides default, so throws an excpetion
+            Assert.Throws<CommandLineException>(() => cl.GetArgEnum<E>("t", V, required: true));  // required overrrides default, so throws an excpetion
         }
 
         #endregion enum mapping

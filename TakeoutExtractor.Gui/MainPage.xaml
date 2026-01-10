@@ -20,7 +20,7 @@
         <MenuBarItem
             Text="Help">
             <MenuFlyoutItem
-                 Text="About TakeoutExtractor"
+                 Text="About Takeout Extractor"
                 Clicked="OnHelpAboutCommand" />
         </MenuBarItem>
     </ContentPage.MenuBarItems>

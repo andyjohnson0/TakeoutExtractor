@@ -27,20 +27,18 @@ namespace uk.andyjohnson.TakeoutExtractor.Cli.Tests
 
 
         [TestMethod]
-        [ExpectedException(typeof(CommandLineException))]
         public void ValueNotFound()
         {
             var cl = new CommandLine(new string[] { "-f", "pig" });
-            var val = cl.GetArgEnum<TestEnum>("f", new string?[] { "none", "foo", "bar", "baz" });
+            Assert.Throws<CommandLineException>(() => cl.GetArgEnum<TestEnum>("f", new string?[] { "none", "foo", "bar", "baz" }));
         }
 
 
         [TestMethod]
-        [ExpectedException(typeof(CommandLineException))]
         public void ValueNotAllowed()
         {
             var cl = new CommandLine(new string[] { "-f", "none" });
-            var val = cl.GetArgEnum<TestEnum>("f", new string?[] { null, "foo", "bar", "baz" });  // TestEnum.None is not allowed
+            Assert.Throws<CommandLineException>(() => cl.GetArgEnum<TestEnum>("f", new string?[] { null, "foo", "bar", "baz" }));  // TestEnum.None is not allowed
         }
     }
 }
