@@ -1,5 +1,13 @@
 #Change Log
 
+##2026-01-10 v1.2
+
+Ported all code to .NET 9.
+Ported GUI to .NET MAUI 9.
+Ported tests to .NUnit 3.
+
+
+
 ##2024-01-08 v1.1
 
 Fixes:

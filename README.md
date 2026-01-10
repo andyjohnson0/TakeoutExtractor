@@ -1,7 +1,7 @@
 ﻿# Takout Extractor
 
 Extracts the contents of a [Google Takeout](https://takeout.google.com/) archive - re-organising it, adding missing metadata, and
-applying a uniform file naming convention. Runs on Windows and MacOS. Requires .NET 7 or later.
+applying a uniform file naming convention. Runs on Windows and MacOS. Requires .NET 9 or later.
 
 Gui and command-line implementations are provided - see the TakeoutExtractor.Gui and TakeoutExtractor.Cli projects respectively.
 Releases include the Gui for Windows and MacOS, and the cli for Windows only.
@@ -17,16 +17,17 @@ named copy of the image and video files in a takeout dataset and restores their 
 
 ## Getting Started
 
-1. Build the solution in Visual Studio 2022
+1. Build the solution in Visual Studio 2022 or later.
 
-2. The command-line extractor, `tex.exe`, will be found in `TakeoutExtractorCli\bin\Release\net6.0\`.
+2. The command-line extractor, `tex.exe`, will be found in `TakeoutExtractorCli\bin\Release\net9.0\`.
 Run `tex /h` for help.
 
 
 ## Built With
 
-- Visual Studio 2022. Maui-based gui currently requires VS2022 7.3.0 preview 2.0 or later.
-- .net 7.0, with nullable reference type checking enabled
+- Visual Studio 2022 or later
+- .NET 9.0, with nullable reference type checking enabled.
+- MAUI or .NET 9 for the GUI project
 - A fork of [ExifLibNet](https://www.nuget.org/packages/ExifLibNet) v2.1.4 with additional fixes, available at https://github.com/andyjohnson0/exiflibrary.
   A pre-built dll is included in the ThirdParty directory.
 
